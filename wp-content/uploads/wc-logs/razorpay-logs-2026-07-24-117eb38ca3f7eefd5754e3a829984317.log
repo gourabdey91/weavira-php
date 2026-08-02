@@ -1,0 +1,229 @@
+2026-07-24T01:21:05+00:00 INFO Running webhook cron.
+2026-07-24T01:21:05+00:00 INFO Webhook cron execution completed.
+2026-07-24T01:52:10+00:00 INFO Running webhook cron.
+2026-07-24T01:52:10+00:00 INFO Webhook cron execution completed.
+2026-07-24T02:25:54+00:00 INFO Running webhook cron.
+2026-07-24T02:25:54+00:00 INFO Webhook cron execution completed.
+2026-07-24T02:26:57+00:00 INFO Running webhook cron.
+2026-07-24T02:26:57+00:00 INFO Webhook cron execution completed.
+2026-07-24T02:31:57+00:00 INFO Running webhook cron.
+2026-07-24T02:31:57+00:00 INFO Webhook cron execution completed.
+2026-07-24T02:37:13+00:00 INFO Running webhook cron.
+2026-07-24T02:37:13+00:00 INFO Webhook cron execution completed.
+2026-07-24T02:42:40+00:00 INFO Running webhook cron.
+2026-07-24T02:42:40+00:00 INFO Webhook cron execution completed.
+2026-07-24T02:47:13+00:00 INFO Running webhook cron.
+2026-07-24T02:47:13+00:00 INFO Webhook cron execution completed.
+2026-07-24T02:51:57+00:00 INFO Running webhook cron.
+2026-07-24T02:51:57+00:00 INFO Webhook cron execution completed.
+2026-07-24T02:57:33+00:00 INFO Running webhook cron.
+2026-07-24T02:57:33+00:00 INFO Webhook cron execution completed.
+2026-07-24T03:01:59+00:00 INFO Running webhook cron.
+2026-07-24T03:01:59+00:00 INFO Webhook cron execution completed.
+2026-07-24T03:07:11+00:00 INFO Running webhook cron.
+2026-07-24T03:07:11+00:00 INFO Webhook cron execution completed.
+2026-07-24T03:27:26+00:00 INFO Running webhook cron.
+2026-07-24T03:27:26+00:00 INFO Webhook cron execution completed.
+2026-07-24T03:43:32+00:00 INFO Running webhook cron.
+2026-07-24T03:43:32+00:00 INFO Webhook cron execution completed.
+2026-07-24T03:55:09+00:00 INFO Running webhook cron.
+2026-07-24T03:55:09+00:00 INFO Webhook cron execution completed.
+2026-07-24T04:21:52+00:00 INFO Running webhook cron.
+2026-07-24T04:21:52+00:00 INFO Webhook cron execution completed.
+2026-07-24T05:33:26+00:00 INFO Running webhook cron.
+2026-07-24T05:33:26+00:00 INFO Webhook cron execution completed.
+2026-07-24T05:38:41+00:00 INFO Running webhook cron.
+2026-07-24T05:38:41+00:00 INFO Webhook cron execution completed.
+2026-07-24T06:38:52+00:00 INFO Running webhook cron.
+2026-07-24T06:38:52+00:00 INFO Webhook cron execution completed.
+2026-07-24T07:22:15+00:00 INFO Running webhook cron.
+2026-07-24T07:22:15+00:00 INFO Webhook cron execution completed.
+2026-07-24T08:38:40+00:00 INFO Running webhook cron.
+2026-07-24T08:38:40+00:00 INFO Webhook cron execution completed.
+2026-07-24T08:42:24+00:00 INFO Running webhook cron.
+2026-07-24T08:42:24+00:00 INFO Webhook cron execution completed.
+2026-07-24T08:47:00+00:00 INFO Running webhook cron.
+2026-07-24T08:47:00+00:00 INFO Webhook cron execution completed.
+2026-07-24T11:42:05+00:00 INFO Running webhook cron.
+2026-07-24T11:42:05+00:00 INFO Webhook cron execution completed.
+2026-07-24T11:53:47+00:00 INFO Running webhook cron.
+2026-07-24T11:53:47+00:00 INFO Webhook cron execution completed.
+2026-07-24T11:58:00+00:00 INFO Running webhook cron.
+2026-07-24T11:58:00+00:00 INFO Webhook cron execution completed.
+2026-07-24T12:31:47+00:00 INFO Running webhook cron.
+2026-07-24T12:31:47+00:00 INFO Webhook cron execution completed.
+2026-07-24T14:12:45+00:00 INFO Running webhook cron.
+2026-07-24T14:12:45+00:00 INFO Webhook cron execution completed.
+2026-07-24T14:17:17+00:00 INFO Running webhook cron.
+2026-07-24T14:17:17+00:00 INFO Webhook cron execution completed.
+2026-07-24T14:22:07+00:00 INFO Running webhook cron.
+2026-07-24T14:22:07+00:00 INFO Webhook cron execution completed.
+2026-07-24T14:26:57+00:00 INFO Running webhook cron.
+2026-07-24T14:26:57+00:00 INFO Webhook cron execution completed.
+2026-07-24T14:31:57+00:00 INFO Running webhook cron.
+2026-07-24T14:31:57+00:00 INFO Webhook cron execution completed.
+2026-07-24T14:38:13+00:00 INFO Running webhook cron.
+2026-07-24T14:38:13+00:00 INFO Webhook cron execution completed.
+2026-07-24T14:42:00+00:00 INFO Running webhook cron.
+2026-07-24T14:42:00+00:00 INFO Webhook cron execution completed.
+2026-07-24T14:45:23+00:00 INFO Called process_payment with params order_id 783
+2026-07-24T14:45:23+00:00 INFO Set transient with key razorpay_wc_order_id params order_id 783
+2026-07-24T14:45:23+00:00 INFO getRazorpayPaymentParams 783
+2026-07-24T14:45:23+00:00 INFO createOrGetRazorpayOrderId 783 and is1ccCheckout is set to no
+2026-07-24T14:45:23+00:00 INFO Called createOrGetRazorpayOrderId with params orderId 783 and is_magic_checkout_order is set to no
+2026-07-24T14:45:23+00:00 INFO razorpayOrderId  | sessionKey razorpay_order_id783
+2026-07-24T14:45:23+00:00 INFO Called createRazorpayOrderId with params orderId 783 and sessionKey razorpay_order_id783
+2026-07-24T14:45:23+00:00 INFO Called getOrderCreationData with params orderId 783
+2026-07-24T14:45:23+00:00 INFO Called getOrderCreationData with params orderId 783 and is1ccOrder is set to no
+2026-07-24T14:45:23+00:00 INFO For order 783
+2026-07-24T14:45:23+00:00 INFO {"receipt":"783","amount":900000,"currency":"INR","payment_capture":1,"app_offer":0,"notes":{"woocommerce_order_id":"783","woocommerce_order_number":"783"}}
+2026-07-24T14:45:24+00:00 INFO Updating razorpay webhook
+2026-07-24T14:45:25+00:00 INFO Meta data saved for Order ID 783 with key razorpay_order_id783 and value order_THNSmYwXdq84Ty.
+2026-07-24T14:45:25+00:00 INFO For order session key razorpay_order_id783
+2026-07-24T14:46:21+00:00 INFO getRazorpayPaymentParams 783
+2026-07-24T14:46:21+00:00 INFO createOrGetRazorpayOrderId 783 and is1ccCheckout is set to no
+2026-07-24T14:46:21+00:00 INFO Called createOrGetRazorpayOrderId with params orderId 783 and is_magic_checkout_order is set to no
+2026-07-24T14:46:21+00:00 INFO razorpayOrderId order_THNSmYwXdq84Ty | sessionKey razorpay_order_id783
+2026-07-24T14:46:21+00:00 INFO Called verifyOrderAmount with params orderId 783 and rzporderId order_THNSmYwXdq84Ty
+2026-07-24T14:46:21+00:00 INFO Called getOrderCreationData with params orderId 783
+2026-07-24T14:46:21+00:00 INFO Called getOrderCreationData with params orderId 783 and is1ccOrder is set to no
+2026-07-24T14:46:27+00:00 INFO Called check_razorpay_response: wc_order_2rvhouYT2rWUD and POST data is {"razorpay_payment_id":"","razorpay_signature":"","razorpay_wc_form_submit":"1"}
+2026-07-24T14:46:27+00:00 INFO HPOS is enabled and order status: pending
+2026-07-24T14:46:27+00:00 INFO Get order id in check_razorpay_response: orderId 783
+2026-07-24T14:46:27+00:00 INFO handleErrorCase
+2026-07-24T14:46:27+00:00 INFO getErrorMessage orderId: 783
+2026-07-24T14:46:27+00:00 INFO returning An error occured. Please contact administrator for assistance
+2026-07-24T14:46:27+00:00 INFO updateOrder orderId: 783 , razorpayPaymentId:  , success: 
+2026-07-24T14:46:28+00:00 INFO Woocommerce orderId: 783 processed through callback
+2026-07-24T14:46:55+00:00 INFO Running webhook cron.
+2026-07-24T14:46:55+00:00 INFO Webhook cron execution completed.
+2026-07-24T14:51:54+00:00 INFO Running webhook cron.
+2026-07-24T14:51:54+00:00 INFO Webhook cron execution completed.
+2026-07-24T14:56:47+00:00 INFO Called process_payment with params order_id 785
+2026-07-24T14:56:47+00:00 INFO Set transient with key razorpay_wc_order_id params order_id 785
+2026-07-24T14:56:47+00:00 INFO getRazorpayPaymentParams 785
+2026-07-24T14:56:47+00:00 INFO createOrGetRazorpayOrderId 785 and is1ccCheckout is set to no
+2026-07-24T14:56:48+00:00 INFO Called createOrGetRazorpayOrderId with params orderId 785 and is_magic_checkout_order is set to no
+2026-07-24T14:56:48+00:00 INFO razorpayOrderId  | sessionKey razorpay_order_id785
+2026-07-24T14:56:48+00:00 INFO Called createRazorpayOrderId with params orderId 785 and sessionKey razorpay_order_id785
+2026-07-24T14:56:48+00:00 INFO Called getOrderCreationData with params orderId 785
+2026-07-24T14:56:48+00:00 INFO Called getOrderCreationData with params orderId 785 and is1ccOrder is set to no
+2026-07-24T14:56:48+00:00 INFO For order 785
+2026-07-24T14:56:48+00:00 INFO {"receipt":"785","amount":332500,"currency":"INR","payment_capture":1,"app_offer":1,"notes":{"woocommerce_order_id":"785","woocommerce_order_number":"785"}}
+2026-07-24T14:56:48+00:00 INFO Meta data saved for Order ID 785 with key razorpay_order_id785 and value order_THNepeOItgK2UD.
+2026-07-24T14:56:48+00:00 INFO For order session key razorpay_order_id785
+2026-07-24T14:57:47+00:00 INFO Running webhook cron.
+2026-07-24T14:57:47+00:00 INFO Webhook cron execution completed.
+2026-07-24T15:03:02+00:00 INFO Running webhook cron.
+2026-07-24T15:03:02+00:00 INFO Webhook cron execution completed.
+2026-07-24T15:05:38+00:00 INFO Called process_payment with params order_id 786
+2026-07-24T15:05:38+00:00 INFO Set transient with key razorpay_wc_order_id params order_id 786
+2026-07-24T15:05:38+00:00 INFO getRazorpayPaymentParams 786
+2026-07-24T15:05:38+00:00 INFO createOrGetRazorpayOrderId 786 and is1ccCheckout is set to no
+2026-07-24T15:05:38+00:00 INFO Called createOrGetRazorpayOrderId with params orderId 786 and is_magic_checkout_order is set to no
+2026-07-24T15:05:38+00:00 INFO razorpayOrderId  | sessionKey razorpay_order_id786
+2026-07-24T15:05:38+00:00 INFO Called createRazorpayOrderId with params orderId 786 and sessionKey razorpay_order_id786
+2026-07-24T15:05:38+00:00 INFO Called getOrderCreationData with params orderId 786
+2026-07-24T15:05:38+00:00 INFO Called getOrderCreationData with params orderId 786 and is1ccOrder is set to no
+2026-07-24T15:05:38+00:00 INFO For order 786
+2026-07-24T15:05:38+00:00 INFO {"receipt":"786","amount":350000,"currency":"INR","payment_capture":1,"app_offer":0,"notes":{"woocommerce_order_id":"786","woocommerce_order_number":"786"}}
+2026-07-24T15:05:38+00:00 INFO Meta data saved for Order ID 786 with key razorpay_order_id786 and value order_THNoAm8zzexQug.
+2026-07-24T15:05:38+00:00 INFO For order session key razorpay_order_id786
+2026-07-24T15:05:56+00:00 INFO getRazorpayPaymentParams 786
+2026-07-24T15:05:56+00:00 INFO createOrGetRazorpayOrderId 786 and is1ccCheckout is set to no
+2026-07-24T15:05:56+00:00 INFO Called createOrGetRazorpayOrderId with params orderId 786 and is_magic_checkout_order is set to no
+2026-07-24T15:05:56+00:00 INFO razorpayOrderId order_THNoAm8zzexQug | sessionKey razorpay_order_id786
+2026-07-24T15:05:56+00:00 INFO Called verifyOrderAmount with params orderId 786 and rzporderId order_THNoAm8zzexQug
+2026-07-24T15:05:56+00:00 INFO Called getOrderCreationData with params orderId 786
+2026-07-24T15:05:56+00:00 INFO Called getOrderCreationData with params orderId 786 and is1ccOrder is set to no
+2026-07-24T15:06:57+00:00 INFO Running webhook cron.
+2026-07-24T15:06:57+00:00 INFO Webhook cron execution completed.
+2026-07-24T15:11:59+00:00 INFO Running webhook cron.
+2026-07-24T15:11:59+00:00 INFO Webhook cron execution completed.
+2026-07-24T15:17:06+00:00 INFO Running webhook cron.
+2026-07-24T15:17:06+00:00 INFO Webhook cron execution completed.
+2026-07-24T15:21:56+00:00 INFO Running webhook cron.
+2026-07-24T15:21:56+00:00 INFO Webhook cron execution completed.
+2026-07-24T15:27:38+00:00 INFO Running webhook cron.
+2026-07-24T15:27:38+00:00 INFO Webhook cron execution completed.
+2026-07-24T15:34:14+00:00 INFO Running webhook cron.
+2026-07-24T15:34:14+00:00 INFO Webhook cron execution completed.
+2026-07-24T15:36:56+00:00 INFO Running webhook cron.
+2026-07-24T15:36:56+00:00 INFO Webhook cron execution completed.
+2026-07-24T15:42:59+00:00 INFO Running webhook cron.
+2026-07-24T15:42:59+00:00 INFO Webhook cron execution completed.
+2026-07-24T15:57:11+00:00 INFO Running webhook cron.
+2026-07-24T15:57:11+00:00 INFO Webhook cron execution completed.
+2026-07-24T16:04:17+00:00 INFO Running webhook cron.
+2026-07-24T16:04:17+00:00 INFO Webhook cron execution completed.
+2026-07-24T16:08:25+00:00 INFO Running webhook cron.
+2026-07-24T16:08:25+00:00 INFO Webhook cron execution completed.
+2026-07-24T16:13:32+00:00 INFO Running webhook cron.
+2026-07-24T16:13:32+00:00 INFO Webhook cron execution completed.
+2026-07-24T16:18:43+00:00 INFO Running webhook cron.
+2026-07-24T16:18:43+00:00 INFO Webhook cron execution completed.
+2026-07-24T16:37:23+00:00 INFO Running webhook cron.
+2026-07-24T16:37:23+00:00 INFO Webhook cron execution completed.
+2026-07-24T16:42:38+00:00 INFO Running webhook cron.
+2026-07-24T16:42:38+00:00 INFO Webhook cron execution completed.
+2026-07-24T16:52:57+00:00 INFO Running webhook cron.
+2026-07-24T16:52:57+00:00 INFO Webhook cron execution completed.
+2026-07-24T17:08:16+00:00 INFO Running webhook cron.
+2026-07-24T17:08:16+00:00 INFO Webhook cron execution completed.
+2026-07-24T17:12:53+00:00 INFO Running webhook cron.
+2026-07-24T17:12:53+00:00 INFO Webhook cron execution completed.
+2026-07-24T17:17:56+00:00 INFO Running webhook cron.
+2026-07-24T17:17:56+00:00 INFO Webhook cron execution completed.
+2026-07-24T17:22:11+00:00 INFO Running webhook cron.
+2026-07-24T17:22:11+00:00 INFO Webhook cron execution completed.
+2026-07-24T17:24:48+00:00 INFO createOneCCAddressSyncCron: attempting to schedule daily cron
+2026-07-24T17:24:48+00:00 INFO createOneCCAddressSyncCron: already scheduled, skipping
+2026-07-24T17:26:57+00:00 INFO Running webhook cron.
+2026-07-24T17:26:57+00:00 INFO Webhook cron execution completed.
+2026-07-24T17:31:56+00:00 INFO Running webhook cron.
+2026-07-24T17:31:56+00:00 INFO Webhook cron execution completed.
+2026-07-24T17:33:56+00:00 INFO rzp_webhook_exec_cron cron created
+2026-07-24T17:33:57+00:00 INFO Running webhook cron.
+2026-07-24T17:33:57+00:00 INFO Webhook cron execution completed.
+2026-07-24T17:40:02+00:00 INFO Running webhook cron.
+2026-07-24T17:40:02+00:00 INFO Webhook cron execution completed.
+2026-07-24T17:44:47+00:00 INFO Running webhook cron.
+2026-07-24T17:44:47+00:00 INFO Webhook cron execution completed.
+2026-07-24T17:49:01+00:00 INFO Running webhook cron.
+2026-07-24T17:49:01+00:00 INFO Webhook cron execution completed.
+2026-07-24T18:14:36+00:00 INFO Running webhook cron.
+2026-07-24T18:14:36+00:00 INFO Webhook cron execution completed.
+2026-07-24T18:20:48+00:00 INFO Running webhook cron.
+2026-07-24T18:20:48+00:00 INFO Webhook cron execution completed.
+2026-07-24T18:29:58+00:00 INFO Running webhook cron.
+2026-07-24T18:29:58+00:00 INFO Webhook cron execution completed.
+2026-07-24T18:51:45+00:00 INFO runOneCCAddressSync: [daily] budget=278.3min (until 05:00 IST)
+2026-07-24T18:51:45+00:00 INFO makeAPICall: url: woocommerce/config is success
+2026-07-24T18:51:45+00:00 INFO sync: confirmed_order_id=761, maxSeconds=16695
+2026-07-24T18:51:45+00:00 INFO makeJSONAPICall: url: woocommerce/ingest is success
+2026-07-24T18:51:45+00:00 INFO sync: config_received event sent at order_id=761
+2026-07-24T18:51:45+00:00 INFO sync: upper_order_id=770, confirmed_order_id=761
+2026-07-24T18:51:45+00:00 INFO getNextBatch: confirmed_order_id=761, orders=1
+2026-07-24T18:51:45+00:00 INFO sync: posting 1 addresses at order_id=770
+2026-07-24T18:51:45+00:00 INFO makeJSONAPICall: url: woocommerce/ingest is success
+2026-07-24T18:51:47+00:00 INFO getNextBatch: confirmed_order_id=770, orders=0
+2026-07-24T18:51:47+00:00 INFO sync: completed. cursor_order_id=770, upper_order_id=770
+2026-07-24T18:51:47+00:00 INFO makeJSONAPICall: url: woocommerce/ingest is success
+2026-07-24T18:51:47+00:00 INFO Running webhook cron.
+2026-07-24T18:51:47+00:00 INFO Webhook cron execution completed.
+2026-07-24T19:26:15+00:00 INFO Running webhook cron.
+2026-07-24T19:26:15+00:00 INFO Webhook cron execution completed.
+2026-07-24T19:52:08+00:00 INFO Running webhook cron.
+2026-07-24T19:52:08+00:00 INFO Webhook cron execution completed.
+2026-07-24T19:58:52+00:00 INFO Running webhook cron.
+2026-07-24T19:58:52+00:00 INFO Webhook cron execution completed.
+2026-07-24T20:02:28+00:00 INFO Running webhook cron.
+2026-07-24T20:02:28+00:00 INFO Webhook cron execution completed.
+2026-07-24T20:07:24+00:00 INFO Running webhook cron.
+2026-07-24T20:07:24+00:00 INFO Webhook cron execution completed.
+2026-07-24T22:15:04+00:00 INFO Running webhook cron.
+2026-07-24T22:15:04+00:00 INFO Webhook cron execution completed.
+2026-07-24T22:48:14+00:00 INFO Running webhook cron.
+2026-07-24T22:48:14+00:00 INFO Webhook cron execution completed.
+2026-07-24T22:50:31+00:00 INFO Running webhook cron.
+2026-07-24T22:50:31+00:00 INFO Webhook cron execution completed.

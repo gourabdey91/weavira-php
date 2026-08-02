@@ -1,0 +1,4 @@
+2026-07-24T14:46:28+00:00 INFO Email "customer_failed_order" for order #783 sent CONTEXT: {"email_type":"customer_failed_order","status":"sent","recipient":"developer","order":783}
+2026-07-24T14:46:28+00:00 INFO Email "failed_order" for order #783 sent CONTEXT: {"email_type":"failed_order","status":"sent","recipient":"developer","order":783}
+2026-07-24T14:49:37+00:00 INFO Email "customer_invoice" for order #783 sent CONTEXT: {"email_type":"customer_invoice","status":"sent","recipient":"developer","order":783}
+2026-07-24T15:06:38+00:00 INFO Email "customer_failed_order" for order #785 sent CONTEXT: {"email_type":"customer_failed_order","status":"sent","recipient":"developer","order":785}

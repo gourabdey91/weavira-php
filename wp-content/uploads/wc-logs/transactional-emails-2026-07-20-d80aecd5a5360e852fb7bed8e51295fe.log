@@ -1,0 +1,15 @@
+2026-07-20T03:28:17+00:00 INFO Email "new_order" for order #457 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"developer","order":457}
+2026-07-20T03:28:17+00:00 INFO Email "customer_processing_order" for order #457 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"guest","order":457}
+2026-07-20T03:32:47+00:00 INFO Email "new_order" for order #459 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"developer","order":459}
+2026-07-20T03:32:47+00:00 INFO Email "customer_processing_order" for order #459 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"guest","order":459}
+2026-07-20T10:27:03+00:00 INFO Email "customer_new_account" for user #2 sent CONTEXT: {"email_type":"customer_new_account","status":"sent","recipient":"test.customer.1784543222936","user":2}
+2026-07-20T10:57:38+00:00 INFO Email "new_order" for order #751 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"developer","order":751}
+2026-07-20T10:57:38+00:00 INFO Email "customer_processing_order" for order #751 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"developer","order":751}
+2026-07-20T12:46:09+00:00 INFO Email "new_order" for order #754 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"developer","order":754}
+2026-07-20T12:46:10+00:00 INFO Email "customer_processing_order" for order #754 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"developer","order":754}
+2026-07-20T14:20:32+00:00 INFO Email "new_order" for order #755 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"developer","order":755}
+2026-07-20T14:20:33+00:00 INFO Email "customer_processing_order" for order #755 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"testcustomer3","order":755}
+2026-07-20T14:21:35+00:00 INFO Email "new_order" for order #756 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"developer","order":756}
+2026-07-20T14:21:35+00:00 INFO Email "customer_processing_order" for order #756 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"developer","order":756}
+2026-07-20T14:53:15+00:00 INFO Email "new_order" for order #757 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"developer","order":757}
+2026-07-20T14:53:15+00:00 INFO Email "customer_processing_order" for order #757 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"guest","order":757}

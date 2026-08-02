@@ -1,0 +1,12 @@
+2026-07-21T07:52:15+00:00 ERROR Could not enable webhook for localhost
+2026-07-21T07:52:15+00:00 INFO createOneCCAddressSyncCron: attempting to schedule daily cron
+2026-07-21T07:52:15+00:00 INFO createOneCCAddressSyncCron: scheduled at 2026-07-21 18:30:00
+2026-07-21T07:52:15+00:00 INFO create one_cc_plugin_sync_cron successful
+2026-07-21T07:52:15+00:00 ERROR The server did not send back a well-formed response. 
+Server Response: Array
+2026-07-21T07:59:55+00:00 INFO Running webhook cron.
+2026-07-21T07:59:55+00:00 INFO Webhook cron execution completed.
+2026-07-21T08:08:21+00:00 INFO Running webhook cron.
+2026-07-21T08:08:21+00:00 INFO Webhook cron execution completed.
+2026-07-21T08:17:53+00:00 INFO Running webhook cron.
+2026-07-21T08:17:53+00:00 INFO Webhook cron execution completed.

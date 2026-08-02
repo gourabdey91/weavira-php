@@ -1,0 +1,240 @@
+*** Print Invoice & Delivery Notes for WooCommerce ***
+
+= 2026-06-29 - version 7.2.1
+* Fix - Order action buttons are not displayed properly on the order edit page.
+* Fix - A few required minified (.min) files are missing from the plugin package, causing warnings and errors.
+* Fix - Critical error: Class Dompdf\Options not found when generating document PDFs.
+* Fix - Deprecated wcdn_order_item_before and wcdn_order_item_after hooks pass inconsistent argument types in v7.
+* Fix - Fatal error: Class Tyche\WCDN\WCDN_Notices not found when plugin activation requirements are not met and the admin notice is triggered.
+
+= 2026-06-24 - version 7.2.0
+* Fix - Logo scaling configured in the template settings is not applied to invoice templates and PDF documents.
+* Fix - Email attachments are not sent consistently when multiple document template email attachments are enabled.
+* Fix - Duplicate Delivery/Pickup Date fields are displayed on invoices when using the WooCommerce Delivery & Pickup Date Time Pro plugin.
+* Fix - Fatal error during PDF generation when PDF attachments are enabled on some hosting environments.
+* Fix - WooCommerce Checkout Add-Ons values are not displayed in generated invoices and documents.
+* Fix - Fatal error during PDF generation when an invalid order is encountered.
+* Fix - PDF attachments are incorrectly attached to Admin New Order emails when only the "Attach PDF to Customer Emails" setting is enabled.
+
+= 2026-05-13 - version 7.1.2
+* Feature - Added integration with Deposits & Partial Payments for WooCommerce Pro (AWCDP). Documents now display a Deposit Amount row and a Future Payments row for deposit orders, reading the correct persisted meta values set at checkout.
+* Enhancement - Added a Page Setup section to all five document types with a Zoom slider (70–130%) and a PDF Zoom Mode option. Layout mode scales the entire document proportionally; Text mode scales only font sizes.
+* Enhancement - Added a Product Name styling section to all five document types for configuring font size, font style, text colour, and padding of product names in the items table.
+* Enhancement - Added font-weight and text-align settings for the Policies, Complimentary Close, and Footer sections.
+* Enhancement - Added Payment Method as a configurable section on the Delivery Note template. Previously it was only available on Invoice and Receipt.
+* Enhancement - Bulk Print now generates merged PDFs on demand via an async AJAX request rather than synchronously on page load, avoiding HTTP timeouts when printing large numbers of orders.
+* Enhancement - Added a loading overlay with a spinner when Auto Print Dialog is enabled. The overlay is dismissed immediately before the browser print dialog opens.
+* Enhancement - All document type templates (invoice, receipt, delivery note, packing slip, credit note) now resolve base.php through the theme override lookup, so copying base.php to your theme now correctly overrides the document layout.
+* Enhancement - Added a WooCommerce_Delivery_Notes global class alias so third-party plugins that detect the plugin via class_exists( 'WooCommerce_Delivery_Notes' ) continue to work after the v7 namespace refactor.
+* Enhancement - The HTML print preview now declares a @page size rule matching the configured PDF paper size, so the browser print preview page dimensions match the generated PDF.
+* Enhancement - Added wcdn_print_document_title filter to customise the print window browser tab title.
+* Enhancement - Added wcdn_pdf_zoom_mode filter to override the PDF zoom mode (layout or text) programmatically.
+* Enhancement - Added wcdn_order_info_fields filter to append extra rows to the order meta block in documents.
+* Enhancement - Added wcdn_order_items filter to sort or reorder line items in the document table. Each item exposes name, sku, price, quantity, total, product_id, and order_item_id.
+* Enhancement - Added thirteen new action hooks to base.php covering every document section: wcdn_before_logo, wcdn_before_title, wcdn_before_branding, wcdn_before_addresses, wcdn_before_totals, wcdn_before_pay_button, wcdn_before_notes, wcdn_before_policies, wcdn_after_policies, wcdn_before_complimentary_close, wcdn_after_complimentary_close, wcdn_before_footer, and wcdn_after_footer.
+* Enhancement - Added six new developer filters: wcdn_shop_data (store name/logo/address/phone/email), wcdn_document_data (footer/policies/close text), wcdn_billing_address, wcdn_shipping_address, wcdn_order_meta_fields (reorder or remove order meta rows), and wcdn_watermark_text.
+* Fix - PDF generation for email attachments was triggered unconditionally, which could exhaust server memory on sites using locale fonts (e.g. CJK scripts). Generation is now skipped entirely when no attachment target has the feature enabled.
+* Fix - The wcdn_pdf_paper_size filter's default value was hardcoded to A4. It now correctly uses the paper size configured under PDF Settings.
+* Fix - Generated PDF filenames now include a per-order cryptographic token, preventing enumeration of stored PDFs by order number alone.
+* Fix - An interval-based readyState polling loop in the admin print button handler could cause double-prints on slow connections. The polling loop has been removed.
+* Fix - Fatal error when generating a PDF for a refund email on orders containing downloadable products.
+* Tweak - Rewrote base.php with comprehensive inline documentation: a full @var block describing every variable available to template overrides ($shop, $order, $document, $settings, $items, $totals), standardised section comment blocks throughout the file, a hooks-at-a-glance reference listing all 26 actions and their signatures, and guidance on overriding the template or its CSS from a theme.
+* Tweak - PDF base font size increased from 9.5pt to 9.75pt for improved readability.
+* Tweak - Line height reduced from 1.3/1.4 to 1.2 in HTML and PDF stylesheets for a more compact document layout.
+* Tweak - Reduced spacing above and below horizontal rules, and reduced the top margin of the order totals table.
+
+2026-04-25 - version 7.1.1
+* Fix - Resolved a deployment issue that caused the admin interface to not load correctly after updating to 7.1.0.
+
+2026-04-25 - version 7.1.0
+* Enhancement - Added Show/Hide controls for Subtotal, Tax, and Shipping rows in the product table. Configurable per document type under Template Settings → Show Product Table Charges.
+* Enhancement - Added option to display Order Data beside or below the Billing/Shipping address section. Configurable under Invoice Settings → Template Order Data Position. Default matches the v6 layout (below).
+* Enhancement - Added settings to show/hide and style Billing Email and Billing Phone Number independently, including font size, font style, text align, and colour.
+* Enhancement - Added wcdn_format_phone_number filter to allow custom formatting of the billing phone number in document templates.
+* Enhancement - Separated Store Phone Number and Store Email into individual rows with dedicated CSS settings for font style, text align, margin top, and margin bottom.
+* Enhancement - Added option to display product images alongside the product title in the items table.
+* Fix - Store logo disappeared for some sites after updating to 7.0. The migration now resolves the attachment URL at migration time rather than storing a raw attachment ID.
+* Fix - Plugin data is now restored to v6.0 format on deactivation, and the v7 state is snapshotted so it can be fully restored on re-activation without re-running the migration.
+* Fix - Shipping method was not displayed in document templates.
+* Fix - Shop address was rendered on a single line. It now correctly renders as multi-line.
+* Fix - A trailing semicolon was shown after an empty store phone or store email label. The semicolon is now omitted when the value is empty.
+* Fix - Store logo was not displaying in the HTML admin preview.
+* Fix - Print button controls for Invoice, Delivery Note, Packing Slip, and Receipt were not shown on the WooCommerce Admin Edit Order page.
+* Fix - All show/hide toggles (logo, shop name, address, phone, email, etc.) were set to false after migrating from v6 sites that had no customisation options saved. The v6 default (all sections visible) is now correctly preserved.
+* Fix - Email attachment (Attach to WooCommerce emails) was incorrectly enabled after migration from v6 when it had never been configured. The feature remains off unless explicitly enabled.
+* Fix - Template preview in the admin broke when the site had no orders, or when order items referenced deleted products. The preview now falls back to generated sample data and fills any blank renderable fields with placeholder values.
+* Fix - Address font size was inflated after migrating from v6 sites that used the Simple template type. The template default is now used for address font size in that case.
+* Fix - Per-template settings (show/hide toggles, alignments, font sizes) were not recovered by the v7.1.0 migration for users upgrading from v7.0.2.
+* Fix - Document title font size was shown as 40 after a fresh install or migration. The default is now 25 and the migration normalises any stored value of 40 to 25.
+* Tweak - Default alignment for logo, document title, shop name, address, phone, and email changed from centre to left.
+* Tweak - The v7.1.0 settings-recovery migration now resets alignment fields to left for sites that used the v6.0 default template type and had not customised those settings.
+
+2026-04-23 - version 7.0.2
+* Fix - Fatal error displayed on edit order page after 7.0 update when HPOS was disabled.
+* Fix - Bulk actions dropdown displayed blank labels after 7.0 update.
+
+2026-04-22 - version 7.0.1
+* Fix - Resolved an issue where a missing static file prevented the page from loading correctly after 7.0.0 update.
+
+2026-04-22 - version 7.0.0
+This release is a complete overhaul of the plugin. The admin interface has been rebuilt using React and the plugin codebase has been fully restructured.
+* Enhancement - Rebuilt the admin interface using React, with dedicated Dashboard, Templates, Settings, and FAQs pages.
+* Enhancement - Added support for five document types: Invoice, Delivery Note, Receipt, Credit Note, and Packing Slip.
+* Enhancement - Added PDF generation and storage for order documents, powered by Dompdf, with configurable file expiration.
+* Enhancement - Added sequential invoice numbering with optional yearly reset and a configurable starting number per year.
+* Enhancement - Added per-template customisation options including logo, colours, font sizes, watermark, and layout settings.
+* Enhancement - Added support for attaching documents to WooCommerce order emails.
+* Enhancement - Added a REST API layer for all admin operations including settings, templates, and PDF generation.
+* Enhancement - Added a data migration routine to carry over settings and invoice counters from previous versions.
+* Tweak - Restructured the plugin codebase with a service-based architecture and Composer autoloading.
+* Tweak - Replaced the legacy template engine with a new renderer supporting theme overrides.
+* Tweak - Added SCRIPT_DEBUG and WCDN_SCRIPT_DEBUG support to switch between minified and unminified assets.
+* Tweak - Updated codebase to align with WordPress Coding Standards.
+
+2026-01-27 - version 6.0.0
+* Fix - Fatal error on the template settings page caused by an invalid string offset type.
+* Fix - Fatal error triggered by an undefined method call when all orders are archived on the site.
+* Fix - Added the wcdn_custom_print_url filter for print action buttons on the order edit page.
+* Fix - Fixed a security vulnerability that allowed guest users to access invoices without a valid token.
+* Fix - Resolved all PHPCS warnings and aligned the code with WordPress Coding Standards to enhance quality and maintainability.
+
+2025-12-23 - version 5.9.0
+* Fix - Address lines in the invoice displayed incorrectly in RTL mode.
+* Fix - Improved input sanitization and validation in invoice template settings to prevent a potential remote code execution vulnerability.
+* Tweak - Updated for compatibility with WordPress 6.9.0.
+* Tweak - Updated for compatibility with WooCommerce 10.4.3.
+
+2025-09-23 - version 5.8.0
+* Fix - Additional options created with the Extra Product Options & Add-Ons for WooCommerce plugin not displaying on item meta on Invoice, Delivery Notes, and Receipt templates.
+* Fix - Meta keys showing instead of addon values for the YITH WooCommerce Product Add-Ons plugin on Invoice, Delivery Notes, and Receipt templates.
+* Fix - Item meta data styling and layout issues on templates.
+
+2025-06-13 - version 5.7.0
+* Fix - Issue where variation item meta (such as size and color) was not appearing on invoices due to changes in the latest WooCommerce update v9.9.0.
+
+2025-05-27 - version 5.6.0
+* Fix - Invoice numbers were not generated in ascending order based on the order ID.
+* Fix - Added wcdn_invoice_order_total_label filter to allow "Total" and "Subtotal" labels in the default invoice template.
+* Fix - Compatibility issue with the Sales By State plugin, causing a critical error when printing the invoice template.
+* Fix - Function name conflict by adding a wcdn prefix to all plugin functions, preventing issues like PHP Fatal error: Cannot redeclare function get_product_name().
+* Tweak - Updated for compatibility with WordPress 6.8.1.
+* Tweak - Updated for compatibility with WooCommerce 9.8.5.
+
+2025-03-04 - version 5.5.0
+* Fix - Issue where bulk printing was being initiated multiple times. Added a popup for bulk action selection and a print button to open the print window in a new tab.
+* Fix - Added the 'allow_user_email_order_access' filter to allow non-logged-in users to access the Print link in emails.
+* Fix - Fixed broken logo issue in the Simple template of the plugin.
+* Fix - Security vulnerability by preventing direct access to PDF files and adding unique keys to PDF filenames.
+* Fix - PHP fatal error: "Uncaught Error: Call to a member function get_meta() on bool" when the invoice number was missing on the edit order page.
+
+2024-12-18 - version 5.4.1
+* Fix - Vulnerability in the 'wcdn_remove_shoplogo' AJAX action by adding proper capability checks. This ensures that only authorized users can modify the shop logo.
+
+2024-12-05 - version 5.4.0
+* Fix - Resolved an issue preventing guest users from viewing the invoice via the Print button on the order received page and the print link in the order email.
+* Fix - Added a notice for logged-out users to log in when attempting to access invoices via a direct link or Print link in the order email.
+
+2024-11-21 - version 5.3.0
+* Fix - Anyone could view customer invoices by simply visiting the URL in the format sent in the email.
+* Fix - PHP Notice: Trying to access array offset on value of type bool.
+* Fix - A slash was added before single quotes in the Shop address field after saving setting.
+* Tweak - Started loading the external resources (JS, CSS, images) from the plugin itself instead of external URLs.
+* Tweak - Removed the call to our tracking server to fetch the deactivation reasons and added them in the plugin itself.
+
+2024-10-22 - version 5.2.0
+* Enhancement - Added the 'wcdn_show_print_button_for_order_status' filter to control the visibility of the print button on the My Account page based on order status.
+* Fix - Deactivation survey request was being sent even though 'Skip & deactivate' was selected while deactivating the plugin.
+* Fix - Invoice, receipt, and delivery notes buttons not appearing on the order edit page.
+* Fix - Refunded products not being removed from the invoice, receipt, and delivery notes.
+* Fix - FAQ page incorrectly appearing in the Dashboard menu.
+* Fix - Resolved admin.js loading error on order edit and listing pages.
+* Fix - Conflict with the Conditional Checkout Fields for WooCommerce plugin, where it was not allowing to add or edit conditional checkout fields.
+* Fix - Strings that have not been translation ready.
+
+2024-07-02 - version 5.1.0
+* Fix - Fixed an error in the debug log when the "Numbering" option is disabled.
+* Fix - Fixed a critical error on the invoice with the Woo Donations plugin to ensure compatibility.
+* Fix - Fixed the PDF font size for the default template.
+* Fix - Added new hook 'wcdn_head_pdf' to apply CSS to PDF.
+* Fix - Fixed the issue where printing orders in bulk did not separate individual orders onto separate pages.
+* Fix - Added a meta name of robots content noindex in the templates.
+
+2024-06-12 - version 5.0.2
+* Fix - HTML tags are not functioning properly on the invoice.
+* Fix - Fatal error while placing the order, due to conflict with PDF Invoices & Packing Slips for WooCommerce plugin.
+
+2024-06-07 - version 5.0.1
+* Fix - Logo was getting printed twice after v5.0 update.
+* Fix - Bulk Action Print Invoice issue.
+
+2024-06-05 - version 5.0.0
+This release contains a major update for the plugin, focusing primarily on the all-new backend user interface, along with several bug fixes.
+
+2024-02-27 - version 4.9.0
+* Fix - Cross-site request forgery vulnerability in the plugin.
+* Fix - Added a filter called 'wcdn_print_text_in_email' & 'wcdn_print_view_in_browser_text_in_email' for changing the "Print: Open print view in browser" text in email URL.
+* Fix - Fatal Error on the edit order page.
+* Fix - Additional product metadata is printed in the invoice.
+* Fix - Added a filter called 'wcdn_address_billing' to the shipping address Title.
+* Fix - Incorrect order date in the invoice.
+
+2023-10-10 - version 4.8.1
+* Fix - Same invoice number & invoice date was displayed on all invoices and the counter was not being increased.
+* Fix - Error Notice was displayed on the settings page with PHP 8.2.
+
+2023-10-04 - version 4.8.0
+* Enhancement - Compatibility With WooCommerce High Performance Order Storage (HPOS)
+* Fix - Fatal error was displayed in the Invoice with WooCommerce Product Add-ons plugin.
+
+2023-03-21 - version 4.7.3
+* Fix - Cross-Site Request Forgery vulnerability in the plugin.
+
+2023-02-02 - version 4.7.2
+* Fix - Fixed a Reflected XSS vulnerability in the plugin.
+* Fix - Fixed a fatal error which occurs when plugins apart from ours are customizing the Bulk Actions on the WooCommerce Orders page.
+
+2022-12-07 - version 4.7.1
+* Fix - Removed the labels for shipping and billing address. This was added in 4.7.0, which is now reverted back.
+
+2022-12-06 - version 4.7.0
+* Fix - Logo was not showing on Android phone earlier. This is fixed now.
+* Fix - Display labels for shipping and billing address.
+* Fix - Removed redundant "Refund" line.
+* Fix - Compatibility with WooCommerce Product Addons plugin. All the fields from the plugin will be shown in the Invoice, Receipt & Delivery Note.
+
+2022-02-08 - version 4.6.5
+* Enhancement - Added an option to print the invoice text in Right to Left direction.
+* Enhancement - Added a filter called 'wcdn_product_meta_data' to remove the meta fields of the product in the invoice.
+* Fix - Quantity column was showing wrong total in the print invoice on the frontend when the invoice contains WooCommerce Composite products.
+* Fix - Extra tabs were added in the bulk action print link.
+* Fix - When using the file field in the WooCommerce Product Addons plugin whole path was getting printed instead of the filename.
+* Fix - The invoice number was not appearing when we open the invoice from the Order email sent to the customer.
+* Fix - Debug log errors have been fixed.
+
+2021-07-21 - version 4.6.4
+* Fix - After updating to v4.6.3, a fatal error occurred on some sites where the invoice template was customized by copying the print-content.php file into the theme folder. This issue is now fixed.
+
+2021-07-19 - version 4.6.3
+* Fix - Fixed errors occurring with PHP 8.
+* Fix - Shipping address was not printed in the invoice when the order was created manually.
+* Fix - When printing receipts, the number of downloaded files was displayed as "%s files". This is now fixed.
+* Dev - Translated the plugin into Korean. Props to @shga89 for the PR.
+
+2020-12-11 - version 4.6.2
+* Enhancement - Added an option to insert the print link in the admin emails.
+* Fix - Strings of Bulk Printing options were not getting translated. Props to @pomegranate.
+* Fix - Finnish language locale name was incorrect.
+* Fix - Custom fields on the WooCommerce product page from Product Input Fields for WooCommerce plugin were not appearing on the invoice.
+* Fix - The BULK printing options of WooCommerce DYMO Print (PRO version) stopped working after installing our Print Invoices plugin. Props to @pepbc.
+* Tweak - In the FAQ page, changed the code snippet to add product images in the invoice.
+
+2020-10-23 - version 4.6.1
+* Fix - Tracker cron event was not running properly, which is now fixed.
+* Dev - Added filters to change the name of the print invoice and delivery notes in the dropdown menu on the Orders page.
+
+2020-09-22 - version 4.6.0
+* Fix - Notice was appearing since WooCommerce v4.4.0.
+* Fix - Bulk printing function was using old hooks and filters. These have been updated.
+* Dev - The total quantity of products is now shown in the quantity column on the invoice.
+* Dev - Added a filter to hide child products in Composite Products.
+* Dev - Translated the plugin into Greek. Props to @edeuter for the PR.

@@ -1,0 +1,2 @@
+2026-07-24T16:06:21+00:00 INFO Email "new_order" for order #770 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"developer","order":770}
+2026-07-24T16:06:21+00:00 INFO Email "customer_processing_order" for order #770 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"developer","order":770}

@@ -1,0 +1,56 @@
+2026-07-22T07:07:40+00:00 INFO Running webhook cron.
+2026-07-22T07:07:40+00:00 INFO Webhook cron execution completed.
+2026-07-22T07:07:51+00:00 INFO runOneCCAddressSync: [daily] past 05:00 IST hard stop, skipping this run
+2026-07-22T07:07:51+00:00 INFO Execute one_cc_plugin_sync_cron successful
+2026-07-22T07:07:52+00:00 ERROR 
+2026-07-22T09:01:12+00:00 INFO Running webhook cron.
+2026-07-22T09:01:12+00:00 INFO Webhook cron execution completed.
+2026-07-22T17:25:40+00:00 INFO Running webhook cron.
+2026-07-22T17:25:40+00:00 INFO Webhook cron execution completed.
+2026-07-22T17:31:01+00:00 INFO Running webhook cron.
+2026-07-22T17:31:01+00:00 INFO Webhook cron execution completed.
+2026-07-22T17:33:42+00:00 INFO Running webhook cron.
+2026-07-22T17:33:42+00:00 INFO Webhook cron execution completed.
+2026-07-22T17:37:02+00:00 INFO Running webhook cron.
+2026-07-22T17:37:02+00:00 INFO Webhook cron execution completed.
+2026-07-22T17:42:11+00:00 INFO Running webhook cron.
+2026-07-22T17:42:11+00:00 INFO Webhook cron execution completed.
+2026-07-22T17:48:08+00:00 INFO Running webhook cron.
+2026-07-22T17:48:08+00:00 INFO Webhook cron execution completed.
+2026-07-22T17:52:36+00:00 INFO Running webhook cron.
+2026-07-22T17:52:36+00:00 INFO Webhook cron execution completed.
+2026-07-22T17:59:39+00:00 INFO Running webhook cron.
+2026-07-22T17:59:39+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:02:02+00:00 INFO Running webhook cron.
+2026-07-22T18:02:02+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:07:56+00:00 INFO Running webhook cron.
+2026-07-22T18:07:56+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:12:17+00:00 INFO Running webhook cron.
+2026-07-22T18:12:17+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:18:01+00:00 INFO Running webhook cron.
+2026-07-22T18:18:01+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:22:03+00:00 INFO Running webhook cron.
+2026-07-22T18:22:03+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:28:06+00:00 INFO Running webhook cron.
+2026-07-22T18:28:06+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:30:07+00:00 INFO runOneCCAddressSync: [daily] budget=299.9min (until 05:00 IST)
+2026-07-22T18:30:08+00:00 INFO makeAPICall: url: woocommerce/config is success
+2026-07-22T18:30:08+00:00 INFO sync: confirmed_order_id=761, maxSeconds=17993
+2026-07-22T18:30:08+00:00 INFO makeJSONAPICall: url: woocommerce/ingest is success
+2026-07-22T18:30:08+00:00 INFO sync: config_received event sent at order_id=761
+2026-07-22T18:30:08+00:00 INFO sync: upper_order_id=761, confirmed_order_id=761
+2026-07-22T18:30:08+00:00 INFO getNextBatch: confirmed_order_id=761, orders=0
+2026-07-22T18:30:08+00:00 INFO sync: completed. cursor_order_id=761, upper_order_id=761
+2026-07-22T18:30:08+00:00 INFO makeJSONAPICall: url: woocommerce/ingest is success
+2026-07-22T18:32:08+00:00 INFO Running webhook cron.
+2026-07-22T18:32:08+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:38:11+00:00 INFO Running webhook cron.
+2026-07-22T18:38:11+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:42:13+00:00 INFO Running webhook cron.
+2026-07-22T18:42:13+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:48:16+00:00 INFO Running webhook cron.
+2026-07-22T18:48:16+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:52:07+00:00 INFO Running webhook cron.
+2026-07-22T18:52:07+00:00 INFO Webhook cron execution completed.
+2026-07-22T18:57:03+00:00 INFO Running webhook cron.
+2026-07-22T18:57:03+00:00 INFO Webhook cron execution completed.

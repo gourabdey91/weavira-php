@@ -1,0 +1,11 @@
+{
+  "name": "smsalert/divi-selector",
+  "title": "SMSAlert",
+  "category": "module",
+  "attributes": {
+    "formId": {
+      "type": "string",
+      "default": ""
+    }
+  }
+}
