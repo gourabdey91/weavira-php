@@ -1,21 +1,102 @@
 <?php
-  // Step 1 only exists to identify a guest (mobile OTP / social / guest
-  // email) — a logged-in customer is already identified, so checkout
-  // starts on Delivery Details instead. billing_email is normally captured
-  // by Step 1's own "Continue as Guest" field and kept out of Step 2's
-  // field grid (see unset() below); when Step 1 is skipped that field
-  // would never render at all, so it stays in Step 2's grid instead,
-  // pre-filled from the account's stored email.
+  // Step 1 only exists to identify a guest (mobile OTP / social) — a
+  // logged-in customer is already identified, so checkout starts on
+  // Delivery Details instead. billing_email is always collected in Step
+  // 2's field grid (pre-filled from the account's stored email when
+  // logged in), since Step 1 no longer has its own email field.
   $skipStep1 = is_user_logged_in();
 
+  // Delivery Address is the primary, always-required address — WooCommerce's
+  // shipping_* fields. billing_* is only ever its own distinct thing when
+  // the customer checks "I need a GST Invoice" below; otherwise it silently
+  // mirrors delivery server-side (see the woocommerce_checkout_process hook
+  // in app/filters.php) purely so WooCommerce has a valid order record —
+  // not shown to the customer as "billing" at all in the common case.
+  //
+  // Phone/Email stay billing_phone/billing_email regardless — they're the
+  // purchaser's own account identity (SMS Alert's checkout-OTP feature is
+  // hard-coded to billing_phone specifically), not a delivery-address or
+  // billing-address concept, so they're never renamed or duplicated.
+  //
+  // The store only sells to India (see the woocommerce_allowed_countries/
+  // specific_allowed_countries options), so country fields are shown locked
+  // rather than editable — disabled fields don't submit, so hidden twins
+  // carry the actual values (see #ck-checkout-form below).
   $wcCheckout = WC()->checkout();
   $billingFields = $wcCheckout->get_checkout_fields('billing');
   $shippingFields = $wcCheckout->get_checkout_fields('shipping');
-  $emailField = $billingFields['billing_email'] ?? null;
-  if (!$skipStep1) {
-      unset($billingFields['billing_email']);
+
+  $billingFields['billing_phone']['label'] = 'Phone Number';
+  $billingFields['billing_phone']['required'] = true;
+  $billingFields['billing_phone']['class'] = ['form-row-first'];
+  $billingFields['billing_email']['label'] = 'Email Address';
+  $billingFields['billing_email']['class'] = ['form-row-last'];
+
+  $shippingFields['shipping_address_1']['label'] = 'Address Line 1';
+  $shippingFields['shipping_address_2']['label'] = 'Address Line 2'; // WC appends its own "(optional)" suffix
+  $shippingFields['shipping_address_2']['label_class'] = []; // WC hides this label (screen-reader-text) by default
+  $shippingFields['shipping_city']['class'] = ['form-row-first'];
+  $shippingFields['shipping_state']['class'] = ['form-row-last'];
+  $shippingFields['shipping_postcode']['class'] = ['form-row-first'];
+  $shippingFields['shipping_country']['custom_attributes'] = ['disabled' => 'disabled'];
+  $shippingFields['shipping_country']['class'] = ['form-row-last'];
+
+  // Fields for the Delivery Address panel, keyed by the id woocommerce_form_field()
+  // needs — phone/email pulled in from $billingFields since they stay billing_*.
+  $deliveryFields = $shippingFields;
+  $deliveryFields['billing_phone'] = $billingFields['billing_phone'];
+  $deliveryFields['billing_email'] = $billingFields['billing_email'];
+
+  // Display order for the Delivery Address panel — matches the mockup's
+  // sequence, which differs from WC's own priority-based field order.
+  // Postcode + Country pair up on the last row.
+  $deliveryFieldOrder = [
+      'shipping_first_name', 'shipping_last_name',
+      'billing_phone', 'billing_email',
+      'shipping_address_1', 'shipping_address_2',
+      'shipping_city', 'shipping_state',
+      'shipping_postcode', 'shipping_country',
+  ];
+
+  // GST billing sub-form — a real, distinct billing_* address, revealed
+  // only when "I need a GST Invoice" is checked. required => false at the
+  // WC level throughout (the section may be hidden at submit time; JS
+  // toggles real requiredness when it's shown — see weavira.js).
+  $gstFields = $billingFields;
+  foreach ($gstFields as $key => $field) {
+      $gstFields[$key]['required'] = false;
   }
-  $shipToDifferentAddress = apply_filters('woocommerce_ship_to_different_address_checked', 'shipping' === get_option('woocommerce_ship_to_destination') ? 1 : 0);
+  // Fields that become required once the section is actually shown (all
+  // but Address Line 2 and the locked Country) — marked with an extra
+  // class since none of them carry WC's own "required_field"/"optional"
+  // treatment at render time (required is false for all of them here).
+  // weavira.js toggles a .ck-gst-fields.is-required class that both sets
+  // these inputs' required attribute and, via CSS, swaps each one's label
+  // from "(optional)" to a required asterisk — no server-render-time
+  // knowledge of the checkbox's state is possible, so this has to be
+  // purely client-side.
+  $gstFields['billing_company']['label'] = 'Business / Legal Name';
+  $gstFields['billing_company']['class'] = ['form-row-wide', 'ck-gst-required-field'];
+  $gstFields['billing_first_name']['class'] = ['form-row-first', 'ck-gst-required-field'];
+  $gstFields['billing_last_name']['class'] = ['form-row-last', 'ck-gst-required-field'];
+  $gstFields['billing_address_1']['label'] = 'Address Line 1';
+  $gstFields['billing_address_1']['class'] = ['form-row-wide', 'ck-gst-required-field'];
+  $gstFields['billing_address_2']['label'] = 'Address Line 2';
+  $gstFields['billing_address_2']['label_class'] = [];
+  $gstFields['billing_city']['class'] = ['form-row-first', 'ck-gst-required-field'];
+  $gstFields['billing_state']['class'] = ['form-row-last', 'ck-gst-required-field'];
+  $gstFields['billing_postcode']['class'] = ['form-row-first', 'ck-gst-required-field'];
+  $gstFields['billing_country']['custom_attributes'] = ['disabled' => 'disabled'];
+  $gstFields['billing_country']['class'] = ['form-row-last'];
+
+  $gstFieldOrder = [
+      'billing_company',
+      'billing_first_name', 'billing_last_name',
+      'billing_address_1', 'billing_address_2',
+      'billing_city', 'billing_state',
+      'billing_postcode', 'billing_country',
+  ];
+
   $hasGiftStep = !empty($giftItems);
   $reviewStepNum = $hasGiftStep ? 4 : 3;
 ?>
@@ -25,8 +106,8 @@
     <img src="<?php echo get_field('arc_option_logo', 'option'); ?>" alt="<?php echo e($siteName); ?>" class="ck-header-logo" />
   </a>
   <div class="ck-header-secure">
-    <i data-lucide="lock" aria-hidden="true"></i>
-    <span>Secure Checkout</span>
+    <i data-lucide="shield-check" aria-hidden="true"></i>
+    <span>100% Secure Checkout</span>
   </div>
 </header>
 
@@ -62,13 +143,23 @@
     <section class="ck-panel ck-step-panel" id="ck-panel-1" data-step="1" aria-labelledby="ck-step1-title" <?php if($skipStep1): ?> hidden <?php endif; ?>>
     <?php if (! ($skipStep1)): ?>
 
-      <h1 class="ck-panel-title" id="ck-step1-title">1. How would you like to continue?</h1>
-      <p class="ck-panel-sub">We need a few details to prepare your order and keep you updated.</p>
+      <h1 class="ck-panel-title" id="ck-step1-title">How would you like to continue?</h1>
+      <p class="ck-panel-sub">Enter your mobile number to receive an OTP and securely continue.</p>
 
       <div class="ck-auth-grid">
 
+        <div class="ck-auth-col">
+          <div class="ck-phone-row">
+                <?php echo do_shortcode('[sa_loginwithotp]'); ?>
+
+                <?php echo do_shortcode('[sa_verify phone_selector="#phone" submit_selector= ".btn"]'); ?>
+
+          </div>
+        </div>
+
+        <div class="ck-auth-or" aria-hidden="true">OR</div>
+
         <div class="ck-social-col">
-          
           <button class="ck-social-btn" type="button" disabled title="Coming soon">
             <svg class="ck-social-icon" viewBox="0 0 24 24" aria-label="Google" role="img">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -86,51 +177,17 @@
           </button>
         </div>
 
-        <div class="ck-auth-or" aria-hidden="true">OR</div>
-
-        <div class="ck-auth-col">
-
-          <div class="ck-method-card">
-            <div class="ck-method-head">
-              <i data-lucide="smartphone" aria-hidden="true"></i>
-              <span>Continue with Mobile Number</span>
-            </div>
-            <div class="ck-phone-row">
-              
-
-
-                  <?php echo do_shortcode('[sa_loginwithotp]'); ?>
-
-                  <?php echo do_shortcode('[sa_verify phone_selector="#phone" submit_selector= ".btn"]'); ?>
-
-
-            </div>
-          </div>
-
-          <div class="ck-method-card ck-method-card--guest">
-            <div class="ck-method-head">
-              <i data-lucide="mail" aria-hidden="true"></i>
-              <span>Continue as Guest</span>
-            </div>
-            <p class="ck-method-sub">Enter your email address</p>
-            <?php
-            if ($emailField) {
-                woocommerce_form_field('billing_email', array_merge($emailField, [
-                    'id' => 'ck_guest_email',
-                    'label' => false,
-                    'placeholder' => 'you@example.com',
-                ]), $wcCheckout->get_value('billing_email'));
-            }
-            ?>
-          </div>
-
-        </div>
-
       </div><!-- /ck-auth-grid -->
 
-      <div class="ck-privacy-note">
-        <i data-lucide="shield-check" aria-hidden="true"></i>
-        <span>We respect your privacy. Your details are safe and will only be used to process your order.</span>
+      <div class="ck-trust-badges">
+        <div class="ck-trust-badge">
+          <i data-lucide="shield-check" aria-hidden="true"></i>
+          <span>Secure OTP Login</span>
+        </div>
+        <div class="ck-trust-badge">
+          <i data-lucide="lock" aria-hidden="true"></i>
+          <span>Your details are never shared</span>
+        </div>
       </div>
 
       <button type="button" class="ck-continue-btn" data-continue-from="1">Continue to Delivery Details</button>
@@ -142,65 +199,219 @@
 
     <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo e(wc_get_checkout_url()); ?>" enctype="multipart/form-data" id="ck-checkout-form">
 
-      <?php if (! ($skipStep1)): ?>
-        <input type="hidden" name="billing_email" id="billing_email" value="<?php echo e($wcCheckout->get_value('billing_email')); ?>" />
-      <?php endif; ?>
+      
+      <input type="hidden" name="shipping_country" value="IN" />
+      <input type="hidden" name="billing_country" value="IN" />
 
       
       <button class="ck-accordion" type="button" aria-expanded="<?php echo e($skipStep1 ? 'true' : 'false'); ?>" aria-controls="ck-panel-2" data-step-toggle="2">
         <span class="ck-accordion-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span>
         <div class="ck-accordion-text">
-          <span class="ck-accordion-title">2. Delivery Details</span>
-          <span class="ck-accordion-sub">Add delivery address and contact number</span>
+          <span class="ck-accordion-title">Delivery Address</span>
+          <span class="ck-accordion-sub">Add your delivery details so we can get your order to you.</span>
         </div>
         <i data-lucide="chevron-right" class="ck-accordion-chevron" aria-hidden="true"></i>
       </button>
       <div class="ck-accordion-panel" id="ck-panel-2" data-step="2" <?php if(!$skipStep1): ?> hidden <?php endif; ?>>
-        <div class="ck-field-grid woocommerce-billing-fields__field-wrapper">
+        <div class="woocommerce-shipping-fields__field-wrapper">
           <?php
-          foreach ($billingFields as $key => $field) {
-              woocommerce_form_field($key, $field, $wcCheckout->get_value($key));
+          // Card-list picker (Home / Office / ...) — shown whenever the
+          // customer has any saved address at all. JS (weavira.js) reads
+          // ajax_object.saved_shipping_addresses (app/setup.php) to fill
+          // the (possibly hidden) shipping_* fields below on click; the
+          // default entry, if any, starts selected with the field grid
+          // hidden, since WC's own get_value() calls below already carry
+          // that default's data via weavira_mirror_default_shipping_address().
+          $shippingDefault = null;
+          foreach (($savedShippingAddresses ?? []) as $saved) {
+              if (!empty($saved['is_default'])) {
+                  $shippingDefault = $saved;
+                  break;
+              }
           }
+          if (!$shippingDefault && !empty($savedShippingAddresses)) {
+              $shippingDefault = $savedShippingAddresses[0];
+          }
+          $hasShippingCards = !empty($savedShippingAddresses);
           ?>
+          <?php if($hasShippingCards): ?>
+            <div class="ck-address-cards" id="ck-shipping-address-cards" role="radiogroup" aria-label="Use a saved address">
+              <?php $__currentLoopData = $savedShippingAddresses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saved): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php
+                  $cardLabel = $saved['label'] ?? '';
+                  $cardIcon = 'map-pin';
+                  if (stripos($cardLabel, 'home') !== false) {
+                      $cardIcon = 'home';
+                  } elseif (stripos($cardLabel, 'office') !== false) {
+                      $cardIcon = 'briefcase';
+                  }
+                ?>
+                
+                <div class="ck-address-card <?php if($shippingDefault && $shippingDefault['id'] === $saved['id']): ?> is-selected <?php endif; ?>" role="button" tabindex="0" data-address-id="<?php echo e($saved['id']); ?>">
+                  <span class="ck-address-card-icon"><i data-lucide="<?php echo e($cardIcon); ?>" aria-hidden="true"></i></span>
+                  <div class="ck-address-card-body">
+                    <div class="ck-address-card-head">
+                      <span class="ck-address-card-label"><?php echo e($cardLabel); ?></span>
+                      <?php if(!empty($saved['is_default'])): ?>
+                        <span class="ck-address-card-default">DEFAULT</span>
+                      <?php endif; ?>
+                      <button type="button" class="ck-address-card-edit" data-edit-address-id="<?php echo e($saved['id']); ?>">Edit</button>
+                    </div>
+                    <span class="ck-address-card-address"><?php echo WC()->countries->get_formatted_address($saved); ?></span>
+                    <?php if(!empty($saved['phone'])): ?>
+                      <span class="ck-address-card-phone"><strong>Mobile Number:</strong> <?php echo e($saved['phone']); ?></span>
+                    <?php endif; ?>
+                  </div>
+                  <i data-lucide="chevron-right" class="ck-address-card-chevron" aria-hidden="true"></i>
+                </div>
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+              <div class="ck-address-card ck-address-card--add" role="button" tabindex="0" id="ck-shipping-address-add-new">
+                <span class="ck-address-card-icon ck-address-card-icon--add" aria-hidden="true">+</span>
+                <span class="ck-address-card-add-label">Add New Address</span>
+              </div>
+            </div>
+
+            
+            <div class="ck-addr-modal" id="ck-address-modal" hidden>
+              <div class="ck-addr-modal-backdrop" data-modal-close></div>
+              <div class="ck-addr-modal-panel" role="dialog" aria-modal="true" aria-labelledby="ck-address-modal-title">
+                <div class="ck-addr-modal-header">
+                  <h2 class="ck-addr-modal-title" id="ck-address-modal-title">Add New Address</h2>
+                  <button type="button" class="ck-addr-modal-close" data-modal-close aria-label="Close">
+                    <i data-lucide="x" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="ck-addr-modal-body">
+                  <p class="ck-addr-modal-error" id="ck-address-modal-error" hidden></p>
+
+                  <div class="ck-tag-picker" id="ck-address-modal-tag-picker">
+                    <span class="ck-tag-picker-label">Save this address as</span>
+                    <div class="ck-tag-picker-options">
+                      <button type="button" class="ck-tag-pill is-active" data-tag="Home">Home</button>
+                      <button type="button" class="ck-tag-pill" data-tag="Office">Office</button>
+                      <button type="button" class="ck-tag-pill" data-tag="Other">Other</button>
+                    </div>
+                    <input type="text" class="ck-tag-other-input" id="ck-address-modal-tag-other" placeholder="Name this address" maxlength="40" hidden />
+                  </div>
+
+                  <div class="ck-field-grid">
+                    <p class="form-row form-row-first">
+                      <label for="ck-am-first_name">First name <span class="required" aria-hidden="true">*</span></label>
+                      <input type="text" class="input-text" id="ck-am-first_name" maxlength="60" />
+                    </p>
+                    <p class="form-row form-row-last">
+                      <label for="ck-am-last_name">Last name <span class="required" aria-hidden="true">*</span></label>
+                      <input type="text" class="input-text" id="ck-am-last_name" maxlength="60" />
+                    </p>
+                    <p class="form-row form-row-wide">
+                      <label for="ck-am-address_1">Address Line 1 <span class="required" aria-hidden="true">*</span></label>
+                      <input type="text" class="input-text" id="ck-am-address_1" placeholder="House number and street name" />
+                    </p>
+                    <p class="form-row form-row-wide">
+                      <label for="ck-am-address_2">Address Line 2 <span class="optional">(optional)</span></label>
+                      <input type="text" class="input-text" id="ck-am-address_2" placeholder="Apartment, suite, unit, etc. (optional)" />
+                    </p>
+                    <p class="form-row form-row-first">
+                      <label for="ck-am-city">Town / City <span class="required" aria-hidden="true">*</span></label>
+                      <input type="text" class="input-text" id="ck-am-city" />
+                    </p>
+                    <p class="form-row form-row-last">
+                      <label for="ck-am-state">State <span class="required" aria-hidden="true">*</span></label>
+                      <select class="input-text" id="ck-am-state">
+                        <option value="">Select an option&hellip;</option>
+                        <?php foreach ((WC()->countries->get_states('IN') ?: []) as $stateCode => $stateName): ?>
+                          <option value="<?php echo e($stateCode); ?>"><?php echo e($stateName); ?></option>
+                        <?php endforeach; ?>
+                      </select>
+                    </p>
+                    <p class="form-row form-row-first">
+                      <label for="ck-am-postcode">PIN Code <span class="required" aria-hidden="true">*</span></label>
+                      <input type="text" class="input-text" id="ck-am-postcode" />
+                    </p>
+                    <p class="form-row form-row-last">
+                      <label for="ck-am-country">Country / Region</label>
+                      <input type="text" class="input-text" id="ck-am-country" value="India" disabled="disabled" />
+                    </p>
+                  </div>
+                </div>
+                <div class="ck-addr-modal-footer">
+                  <button type="button" class="ck-addr-modal-cancel" data-modal-close>Cancel</button>
+                  <button type="button" class="ck-addr-modal-save" id="ck-address-modal-save">Save Address</button>
+                </div>
+              </div>
+            </div>
+          <?php endif; ?>
+
+          <div class="ck-field-grid" id="ck-shipping-field-grid" <?php if($shippingDefault): ?> hidden <?php endif; ?>>
+            <?php
+            foreach ($deliveryFieldOrder as $key) {
+                if (isset($deliveryFields[$key])) {
+                    woocommerce_form_field($key, $deliveryFields[$key], $wcCheckout->get_value($key));
+                }
+            }
+            ?>
+          </div>
         </div>
 
-        <?php if(WC()->cart->needs_shipping_address()): ?>
-          <div class="woocommerce-shipping-fields">
-            <h3 id="ship-to-different-address">
-              <label class="cart-gift-label woocommerce-form__label woocommerce-form__label-for-checkbox checkbox">
-                <input id="ship-to-different-address-checkbox" class="cart-gift-checkbox woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" type="checkbox" name="ship_to_different_address" value="1" <?php if($shipToDifferentAddress): echo 'checked'; endif; ?> />
-                Ship to a different address?
-              </label>
-            </h3>
-            <div class="shipping_address" <?php if(!$shipToDifferentAddress): ?> style="display:none;" <?php endif; ?>>
-              <?php do_action('woocommerce_before_checkout_shipping_form', $wcCheckout); ?>
-
-              <?php if(count($savedShippingAddresses ?? []) > 1): ?>
-                
-                <p class="form-row form-row-wide">
-                  <label for="wv-shipping-address-select">Use a saved address</label>
-                  <select id="wv-shipping-address-select" class="woocommerce-Input woocommerce-Input--select input-select">
-                    <option value="">Enter a new address</option>
-                    <?php $__currentLoopData = $savedShippingAddresses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saved): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                      <option value="<?php echo e($saved['id']); ?>"><?php echo e($saved['label']); ?></option>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                  </select>
-                </p>
-              <?php endif; ?>
-
-              <div class="ck-field-grid woocommerce-shipping-fields__field-wrapper">
-                <?php
-                foreach ($shippingFields as $key => $field) {
-                    woocommerce_form_field($key, $field, $wcCheckout->get_value($key));
-                }
-                ?>
-              </div>
-              <?php do_action('woocommerce_after_checkout_shipping_form', $wcCheckout); ?>
+        <div class="ck-gst-block">
+          <div class="ck-gst-head">
+            <span class="ck-gst-icon"><i data-lucide="file-text" aria-hidden="true"></i></span>
+            <div class="ck-gst-text">
+              <span class="ck-gst-title">Business Invoice (Optional)</span>
+              <span class="ck-gst-sub">Add GST details for a business invoice.</span>
             </div>
           </div>
-        <?php endif; ?>
+          <label class="ck-gst-checkbox">
+            <input type="checkbox" name="wv_gst_invoice" value="1" id="wv-gst-checkbox" />
+            I need a GST Invoice
+          </label>
+          <div class="ck-gst-note">
+            <i data-lucide="info" aria-hidden="true"></i>
+            <span>By default, we'll invoice your delivery address. Fill in the details below only if you need a different billing address for GST purposes.</span>
+          </div>
 
-        <button type="button" class="ck-continue-btn" data-continue-from="2">Continue to <?php echo e($hasGiftStep ? 'Gift Details' : 'Review & Payment'); ?></button>
+          <div class="ck-gst-fields" id="ck-gst-fields" hidden>
+            <?php if(count($savedBillingAddresses ?? []) > 1): ?>
+              <p class="form-row form-row-wide">
+                <label for="wv-billing-address-select">Use a saved address</label>
+                <select id="wv-billing-address-select" class="woocommerce-Input woocommerce-Input--select input-select">
+                  <option value="">Enter a new address</option>
+                  <?php $__currentLoopData = $savedBillingAddresses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saved): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($saved['id']); ?>"><?php echo e($saved['label']); ?></option>
+                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </select>
+              </p>
+            <?php endif; ?>
+
+            <div class="ck-field-grid woocommerce-billing-fields__field-wrapper">
+              <p class="form-row form-row-wide ck-gst-required-field">
+                <label for="wv_gst_number">GST Number</label>
+                <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="wv_gst_number" id="wv_gst_number" maxlength="15" placeholder="e.g. 22AAAAA0000A1Z5" />
+              </p>
+              <?php
+              foreach ($gstFieldOrder as $key) {
+                  if (isset($gstFields[$key])) {
+                      woocommerce_form_field($key, $gstFields[$key], $wcCheckout->get_value($key));
+                  }
+              }
+              ?>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="ck-tag-picker" id="ck-shipping-tag-picker" <?php if($shippingDefault): ?> hidden <?php endif; ?>>
+          <span class="ck-tag-picker-label">Save this address as</span>
+          <div class="ck-tag-picker-options">
+            <button type="button" class="ck-tag-pill is-active" data-tag="Home">Home</button>
+            <button type="button" class="ck-tag-pill" data-tag="Office">Office</button>
+            <button type="button" class="ck-tag-pill" data-tag="Other">Other</button>
+          </div>
+          <input type="text" class="ck-tag-other-input" id="ck-shipping-tag-other" placeholder="Name this address" maxlength="40" hidden />
+          <input type="hidden" id="ck-shipping-tag-value" value="Home" />
+        </div>
+
+        <button type="button" class="ck-continue-btn" data-continue-from="2">Continue to <?php echo e($hasGiftStep ? 'Gift Details' : 'Review & Payment'); ?> <i data-lucide="arrow-right" aria-hidden="true"></i></button>
       </div>
 
       <?php if($hasGiftStep): ?>
@@ -310,9 +521,25 @@
       <span class="ck-total-price"><?php echo $total; ?></span>
     </div>
 
+    <div class="ck-summary-perks" role="list">
+      <div class="ck-summary-perk" role="listitem">
+        <i data-lucide="truck" aria-hidden="true"></i>
+        <span>Free Shipping</span>
+      </div>
+      <div class="ck-summary-perk" role="listitem">
+        <i data-lucide="headphones" aria-hidden="true"></i>
+        <span>Easy Exchange</span>
+      </div>
+    </div>
+
   </aside>
 
 </main><!-- /ck-layout -->
+
+<div class="ck-privacy-note">
+  <i data-lucide="shield-check" aria-hidden="true"></i>
+  <span>We respect your privacy. Your details are safe and will only be used to process your order.</span>
+</div>
 
 <?php do_action('woocommerce_after_checkout_form', $wcCheckout); ?>
 <?php /**PATH C:\Users\Admin\Local Sites\weavira\app\public\wp-content\themes\weavira\resources\views/woocommerce/checkout.blade.php ENDPATH**/ ?>
