@@ -1,0 +1,23 @@
+{
+    "key": "ui_options_page_68f4a1c9b502e",
+    "title": "Header / Mega Menu",
+    "active": true,
+    "menu_order": 1,
+    "page_title": "Header / Mega Menu",
+    "menu_slug": "header-options",
+    "parent_slug": "theme-settings",
+    "advanced_configuration": 0,
+    "icon_url": "",
+    "menu_title": "",
+    "position": "",
+    "redirect": false,
+    "description": "",
+    "update_button": "Update",
+    "updated_message": "Options Updated",
+    "capability": "edit_posts",
+    "data_storage": "options",
+    "post_id": "",
+    "autoload": 0,
+    "_parent": 316,
+    "modified": 1784310000
+}

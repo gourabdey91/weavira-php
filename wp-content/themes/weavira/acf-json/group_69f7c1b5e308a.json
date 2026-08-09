@@ -1,0 +1,47 @@
+{
+    "key": "group_69f7c1b5e308a",
+    "title": "Mega Menu Swatch",
+    "fields": [
+        {
+            "key": "field_a3e6a3e54676",
+            "label": "Swatch Colour",
+            "name": "swatch_color",
+            "aria-label": "",
+            "type": "color_picker",
+            "instructions": "The hex colour shown as a swatch dot in the header's Shop by Colour list.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "enable_opacity": 0,
+            "return_format": "string",
+            "allow_in_bindings": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "pa_body-primary-colour"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Adds a hex colour swatch to Body Primary Colour attribute terms, used in the header's Shop by Colour list.",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1784310000
+}

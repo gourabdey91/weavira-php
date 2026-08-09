@@ -1,0 +1,709 @@
+{
+    "key": "group_97086ebcb03a0",
+    "title": "Product Details",
+    "fields": [
+        {
+            "key": "field_5c1a97e2d4b03",
+            "label": "Gallery Video",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_6d24b813fa590",
+            "label": "Video",
+            "name": "product_video",
+            "aria-label": "",
+            "type": "file",
+            "instructions": "Optional. Shown as an extra thumbnail in the product gallery — clicking it plays the video in place of the main image.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "library": "all",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": "mp4,mov,webm",
+            "allow_in_bindings": 0
+        },
+        {
+            "key": "field_0e97c521d68af",
+            "label": "Video Thumbnail",
+            "name": "product_video_poster",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Poster image for the video thumbnail. Falls back to the product's main photo if left blank.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium",
+            "allow_in_bindings": 0
+        },
+        {
+            "key": "field_5d684b9315e90",
+            "label": "Product Badges",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_3e0eb7285b4d0",
+            "label": "Segment",
+            "name": "segment",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Displayed as a badge on the product page.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "Luxury": "Luxury",
+                "Premium": "Premium",
+                "Classic": "Classic"
+            },
+            "default_value": "",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 1,
+            "ui": 1,
+            "ajax": 0,
+            "placeholder": "",
+            "allow_in_bindings": 0
+        },
+        {
+            "key": "field_52b570e299090",
+            "label": "Mercerised",
+            "name": "mercerised",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Only applicable when Material = Cotton. Displayed as a badge on the product page.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "Yes": "Yes",
+                "No": "No"
+            },
+            "default_value": "",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 1,
+            "ui": 1,
+            "ajax": 0,
+            "placeholder": "",
+            "allow_in_bindings": 0
+        },
+        {
+            "key": "field_269d3fc7c9150",
+            "label": "Weaving Specs",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_5d0207fdace40",
+            "label": "Weaving Team Size",
+            "name": "weaving_team_size",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Number of weavers involved in making this piece.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_fab591e886d30",
+            "label": "Weaving Hours",
+            "name": "weaving_hours",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Approx. hours to hand-weave this piece.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_8d2339e4e5fc0",
+            "label": "Weaving Description",
+            "name": "weaving_description",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Short line describing the weaving effort, e.g. “It took 30 hrs and the involvement of 5 people to handweave this.” Displayed near the top of the product description.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_8717af8ec5cd0",
+            "label": "Measurements",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_6466812e7b2a0",
+            "label": "Length (excl. Blouse Piece)",
+            "name": "length_meters",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Length in meters, not including the blouse piece.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": "m"
+        },
+        {
+            "key": "field_e76f61743c620",
+            "label": "Net Weight",
+            "name": "net_weight",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": "g"
+        },
+        {
+            "key": "field_c21d445773af0",
+            "label": "Gross Weight",
+            "name": "gross_weight",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": "g"
+        },
+        {
+            "key": "field_25dd13050a910",
+            "label": "Care & Notes",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_1d6779006adc0",
+            "label": "Wash Care",
+            "name": "wash_care",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_2a286a1dc3580",
+            "label": "Custom Vocabulary",
+            "name": "custom_vocabulary",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional local/regional name or term for this weave/design, for use in marketing copy.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_7473e726438bf",
+            "label": "Design Details",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_4f4bfee240151",
+            "label": "Design Detail Cards",
+            "name": "design_details",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Up to 3 cards shown in “The Details” section (e.g. Motif, Border, Pallu).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "row",
+            "min": 0,
+            "max": 3,
+            "button_label": "Add Card",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_1285360fbe8ab",
+                    "label": "Image",
+                    "name": "design_details_image",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": "",
+                    "preview_size": "medium",
+                    "allow_in_bindings": 0,
+                    "parent_repeater": "field_4f4bfee240151"
+                },
+                {
+                    "key": "field_ac4e2f7e4697a",
+                    "label": "Label",
+                    "name": "design_details_label",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "e.g. MOTIF, BORDER, PALLU",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_4f4bfee240151"
+                },
+                {
+                    "key": "field_1ff8ba0ba6c7d",
+                    "label": "Title",
+                    "name": "design_details_title",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_4f4bfee240151"
+                },
+                {
+                    "key": "field_f45dca19b2d64",
+                    "label": "Description",
+                    "name": "design_details_desc",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "rows": "",
+                    "placeholder": "",
+                    "new_lines": "",
+                    "parent_repeater": "field_4f4bfee240151"
+                }
+            ]
+        },
+        {
+            "key": "field_c396840afaf8d",
+            "label": "Feel Scale",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_9a3c4d81f27e6",
+            "label": "Feel Kicker",
+            "name": "feel_kicker",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Section heading. Defaults to “How Will This Saree Feel?” if left blank.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "How Will This Saree Feel?",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_2be6f905c418a",
+            "label": "Feel Image",
+            "name": "feel_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Close-up of the fabric weave/texture. Falls back to the product's main photo if left blank.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium",
+            "allow_in_bindings": 0
+        },
+        {
+            "key": "field_07400d37b5dcb",
+            "label": "Feel Scale Value",
+            "name": "feel_scale_value",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Where this saree sits on the hand-feel scale. Leave blank to hide the section.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "Featherlight": "Featherlight",
+                "Fine": "Fine",
+                "Traditional": "Traditional",
+                "Heritage": "Heritage"
+            },
+            "default_value": "",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 1,
+            "ui": 1,
+            "ajax": 0,
+            "placeholder": "",
+            "allow_in_bindings": 0
+        },
+        {
+            "key": "field_7b5f59bed8d32",
+            "label": "Feel Description",
+            "name": "feel_body",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Describes the hand-feel/drape of the fabric.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_764570291847",
+            "label": "Search",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "left",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_c5ea4c6b1f3f",
+            "label": "Search Keywords",
+            "name": "search_keywords",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Alternate names, occasions, or terms shoppers might search for (e.g. “Bridal”, “Sangeet Gift”, “Checks”). Matched by the site search in addition to the product title.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "row",
+            "min": 0,
+            "max": 15,
+            "button_label": "Add Keyword",
+            "rows_per_page": 20,
+            "collapsed": "",
+            "sub_fields": [
+                {
+                    "key": "field_2850d784fad7",
+                    "label": "Keyword",
+                    "name": "keyword",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_c5ea4c6b1f3f"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "product"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1784330000
+}

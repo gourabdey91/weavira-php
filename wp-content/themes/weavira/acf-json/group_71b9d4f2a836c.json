@@ -1,0 +1,51 @@
+{
+    "key": "group_71b9d4f2a836c",
+    "title": "Journal Entry Settings",
+    "fields": [
+        {
+            "key": "field_794b0a93a797",
+            "label": "Editor's Pick",
+            "name": "journal_is_featured",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Show this entry as the featured editorial in the header's Journal mega menu. If none are checked, the most recent entry is used.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui_on_text": "",
+            "ui_off_text": "",
+            "ui": 1,
+            "allow_in_bindings": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "journal"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [
+        "the_content"
+    ],
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1784553929
+}

@@ -1,0 +1,53 @@
+{
+    "key": "group_8c4f6d31e7a29",
+    "title": "Heritage Design Details",
+    "fields": [
+        {
+            "key": "field_1a7b2c9d4e01",
+            "label": "Related Design Attribute",
+            "name": "related_design_attribute",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "The matching product Design attribute term, if one exists — links this motif to the real products that carry it (drives the design count and the \"View Designs\" link). Leave empty if no products carry this motif yet.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "pa_design",
+            "add_term": 0,
+            "save_terms": 0,
+            "load_terms": 0,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 1,
+            "multiple": 0,
+            "bidirectional": 0,
+            "bidirectional_target": []
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "heritage_design"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Fields for Heritage Design entries (html/heritage-designs.html) — the motif directory linking editorial content back to real Design-attribute products.",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1784380000
+}

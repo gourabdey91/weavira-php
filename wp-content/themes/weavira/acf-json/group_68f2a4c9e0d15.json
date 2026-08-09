@@ -1,0 +1,134 @@
+{
+    "key": "group_68f2a4c9e0d15",
+    "title": "Theme Story",
+    "fields": [
+        {
+            "key": "field_3a7c9e15b402f",
+            "label": "Story Heading",
+            "name": "story_heading",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "e.g. “Inspired by Rath Yatra”. Shown in the story banner on every product tagged with this Theme.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_6e18d34fa905c",
+            "label": "Story Body",
+            "name": "story_body",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "The narrative copy shown in the story banner.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_c50a827e6b193",
+            "label": "Story CTA Label",
+            "name": "story_cta_label",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "e.g. “KNOW MORE”",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_9d3f512c8a76e",
+            "label": "Story CTA Link",
+            "name": "story_cta_link",
+            "aria-label": "",
+            "type": "link",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "allow_in_bindings": 0
+        },
+        {
+            "key": "field_1f4b8e02d675a",
+            "label": "Story Image",
+            "name": "story_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Shown in the story banner. Falls back to the product's main photo if left blank.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium",
+            "allow_in_bindings": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "pa_theme"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "One story per Theme term — add a new Theme (e.g. Rath Yatra, Konark) and fill this in once; every product tagged with that Theme shows it automatically.",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1784300000
+}

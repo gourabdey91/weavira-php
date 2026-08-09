@@ -1,0 +1,28 @@
+{
+  "baseBranchPatterns": [
+    "main"
+  ],
+  "commitMessageAction": "⬆️ Bump",
+  "commitMessageTopic": "{{depName}}",
+  "extends": [
+    "config:recommended",
+    "schedule:weekly"
+  ],
+  "rangeStrategy": "replace",
+  "ignoreDeps": ["php"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "matchPackageNames": ["node"],
+      "enabled": false
+    },
+    {
+      "groupName": "GitHub Actions",
+      "matchManagers": ["github-actions"]
+    }
+  ],
+  "timezone": "America/Detroit"
+}
