@@ -68,38 +68,10 @@
                   <?php endif; ?>
                 </div>
                 <div class="cart-item-footer">
-                  <label class="cart-gift-label">
-                    <input type="checkbox" class="cart-gift-checkbox" data-gift-checkbox <?php if($item['gift']): echo 'checked'; endif; ?>> This will be a Gift
-                  </label>
+                  <p class="cart-gift-note">Customize the packaging for your loved ones for free. Details will be added during checkout.</p>
                   <button class="cart-remove-btn" type="button">Remove</button>
                 </div>
               </div>
-            </div>
-            <div class="wv-gift-fields" data-gift-fields <?php if(!$item['gift']): ?> hidden <?php endif; ?>>
-              <div class="wv-gift-field">
-                <label for="wv-gift-for-<?php echo e($loop->index); ?>">Gift For</label>
-                <select id="wv-gift-for-<?php echo e($loop->index); ?>" class="wv-gift-for">
-                  <option value="" <?php if(empty($item['gift']['gift_for'])): echo 'selected'; endif; ?> disabled>Select</option>
-                  <?php $__currentLoopData = \App\weavira_gift_for_options(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $option): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <option value="<?php echo e($option); ?>" <?php if(($item['gift']['gift_for'] ?? '') === $option): echo 'selected'; endif; ?>><?php echo e($option); ?></option>
-                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </select>
-              </div>
-              <div class="wv-gift-field">
-                <label for="wv-gift-occasion-<?php echo e($loop->index); ?>">Occasion</label>
-                <select id="wv-gift-occasion-<?php echo e($loop->index); ?>" class="wv-gift-occasion">
-                  <option value="" <?php if(empty($item['gift']['occasion'])): echo 'selected'; endif; ?> disabled>Select</option>
-                  <?php $__currentLoopData = \App\weavira_gift_occasion_options(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $option): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <option value="<?php echo e($option); ?>" <?php if(($item['gift']['occasion'] ?? '') === $option): echo 'selected'; endif; ?>><?php echo e($option); ?></option>
-                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </select>
-              </div>
-              <div class="wv-gift-field wv-gift-field--full">
-                <label for="wv-gift-recipient-<?php echo e($loop->index); ?>">Gift Recipient Name</label>
-                <input type="text" id="wv-gift-recipient-<?php echo e($loop->index); ?>" class="wv-gift-recipient" value="<?php echo e($item['gift']['recipient_name'] ?? ''); ?>" placeholder="Enter recipient&rsquo;s name" maxlength="80" />
-              </div>
-              <p class="wv-gift-disclaimer">This data is collected only for Customized Packaging.</p>
-              <p class="cart-gift-status" aria-live="polite"></p>
             </div>
           </div>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

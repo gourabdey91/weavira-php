@@ -6,17 +6,7 @@
   page-shell + breadcrumb rather than getting one from the shared layout.
 --}}
 @php
-  $registrationEnabled = get_option('woocommerce_enable_myaccount_registration') === 'yes';
-  $activeTab = (!empty($_POST['register']) || !empty($_GET['action']) && $_GET['action'] === 'register') ? 'register' : 'login';
   $postedUsername = isset($_POST['username']) && is_string($_POST['username']) ? esc_attr(wp_unslash($_POST['username'])) : '';
-  $postedFirstName = isset($_POST['first_name']) ? esc_attr(wp_unslash($_POST['first_name'])) : '';
-  $postedLastName = isset($_POST['last_name']) ? esc_attr(wp_unslash($_POST['last_name'])) : '';
-  // Named billing_phone (not mobile) so it lines up with what SMS Alert's
-  // own OTP-verification hooks expect on the register form — see the
-  // [sa_verify] shortcode below and woocommerce_registration_errors in
-  // app/filters.php.
-  $postedMobile = isset($_POST['billing_phone']) ? esc_attr(wp_unslash($_POST['billing_phone'])) : '';
-  $postedEmail = isset($_POST['email']) ? esc_attr(wp_unslash($_POST['email'])) : '';
   $loginWithOtpEnabled = function_exists('smsalert_get_option') && smsalert_get_option('login_with_otp', 'smsalert_general') === 'on';
 @endphp
 
@@ -43,31 +33,65 @@
 
     <div class="myaccount-auth-card">
 
-      @if($registrationEnabled)
-        <div class="myaccount-auth-tabs" role="tablist">
-          <button type="button" class="myaccount-auth-tab @if($activeTab === 'login') is-active @endif" data-auth-tab="login" role="tab" aria-selected="{{ $activeTab === 'login' ? 'true' : 'false' }}">Login</button>
-          <button type="button" class="myaccount-auth-tab @if($activeTab === 'register') is-active @endif" data-auth-tab="register" role="tab" aria-selected="{{ $activeTab === 'register' ? 'true' : 'false' }}">Register</button>
+      @if($loginWithOtpEnabled)
+        {{--
+          One unified form instead of separate Login/Register tabs — same
+          OTP flow as checkout Step 1 (do_shortcode('[sa_loginwithotp]') +
+          [sa_verify]): SMS Alert matches the mobile number against an
+          existing user's billing_phone meta and logs them in, or creates a
+          new account if no match exists, so a single form covers both
+          cases without asking the visitor which one they are.
+        --}}
+        <div class="ck-panel-head">
+          <div class="ck-panel-text">
+            <h1 class="ck-panel-title">Log in or Sign Up</h1>
+            <p class="ck-panel-sub">Quick, secure, and password-free.</p>
+          </div>
         </div>
-      @else
-        <h2 class="myaccount-auth-heading">Login</h2>
-      @endif
 
-      <div class="myaccount-auth-panel" data-auth-panel="login" @if($registrationEnabled && $activeTab !== 'login') hidden @endif>
-        @if($loginWithOtpEnabled)
-          {{--
-            SMS Alert's own [sa_loginwithotp] shortcode — full mobile number
-            + OTP login form (same one used for guest checkout's "Continue
-            with Mobile Number" step). Requires "Login With OTP" on in SMS
-            Alert settings; matches an existing user by their billing_phone
-            meta, so no extra wiring needed on our side.
-          --}}
-          {!! do_shortcode('[sa_loginwithotp sa_label="Mobile Number" sa_placeholder="Enter mobile number" sa_button="Login with OTP"]') !!}
+        <div class="ck-auth-grid">
+
+          <div class="ck-auth-col">
+            <div class="ck-phone-row">
+              {!! do_shortcode('[sa_loginwithotp sa_label="Mobile Number" sa_placeholder="Enter mobile number"]') !!}
+              {!! do_shortcode('[sa_verify phone_selector="#phone" submit_selector=".btn"]') !!}
+            </div>
+          </div>
+
           <div class="ck-auth-or" aria-hidden="true">OR</div>
-        @endif
+
+          <div class="ck-social-col">
+            <button class="ck-social-btn" type="button" disabled title="Coming soon">
+              <svg class="ck-social-icon" viewBox="0 0 24 24" aria-label="Google" role="img">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              Continue with Google
+            </button>
+            <button class="ck-social-btn" type="button" disabled title="Coming soon">
+              <svg class="ck-social-icon" viewBox="0 0 24 24" fill="currentColor" aria-label="Apple" role="img">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+              </svg>
+              Continue with Apple
+            </button>
+          </div>
+
+        </div><!-- /ck-auth-grid -->
+
+        <p class="ck-panel-trust">
+          <i data-lucide="shield-check" aria-hidden="true"></i>
+          Secure sign-in <span class="ck-panel-trust-dot" aria-hidden="true">&bull;</span> Your information is protected
+        </p>
+      @else
+        {{-- Fallback when SMS Alert's "Login With OTP" setting is off —
+             still a single form, just username/password instead of OTP. --}}
+        <h2 class="myaccount-auth-heading">Login</h2>
         <form class="woocommerce-form woocommerce-form-login login myaccount-auth-form" method="post" novalidate>
           <p class="myaccount-auth-field">
             <label for="username"><i data-lucide="user" aria-hidden="true"></i>Username or email address <span class="required" aria-hidden="true">*</span></label>
-            <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="username" id="username" autocomplete="username" value="{{ $activeTab === 'login' ? $postedUsername : '' }}" required aria-required="true" />
+            <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="username" id="username" autocomplete="username" value="{{ $postedUsername }}" required aria-required="true" />
           </p>
           <p class="myaccount-auth-field">
             <label for="password"><i data-lucide="lock" aria-hidden="true"></i>Password <span class="required" aria-hidden="true">*</span></label>
@@ -83,62 +107,6 @@
           <?php wp_nonce_field('woocommerce-login', 'woocommerce-login-nonce'); ?>
           <button type="submit" class="myaccount-save-btn myaccount-save-btn--block" name="login" value="Log in">Log In</button>
         </form>
-      </div>
-
-      @if($registrationEnabled)
-        <div class="myaccount-auth-panel" data-auth-panel="register" @if($activeTab !== 'register') hidden @endif>
-          <form method="post" class="woocommerce-form woocommerce-form-register register myaccount-auth-form">
-            <div class="myaccount-auth-name-row">
-              <p class="myaccount-auth-field">
-                <label for="reg_first_name"><i data-lucide="user" aria-hidden="true"></i>First name <span class="required" aria-hidden="true">*</span></label>
-                <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="first_name" id="reg_first_name" autocomplete="given-name" value="{{ $postedFirstName }}" required aria-required="true" />
-              </p>
-              <p class="myaccount-auth-field">
-                <label for="reg_last_name">Last name <span class="required" aria-hidden="true">*</span></label>
-                <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="last_name" id="reg_last_name" autocomplete="family-name" value="{{ $postedLastName }}" required aria-required="true" />
-              </p>
-            </div>
-
-            @if(get_option('woocommerce_registration_generate_username') === 'no')
-              <p class="myaccount-auth-field">
-                <label for="reg_username"><i data-lucide="user" aria-hidden="true"></i>Username <span class="required" aria-hidden="true">*</span></label>
-                <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="username" id="reg_username" autocomplete="username" value="{{ $activeTab === 'register' ? $postedUsername : '' }}" required aria-required="true" />
-              </p>
-            @endif
-
-            <p class="myaccount-auth-field">
-              <label for="reg_email"><i data-lucide="mail" aria-hidden="true"></i>Email address <span class="required" aria-hidden="true">*</span></label>
-              <input type="email" class="woocommerce-Input woocommerce-Input--text input-text" name="email" id="reg_email" autocomplete="email" value="{{ $postedEmail }}" required aria-required="true" />
-            </p>
-
-            <p class="myaccount-auth-field">
-              <label for="reg_mobile"><i data-lucide="phone" aria-hidden="true"></i>Mobile number <span class="required" aria-hidden="true">*</span></label>
-              <input type="tel" class="woocommerce-Input woocommerce-Input--text input-text" name="billing_phone" id="reg_mobile" autocomplete="tel" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" value="{{ $postedMobile }}" required aria-required="true" />
-            </p>
-
-            @if(get_option('woocommerce_registration_generate_password') === 'no')
-              <p class="myaccount-auth-field">
-                <label for="reg_password"><i data-lucide="lock" aria-hidden="true"></i>Password <span class="required" aria-hidden="true">*</span></label>
-                <input type="password" class="woocommerce-Input woocommerce-Input--text input-text" name="password" id="reg_password" autocomplete="new-password" required aria-required="true" />
-              </p>
-            @else
-              <p class="myaccount-reg-note">A link to set a new password will be sent to your email address.</p>
-            @endif
-
-            <?php wp_nonce_field('woocommerce-register', 'woocommerce-register-nonce'); ?>
-            <button type="submit" class="myaccount-save-btn myaccount-save-btn--block" id="reg_submit_btn" name="register" value="Register">Create Account</button>
-          </form>
-          {{--
-            SMS Alert's own shortcode, not a custom integration: it clones
-            the button above into a "Verify" step (send OTP → popup code
-            entry → re-submits the real button once verified), reading the
-            phone number from #reg_mobile. Requires "Buyer Signup OTP" on
-            in SMS Alert settings and billing_phone (not mobile) as the
-            field name — see woocommerce_registration_errors in
-            app/filters.php, which the plugin also relies on.
-          --}}
-          {!! do_shortcode('[sa_verify phone_selector="#reg_mobile" submit_selector="#reg_submit_btn"]') !!}
-        </div>
       @endif
 
     </div>

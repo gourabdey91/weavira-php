@@ -70,38 +70,10 @@
                   @endif
                 </div>
                 <div class="cart-item-footer">
-                  <label class="cart-gift-label">
-                    <input type="checkbox" class="cart-gift-checkbox" data-gift-checkbox @checked($item['gift'])> This will be a Gift
-                  </label>
+                  <p class="cart-gift-note">Customize the packaging for your loved ones for free. Details will be added during checkout.</p>
                   <button class="cart-remove-btn" type="button">Remove</button>
                 </div>
               </div>
-            </div>
-            <div class="wv-gift-fields" data-gift-fields @if(!$item['gift']) hidden @endif>
-              <div class="wv-gift-field">
-                <label for="wv-gift-for-{{ $loop->index }}">Gift For</label>
-                <select id="wv-gift-for-{{ $loop->index }}" class="wv-gift-for">
-                  <option value="" @selected(empty($item['gift']['gift_for'])) disabled>Select</option>
-                  @foreach(\App\weavira_gift_for_options() as $option)
-                    <option value="{{ $option }}" @selected(($item['gift']['gift_for'] ?? '') === $option)>{{ $option }}</option>
-                  @endforeach
-                </select>
-              </div>
-              <div class="wv-gift-field">
-                <label for="wv-gift-occasion-{{ $loop->index }}">Occasion</label>
-                <select id="wv-gift-occasion-{{ $loop->index }}" class="wv-gift-occasion">
-                  <option value="" @selected(empty($item['gift']['occasion'])) disabled>Select</option>
-                  @foreach(\App\weavira_gift_occasion_options() as $option)
-                    <option value="{{ $option }}" @selected(($item['gift']['occasion'] ?? '') === $option)>{{ $option }}</option>
-                  @endforeach
-                </select>
-              </div>
-              <div class="wv-gift-field wv-gift-field--full">
-                <label for="wv-gift-recipient-{{ $loop->index }}">Gift Recipient Name</label>
-                <input type="text" id="wv-gift-recipient-{{ $loop->index }}" class="wv-gift-recipient" value="{{ $item['gift']['recipient_name'] ?? '' }}" placeholder="Enter recipient&rsquo;s name" maxlength="80" />
-              </div>
-              <p class="wv-gift-disclaimer">This data is collected only for Customized Packaging.</p>
-              <p class="cart-gift-status" aria-live="polite"></p>
             </div>
           </div>
         @endforeach
