@@ -12,9 +12,9 @@
     <p class="wv-cart-toast-title" id="wv-cart-toast-title">Added to your bag</p>
     <p class="wv-cart-toast-product" id="wv-cart-toast-product"></p>
   </div>
+  
   <div class="wv-cart-toast-actions">
-    <a href="<?php echo e(wc_get_cart_url()); ?>" class="wv-cart-toast-cart" id="wv-cart-toast-cart">View Cart</a>
-    <a href="<?php echo e(wc_get_checkout_url()); ?>" class="wv-cart-toast-checkout" id="wv-cart-toast-checkout">Checkout</a>
+    <a href="<?php echo e(wc_get_cart_url()); ?>" class="wv-cart-toast-cart" id="wv-cart-toast-cart">View Bag</a>
   </div>
 </div>
 <?php /**PATH C:\Users\Admin\Local Sites\weavira\app\public\wp-content\themes\weavira\resources\views/partials/cart-toast.blade.php ENDPATH**/ ?>

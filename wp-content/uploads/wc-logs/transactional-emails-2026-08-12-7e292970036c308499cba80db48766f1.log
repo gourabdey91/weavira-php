@@ -1,0 +1,4 @@
+2026-08-12T17:58:27+00:00 INFO Email "new_order" for order #774 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"developer","order":774}
+2026-08-12T17:58:29+00:00 INFO Email "customer_processing_order" for order #774 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"guest","order":774}
+2026-08-12T18:09:27+00:00 INFO Email "new_order" for order #775 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"developer","order":775}
+2026-08-12T18:09:30+00:00 INFO Email "customer_processing_order" for order #775 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"guest","order":775}

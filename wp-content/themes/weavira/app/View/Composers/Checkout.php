@@ -15,17 +15,14 @@ class Checkout extends Cart
 
     /**
      * Same order data as the cart page (items, totals, tax rows), plus the
-     * subset of items marked as a gift — driving the "Gift Details" step.
+     * saved address books. The Gifting step renders every cart item with
+     * its own toggle, so there's no pre-filtered "gift items" subset.
      *
      * @return array
      */
     public function with()
     {
         $data = parent::with();
-
-        $data['giftItems'] = array_values(array_filter($data['cartItems'], function ($item) {
-            return !empty($item['gift']);
-        }));
 
         // Address book (Home / Office / ...) for the Delivery Address
         // panel's "Use a saved address" picker — see

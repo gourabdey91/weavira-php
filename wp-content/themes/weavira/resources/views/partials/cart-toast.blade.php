@@ -16,8 +16,13 @@
     <p class="wv-cart-toast-title" id="wv-cart-toast-title">Added to your bag</p>
     <p class="wv-cart-toast-product" id="wv-cart-toast-product"></p>
   </div>
+  {{--
+    Deliberately no "Checkout" shortcut here: gifting can only be applied
+    per line item, so jumping straight to checkout used to strand anyone
+    who wanted gift packaging. Routing through the bag also suits a
+    considered, high-value purchase better than a fast-exit CTA.
+  --}}
   <div class="wv-cart-toast-actions">
-    <a href="{{ wc_get_cart_url() }}" class="wv-cart-toast-cart" id="wv-cart-toast-cart">View Cart</a>
-    <a href="{{ wc_get_checkout_url() }}" class="wv-cart-toast-checkout" id="wv-cart-toast-checkout">Checkout</a>
+    <a href="{{ wc_get_cart_url() }}" class="wv-cart-toast-cart" id="wv-cart-toast-cart">View Bag</a>
   </div>
 </div>

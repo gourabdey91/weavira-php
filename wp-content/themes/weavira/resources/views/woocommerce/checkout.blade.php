@@ -97,8 +97,11 @@
       'billing_postcode', 'billing_country',
   ];
 
-  $hasGiftStep = !empty($giftItems);
-  $reviewStepNum = $hasGiftStep ? 4 : 3;
+  // Gifting is always offered here, listing every cart item with its own
+  // toggle. It used to render only for items already flagged on the cart
+  // page, which meant anyone reaching checkout another way (Buy It Now,
+  // the add-to-cart toast, a direct URL) could never apply gifting at all.
+  $reviewStepNum = 4;
 @endphp
 
 <header class="ck-header">
@@ -122,13 +125,11 @@
     <span class="ck-step-label">Delivery Details</span>
   </div>
   <div class="ck-step-line" aria-hidden="true"></div>
-  @if($hasGiftStep)
-    <div class="ck-step" data-step="3" role="listitem">
-      <div class="ck-step-num">3</div>
-      <span class="ck-step-label">Gift Details ({{ count($giftItems) }})</span>
-    </div>
-    <div class="ck-step-line" aria-hidden="true"></div>
-  @endif
+  <div class="ck-step" data-step="3" role="listitem">
+    <div class="ck-step-num">3</div>
+    <span class="ck-step-label">Gifting</span>
+  </div>
+  <div class="ck-step-line" aria-hidden="true"></div>
   <div class="ck-step" data-step="{{ $reviewStepNum }}" role="listitem">
     <div class="ck-step-num">{{ $reviewStepNum }}</div>
     <span class="ck-step-label">Review &amp; Payment</span>
@@ -434,27 +435,30 @@
           <input type="hidden" id="ck-shipping-tag-value" value="Home" />
         </div>
 
-        <button type="button" class="ck-continue-btn" data-continue-from="2">Continue to {{ $hasGiftStep ? 'Gift Details' : 'Review & Payment' }} <i data-lucide="arrow-right" aria-hidden="true"></i></button>
+        <button type="button" class="ck-continue-btn" data-continue-from="2">Continue to Gifting <i data-lucide="arrow-right" aria-hidden="true"></i></button>
       </div>
 
-      @if($hasGiftStep)
-        {{-- STEP 3: Gift Details --}}
-        <button class="ck-accordion" type="button" aria-expanded="false" aria-controls="ck-panel-3" data-step-toggle="3">
-          <span class="ck-accordion-icon"><i data-lucide="gift" aria-hidden="true"></i></span>
-          <div class="ck-accordion-text">
-            <span class="ck-accordion-title">3. Gift Details ({{ count($giftItems) }} Item{{ count($giftItems) === 1 ? '' : 's' }})</span>
-            <span class="ck-accordion-sub">Confirm recipient information for items marked as gift</span>
-          </div>
-          <i data-lucide="chevron-right" class="ck-accordion-chevron" aria-hidden="true"></i>
-        </button>
-        <div class="ck-accordion-panel" id="ck-panel-3" data-step="3" hidden>
-          @foreach($giftItems as $item)
+      {{-- STEP 3: Gifting — always rendered, listing every item (see the
+           @php block above for why it isn't gated on pre-flagged items). --}}
+      <button class="ck-accordion" type="button" aria-expanded="false" aria-controls="ck-panel-3" data-step-toggle="3">
+        <span class="ck-accordion-icon"><i data-lucide="gift" aria-hidden="true"></i></span>
+        <div class="ck-accordion-text">
+          <span class="ck-accordion-title">3. Gifting</span>
+          <span class="ck-accordion-sub">Mark any item as a gift for personalised packaging</span>
+        </div>
+        <i data-lucide="chevron-right" class="ck-accordion-chevron" aria-hidden="true"></i>
+      </button>
+      <div class="ck-accordion-panel" id="ck-panel-3" data-step="3" hidden>
+          @foreach($cartItems as $item)
             <div class="ck-gift-item" data-cart-item-key="{{ $item['key'] }}">
               <div class="ck-gift-item-head">
                 <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="ck-gift-item-img" loading="lazy" />
                 <p class="ck-gift-item-name">{{ $item['name'] }}</p>
               </div>
-              <div class="wv-gift-fields ck-gift-form" data-gift-fields>
+              <label class="cart-gift-label">
+                <input type="checkbox" class="cart-gift-checkbox" data-gift-checkbox @checked($item['gift'])> This will be a Gift
+              </label>
+              <div class="wv-gift-fields ck-gift-form" data-gift-fields @if(!$item['gift']) hidden @endif>
                 <div class="wv-gift-field">
                   <label for="ck-gift-for-{{ $loop->index }}">Gift For</label>
                   <select id="ck-gift-for-{{ $loop->index }}" class="wv-gift-for">
@@ -482,9 +486,8 @@
               </div>
             </div>
           @endforeach
-          <button type="button" class="ck-continue-btn" data-continue-from="3">Continue to Review &amp; Payment</button>
-        </div>
-      @endif
+        <button type="button" class="ck-continue-btn" data-continue-from="3">Continue to Review &amp; Payment</button>
+      </div>
 
       {{-- STEP: Review & Payment --}}
       <button class="ck-accordion" type="button" aria-expanded="false" aria-controls="ck-panel-{{ $reviewStepNum }}" data-step-toggle="{{ $reviewStepNum }}">
@@ -537,12 +540,25 @@
         <span>Shipping</span>
         <span class="@if($isFreeShipping) ck-free @endif">{{ $shippingLabel ?: 'Calculated at next step' }}</span>
       </div>
+      {{-- Same GST breakdown the cart page shows (both read $taxRows from
+           the Cart composer this one extends) — the summary previously
+           jumped straight from Subtotal to Total with the tax invisible. --}}
+      @foreach($taxRows as $tax)
+        <div class="ck-summary-row">
+          <span>{{ $tax['label'] }} (Included)</span>
+          <span>{!! $tax['amount'] !!}</span>
+        </div>
+      @endforeach
     </div>
 
     <div class="ck-summary-total">
-      <span class="ck-total-label">Total @if(wc_tax_enabled())<em class="ck-gst-note">(Incl. GST)</em>@endif</span>
+      <span class="ck-total-label">Total</span>
       <span class="ck-total-price">{!! $total !!}</span>
     </div>
+
+    @if(wc_tax_enabled())
+      <p class="ck-summary-note">Prices are inclusive of GST. A tax invoice will be provided after purchase.</p>
+    @endif
 
     <div class="ck-summary-perks" role="list">
       <div class="ck-summary-perk" role="listitem">

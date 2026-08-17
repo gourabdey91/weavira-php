@@ -97,8 +97,11 @@
       'billing_postcode', 'billing_country',
   ];
 
-  $hasGiftStep = !empty($giftItems);
-  $reviewStepNum = $hasGiftStep ? 4 : 3;
+  // Gifting is always offered here, listing every cart item with its own
+  // toggle. It used to render only for items already flagged on the cart
+  // page, which meant anyone reaching checkout another way (Buy It Now,
+  // the add-to-cart toast, a direct URL) could never apply gifting at all.
+  $reviewStepNum = 4;
 ?>
 
 <header class="ck-header">
@@ -122,13 +125,11 @@
     <span class="ck-step-label">Delivery Details</span>
   </div>
   <div class="ck-step-line" aria-hidden="true"></div>
-  <?php if($hasGiftStep): ?>
-    <div class="ck-step" data-step="3" role="listitem">
-      <div class="ck-step-num">3</div>
-      <span class="ck-step-label">Gift Details (<?php echo e(count($giftItems)); ?>)</span>
-    </div>
-    <div class="ck-step-line" aria-hidden="true"></div>
-  <?php endif; ?>
+  <div class="ck-step" data-step="3" role="listitem">
+    <div class="ck-step-num">3</div>
+    <span class="ck-step-label">Gifting</span>
+  </div>
+  <div class="ck-step-line" aria-hidden="true"></div>
   <div class="ck-step" data-step="<?php echo e($reviewStepNum); ?>" role="listitem">
     <div class="ck-step-num"><?php echo e($reviewStepNum); ?></div>
     <span class="ck-step-label">Review &amp; Payment</span>
@@ -411,27 +412,29 @@
           <input type="hidden" id="ck-shipping-tag-value" value="Home" />
         </div>
 
-        <button type="button" class="ck-continue-btn" data-continue-from="2">Continue to <?php echo e($hasGiftStep ? 'Gift Details' : 'Review & Payment'); ?> <i data-lucide="arrow-right" aria-hidden="true"></i></button>
+        <button type="button" class="ck-continue-btn" data-continue-from="2">Continue to Gifting <i data-lucide="arrow-right" aria-hidden="true"></i></button>
       </div>
 
-      <?php if($hasGiftStep): ?>
-        
-        <button class="ck-accordion" type="button" aria-expanded="false" aria-controls="ck-panel-3" data-step-toggle="3">
-          <span class="ck-accordion-icon"><i data-lucide="gift" aria-hidden="true"></i></span>
-          <div class="ck-accordion-text">
-            <span class="ck-accordion-title">3. Gift Details (<?php echo e(count($giftItems)); ?> Item<?php echo e(count($giftItems) === 1 ? '' : 's'); ?>)</span>
-            <span class="ck-accordion-sub">Confirm recipient information for items marked as gift</span>
-          </div>
-          <i data-lucide="chevron-right" class="ck-accordion-chevron" aria-hidden="true"></i>
-        </button>
-        <div class="ck-accordion-panel" id="ck-panel-3" data-step="3" hidden>
-          <?php $__currentLoopData = $giftItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+      
+      <button class="ck-accordion" type="button" aria-expanded="false" aria-controls="ck-panel-3" data-step-toggle="3">
+        <span class="ck-accordion-icon"><i data-lucide="gift" aria-hidden="true"></i></span>
+        <div class="ck-accordion-text">
+          <span class="ck-accordion-title">3. Gifting</span>
+          <span class="ck-accordion-sub">Mark any item as a gift for personalised packaging</span>
+        </div>
+        <i data-lucide="chevron-right" class="ck-accordion-chevron" aria-hidden="true"></i>
+      </button>
+      <div class="ck-accordion-panel" id="ck-panel-3" data-step="3" hidden>
+          <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="ck-gift-item" data-cart-item-key="<?php echo e($item['key']); ?>">
               <div class="ck-gift-item-head">
                 <img src="<?php echo e($item['image']); ?>" alt="<?php echo e($item['name']); ?>" class="ck-gift-item-img" loading="lazy" />
                 <p class="ck-gift-item-name"><?php echo e($item['name']); ?></p>
               </div>
-              <div class="wv-gift-fields ck-gift-form" data-gift-fields>
+              <label class="cart-gift-label">
+                <input type="checkbox" class="cart-gift-checkbox" data-gift-checkbox <?php if($item['gift']): echo 'checked'; endif; ?>> This will be a Gift
+              </label>
+              <div class="wv-gift-fields ck-gift-form" data-gift-fields <?php if(!$item['gift']): ?> hidden <?php endif; ?>>
                 <div class="wv-gift-field">
                   <label for="ck-gift-for-<?php echo e($loop->index); ?>">Gift For</label>
                   <select id="ck-gift-for-<?php echo e($loop->index); ?>" class="wv-gift-for">
@@ -459,9 +462,8 @@
               </div>
             </div>
           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-          <button type="button" class="ck-continue-btn" data-continue-from="3">Continue to Review &amp; Payment</button>
-        </div>
-      <?php endif; ?>
+        <button type="button" class="ck-continue-btn" data-continue-from="3">Continue to Review &amp; Payment</button>
+      </div>
 
       
       <button class="ck-accordion" type="button" aria-expanded="false" aria-controls="ck-panel-<?php echo e($reviewStepNum); ?>" data-step-toggle="<?php echo e($reviewStepNum); ?>">
@@ -514,12 +516,23 @@
         <span>Shipping</span>
         <span class="<?php if($isFreeShipping): ?> ck-free <?php endif; ?>"><?php echo e($shippingLabel ?: 'Calculated at next step'); ?></span>
       </div>
+      
+      <?php $__currentLoopData = $taxRows; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tax): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <div class="ck-summary-row">
+          <span><?php echo e($tax['label']); ?> (Included)</span>
+          <span><?php echo $tax['amount']; ?></span>
+        </div>
+      <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
 
     <div class="ck-summary-total">
-      <span class="ck-total-label">Total <?php if(wc_tax_enabled()): ?><em class="ck-gst-note">(Incl. GST)</em><?php endif; ?></span>
+      <span class="ck-total-label">Total</span>
       <span class="ck-total-price"><?php echo $total; ?></span>
     </div>
+
+    <?php if(wc_tax_enabled()): ?>
+      <p class="ck-summary-note">Prices are inclusive of GST. A tax invoice will be provided after purchase.</p>
+    <?php endif; ?>
 
     <div class="ck-summary-perks" role="list">
       <div class="ck-summary-perk" role="listitem">

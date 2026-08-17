@@ -49,8 +49,8 @@
                 <div class="cart-amount-badges">
                   <div class="cart-price-qty">
                     <div class="cart-amount">
-                      <p class="cart-item-unit-price">{!! $item['unitPriceHtml'] !!} <span class="cart-item-unit-suffix">/ item</span></p>
-                      <p class="cart-item-price">{!! $item['lineTotalHtml'] !!}</p>
+                      <p class="cart-item-price">{!! $item['unitPriceHtml'] !!}</p>
+                      <p class="cart-item-unit-price"><span class="cart-item-total-label">Total:</span> {!! $item['lineTotalHtml'] !!}</p>
                       @if(wc_tax_enabled())
                         <p class="cart-item-gst">Incl. GST</p>
                       @endif
