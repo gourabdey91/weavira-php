@@ -69,6 +69,48 @@ add_filter('template_include', function ($template) {
 }, 20);
 
 /**
+ * Move the coupon form out of its default position at the very top of the
+ * checkout page, into the Order Summary sidebar (between the item list and
+ * the totals) — see checkout.blade.php, which calls
+ * woocommerce_checkout_coupon_form() directly at that spot. The function
+ * itself, its wc_coupons_enabled() guard, and WooCommerce's own toggle/AJAX
+ * JS (checkout.js, keyed on the .showcoupon/.checkout_coupon/#coupon_code
+ * selectors, not on markup structure) are untouched — only *where* it
+ * renders changes. The restyled markup itself lives in the theme's
+ * woocommerce/checkout/form-coupon.php override.
+ */
+add_action('init', function () {
+    remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10);
+});
+
+/**
+ * Drop the privacy policy text ("Your personal data will be used to
+ * process your order...") from checkout entirely. WooCommerce's
+ * checkout/terms.php template hooks this onto
+ * woocommerce_checkout_terms_and_conditions at priority 20; the
+ * terms-and-conditions checkbox (if enabled) is a separate block in that
+ * same template and is untouched.
+ */
+add_action('init', function () {
+    remove_action('woocommerce_checkout_terms_and_conditions', 'wc_checkout_privacy_policy_text', 20);
+});
+
+/**
+ * "Place order" → "Pay ₹24,000.00" — the button states the exact amount
+ * being charged instead of a generic label. Reuses WC()->cart->get_total(),
+ * the same source the sidebar's Total row is built from, so the two always
+ * agree; wp_strip_all_tags() drops its currency-amount <span> wrapper since
+ * the button text/value/data-value attributes are escaped as plain text.
+ */
+add_filter('woocommerce_order_button_text', function ($text) {
+    if (!function_exists('WC') || !WC()->cart) {
+        return $text;
+    }
+
+    return sprintf(__('Pay %s', 'sage'), wp_strip_all_tags(WC()->cart->get_total()));
+});
+
+/**
  * The checkout page is a distraction-free flow with its own minimal header
  * (see checkout.blade.php) instead of the site's normal header/mega-menu/
  * footer, so it skips the `inner` body class those expect and gets its own

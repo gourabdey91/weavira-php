@@ -117,7 +117,7 @@
 <div class="ck-progress" role="list" aria-label="Checkout steps">
   <div class="ck-step <?php if(!$skipStep1): ?> ck-step--active <?php endif; ?>" data-step="1" role="listitem">
     <div class="ck-step-num" <?php if(!$skipStep1): ?> aria-current="step" <?php endif; ?>>1</div>
-    <span class="ck-step-label">Continue</span>
+    <span class="ck-step-label">Account</span>
   </div>
   <div class="ck-step-line" aria-hidden="true"></div>
   <div class="ck-step <?php if($skipStep1): ?> ck-step--active <?php endif; ?>" data-step="2" role="listitem">
@@ -144,8 +144,14 @@
     <section class="ck-panel ck-step-panel" id="ck-panel-1" data-step="1" aria-labelledby="ck-step1-title" <?php if($skipStep1): ?> hidden <?php endif; ?>>
     <?php if (! ($skipStep1)): ?>
 
-      <h1 class="ck-panel-title" id="ck-step1-title">How would you like to continue?</h1>
-      <p class="ck-panel-sub">Enter your mobile number to receive an OTP and securely continue.</p>
+      
+      <div class="ck-panel-head">
+        <span class="ck-panel-icon"><i data-lucide="user" aria-hidden="true"></i></span>
+        <div class="ck-panel-text">
+          <h1 class="ck-panel-title" id="ck-step1-title">Log in or Sign Up</h1>
+          <p class="ck-panel-sub">Quick, secure, and password-free.</p>
+        </div>
+      </div>
 
       <div class="ck-auth-grid">
 
@@ -180,18 +186,11 @@
 
       </div><!-- /ck-auth-grid -->
 
-      <div class="ck-trust-badges">
-        <div class="ck-trust-badge">
-          <i data-lucide="shield-check" aria-hidden="true"></i>
-          <span>Secure OTP Login</span>
-        </div>
-        <div class="ck-trust-badge">
-          <i data-lucide="lock" aria-hidden="true"></i>
-          <span>Your details are never shared</span>
-        </div>
-      </div>
-
-      <button type="button" class="ck-continue-btn" data-continue-from="1">Continue to Delivery Details</button>
+      
+      <p class="ck-panel-trust">
+        <i data-lucide="shield-check" aria-hidden="true"></i>
+        Secure sign-in <span class="ck-panel-trust-dot" aria-hidden="true">&bull;</span> Your information is protected
+      </p>
 
     <?php endif; ?>
     </section><!-- /Step 1 -->
@@ -285,16 +284,6 @@
                 <div class="ck-addr-modal-body">
                   <p class="ck-addr-modal-error" id="ck-address-modal-error" hidden></p>
 
-                  <div class="ck-tag-picker" id="ck-address-modal-tag-picker">
-                    <span class="ck-tag-picker-label">Save this address as</span>
-                    <div class="ck-tag-picker-options">
-                      <button type="button" class="ck-tag-pill is-active" data-tag="Home">Home</button>
-                      <button type="button" class="ck-tag-pill" data-tag="Office">Office</button>
-                      <button type="button" class="ck-tag-pill" data-tag="Other">Other</button>
-                    </div>
-                    <input type="text" class="ck-tag-other-input" id="ck-address-modal-tag-other" placeholder="Name this address" maxlength="40" hidden />
-                  </div>
-
                   <div class="ck-field-grid">
                     <p class="form-row form-row-first">
                       <label for="ck-am-first_name">First name <span class="required" aria-hidden="true">*</span></label>
@@ -334,6 +323,16 @@
                       <input type="text" class="input-text" id="ck-am-country" value="India" disabled="disabled" />
                     </p>
                   </div>
+
+                  <div class="ck-tag-picker" id="ck-address-modal-tag-picker">
+                    <span class="ck-tag-picker-label">Save this address as</span>
+                    <div class="ck-tag-picker-options">
+                      <button type="button" class="ck-tag-pill is-active" data-tag="Home">Home</button>
+                      <button type="button" class="ck-tag-pill" data-tag="Office">Office</button>
+                      <button type="button" class="ck-tag-pill" data-tag="Other">Other</button>
+                    </div>
+                    <input type="text" class="ck-tag-other-input" id="ck-address-modal-tag-other" placeholder="Name this address" maxlength="40" hidden />
+                  </div>
                 </div>
                 <div class="ck-addr-modal-footer">
                   <button type="button" class="ck-addr-modal-cancel" data-modal-close>Cancel</button>
@@ -352,6 +351,18 @@
             }
             ?>
           </div>
+        </div>
+
+        
+        <div class="ck-tag-picker" id="ck-shipping-tag-picker" <?php if($shippingDefault): ?> hidden <?php endif; ?>>
+          <span class="ck-tag-picker-label">Save this address as</span>
+          <div class="ck-tag-picker-options">
+            <button type="button" class="ck-tag-pill is-active" data-tag="Home">Home</button>
+            <button type="button" class="ck-tag-pill" data-tag="Office">Office</button>
+            <button type="button" class="ck-tag-pill" data-tag="Other">Other</button>
+          </div>
+          <input type="text" class="ck-tag-other-input" id="ck-shipping-tag-other" placeholder="Name this address" maxlength="40" hidden />
+          <input type="hidden" id="ck-shipping-tag-value" value="Home" />
         </div>
 
         <div class="ck-gst-block">
@@ -400,19 +411,7 @@
           </div>
         </div>
 
-        
-        <div class="ck-tag-picker" id="ck-shipping-tag-picker" <?php if($shippingDefault): ?> hidden <?php endif; ?>>
-          <span class="ck-tag-picker-label">Save this address as</span>
-          <div class="ck-tag-picker-options">
-            <button type="button" class="ck-tag-pill is-active" data-tag="Home">Home</button>
-            <button type="button" class="ck-tag-pill" data-tag="Office">Office</button>
-            <button type="button" class="ck-tag-pill" data-tag="Other">Other</button>
-          </div>
-          <input type="text" class="ck-tag-other-input" id="ck-shipping-tag-other" placeholder="Name this address" maxlength="40" hidden />
-          <input type="hidden" id="ck-shipping-tag-value" value="Home" />
-        </div>
-
-        <button type="button" class="ck-continue-btn" data-continue-from="2">Continue to Gifting <i data-lucide="arrow-right" aria-hidden="true"></i></button>
+        <button type="button" class="ck-continue-btn" data-continue-from="2">Next <i data-lucide="arrow-right" aria-hidden="true"></i></button>
       </div>
 
       
@@ -462,7 +461,7 @@
               </div>
             </div>
           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        <button type="button" class="ck-continue-btn" data-continue-from="3">Continue to Review &amp; Payment</button>
+        <button type="button" class="ck-continue-btn" data-continue-from="3">Next <i data-lucide="arrow-right" aria-hidden="true"></i></button>
       </div>
 
       
@@ -506,6 +505,8 @@
         </div>
       <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div><!-- /ck-order-items -->
+
+    <?php woocommerce_checkout_coupon_form(); ?>
 
     <div class="ck-summary-rows">
       <div class="ck-summary-row">

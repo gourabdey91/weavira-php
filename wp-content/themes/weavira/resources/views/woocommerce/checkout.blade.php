@@ -117,7 +117,7 @@
 <div class="ck-progress" role="list" aria-label="Checkout steps">
   <div class="ck-step @if(!$skipStep1) ck-step--active @endif" data-step="1" role="listitem">
     <div class="ck-step-num" @if(!$skipStep1) aria-current="step" @endif>1</div>
-    <span class="ck-step-label">Continue</span>
+    <span class="ck-step-label">Account</span>
   </div>
   <div class="ck-step-line" aria-hidden="true"></div>
   <div class="ck-step @if($skipStep1) ck-step--active @endif" data-step="2" role="listitem">
@@ -152,8 +152,16 @@
     <section class="ck-panel ck-step-panel" id="ck-panel-1" data-step="1" aria-labelledby="ck-step1-title" @if($skipStep1) hidden @endif>
     @unless($skipStep1)
 
-      <h1 class="ck-panel-title" id="ck-step1-title">How would you like to continue?</h1>
-      <p class="ck-panel-sub">Enter your mobile number to receive an OTP and securely continue.</p>
+      {{-- Icon + title + subtitle row, matching the header pattern already
+           used by Steps 2-4 (.ck-accordion-icon/-text/-title/-sub) — Step 1
+           was the only step missing it. --}}
+      <div class="ck-panel-head">
+        <span class="ck-panel-icon"><i data-lucide="user" aria-hidden="true"></i></span>
+        <div class="ck-panel-text">
+          <h1 class="ck-panel-title" id="ck-step1-title">Log in or Sign Up</h1>
+          <p class="ck-panel-sub">Quick, secure, and password-free.</p>
+        </div>
+      </div>
 
       <div class="ck-auth-grid">
 
@@ -186,18 +194,13 @@
 
       </div><!-- /ck-auth-grid -->
 
-      <div class="ck-trust-badges">
-        <div class="ck-trust-badge">
-          <i data-lucide="shield-check" aria-hidden="true"></i>
-          <span>Secure OTP Login</span>
-        </div>
-        <div class="ck-trust-badge">
-          <i data-lucide="lock" aria-hidden="true"></i>
-          <span>Your details are never shared</span>
-        </div>
-      </div>
-
-      <button type="button" class="ck-continue-btn" data-continue-from="1">Continue to Delivery Details</button>
+      {{-- Single unboxed line, replacing the previous two-box trust-badge
+           pair — matches the mockup's flat treatment (background color and
+           borders only on the outer .ck-panel, not nested inside it). --}}
+      <p class="ck-panel-trust">
+        <i data-lucide="shield-check" aria-hidden="true"></i>
+        Secure sign-in <span class="ck-panel-trust-dot" aria-hidden="true">&bull;</span> Your information is protected
+      </p>
 
     @endunless
     </section><!-- /Step 1 -->
@@ -305,16 +308,6 @@
                 <div class="ck-addr-modal-body">
                   <p class="ck-addr-modal-error" id="ck-address-modal-error" hidden></p>
 
-                  <div class="ck-tag-picker" id="ck-address-modal-tag-picker">
-                    <span class="ck-tag-picker-label">Save this address as</span>
-                    <div class="ck-tag-picker-options">
-                      <button type="button" class="ck-tag-pill is-active" data-tag="Home">Home</button>
-                      <button type="button" class="ck-tag-pill" data-tag="Office">Office</button>
-                      <button type="button" class="ck-tag-pill" data-tag="Other">Other</button>
-                    </div>
-                    <input type="text" class="ck-tag-other-input" id="ck-address-modal-tag-other" placeholder="Name this address" maxlength="40" hidden />
-                  </div>
-
                   <div class="ck-field-grid">
                     <p class="form-row form-row-first">
                       <label for="ck-am-first_name">First name <span class="required" aria-hidden="true">*</span></label>
@@ -354,6 +347,16 @@
                       <input type="text" class="input-text" id="ck-am-country" value="India" disabled="disabled" />
                     </p>
                   </div>
+
+                  <div class="ck-tag-picker" id="ck-address-modal-tag-picker">
+                    <span class="ck-tag-picker-label">Save this address as</span>
+                    <div class="ck-tag-picker-options">
+                      <button type="button" class="ck-tag-pill is-active" data-tag="Home">Home</button>
+                      <button type="button" class="ck-tag-pill" data-tag="Office">Office</button>
+                      <button type="button" class="ck-tag-pill" data-tag="Other">Other</button>
+                    </div>
+                    <input type="text" class="ck-tag-other-input" id="ck-address-modal-tag-other" placeholder="Name this address" maxlength="40" hidden />
+                  </div>
                 </div>
                 <div class="ck-addr-modal-footer">
                   <button type="button" class="ck-addr-modal-cancel" data-modal-close>Cancel</button>
@@ -372,6 +375,21 @@
             }
             ?>
           </div>
+        </div>
+
+        {{-- Only relevant while the field grid above is visible (Add New
+             Address is active, or there were no saved addresses to begin
+             with) — weavira.js shows/hides this alongside the grid, and
+             reads #ck-shipping-tag-value when auto-saving on Continue. --}}
+        <div class="ck-tag-picker" id="ck-shipping-tag-picker" @if($shippingDefault) hidden @endif>
+          <span class="ck-tag-picker-label">Save this address as</span>
+          <div class="ck-tag-picker-options">
+            <button type="button" class="ck-tag-pill is-active" data-tag="Home">Home</button>
+            <button type="button" class="ck-tag-pill" data-tag="Office">Office</button>
+            <button type="button" class="ck-tag-pill" data-tag="Other">Other</button>
+          </div>
+          <input type="text" class="ck-tag-other-input" id="ck-shipping-tag-other" placeholder="Name this address" maxlength="40" hidden />
+          <input type="hidden" id="ck-shipping-tag-value" value="Home" />
         </div>
 
         <div class="ck-gst-block">
@@ -420,22 +438,7 @@
           </div>
         </div>
 
-        {{-- Only relevant while the field grid above is visible (Add New
-             Address is active, or there were no saved addresses to begin
-             with) — weavira.js shows/hides this alongside the grid, and
-             reads #ck-shipping-tag-value when auto-saving on Continue. --}}
-        <div class="ck-tag-picker" id="ck-shipping-tag-picker" @if($shippingDefault) hidden @endif>
-          <span class="ck-tag-picker-label">Save this address as</span>
-          <div class="ck-tag-picker-options">
-            <button type="button" class="ck-tag-pill is-active" data-tag="Home">Home</button>
-            <button type="button" class="ck-tag-pill" data-tag="Office">Office</button>
-            <button type="button" class="ck-tag-pill" data-tag="Other">Other</button>
-          </div>
-          <input type="text" class="ck-tag-other-input" id="ck-shipping-tag-other" placeholder="Name this address" maxlength="40" hidden />
-          <input type="hidden" id="ck-shipping-tag-value" value="Home" />
-        </div>
-
-        <button type="button" class="ck-continue-btn" data-continue-from="2">Continue to Gifting <i data-lucide="arrow-right" aria-hidden="true"></i></button>
+        <button type="button" class="ck-continue-btn" data-continue-from="2">Next <i data-lucide="arrow-right" aria-hidden="true"></i></button>
       </div>
 
       {{-- STEP 3: Gifting — always rendered, listing every item (see the
@@ -486,7 +489,7 @@
               </div>
             </div>
           @endforeach
-        <button type="button" class="ck-continue-btn" data-continue-from="3">Continue to Review &amp; Payment</button>
+        <button type="button" class="ck-continue-btn" data-continue-from="3">Next <i data-lucide="arrow-right" aria-hidden="true"></i></button>
       </div>
 
       {{-- STEP: Review & Payment --}}
@@ -530,6 +533,8 @@
         </div>
       @endforeach
     </div><!-- /ck-order-items -->
+
+    <?php woocommerce_checkout_coupon_form(); ?>
 
     <div class="ck-summary-rows">
       <div class="ck-summary-row">
