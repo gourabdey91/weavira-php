@@ -127,12 +127,12 @@
   <div class="ck-step-line" aria-hidden="true"></div>
   <div class="ck-step" data-step="3" role="listitem">
     <div class="ck-step-num">3</div>
-    <span class="ck-step-label">Gifting</span>
+    <span class="ck-step-label">Customize Packaging</span>
   </div>
   <div class="ck-step-line" aria-hidden="true"></div>
   <div class="ck-step" data-step="<?php echo e($reviewStepNum); ?>" role="listitem">
     <div class="ck-step-num"><?php echo e($reviewStepNum); ?></div>
-    <span class="ck-step-label">Review &amp; Payment</span>
+    <span class="ck-step-label">Place Order</span>
   </div>
 </div>
 
@@ -146,7 +146,6 @@
 
       
       <div class="ck-panel-head">
-        <span class="ck-panel-icon"><i data-lucide="user" aria-hidden="true"></i></span>
         <div class="ck-panel-text">
           <h1 class="ck-panel-title" id="ck-step1-title">Log in or Sign Up</h1>
           <p class="ck-panel-sub">Quick, secure, and password-free.</p>
@@ -418,8 +417,8 @@
       <button class="ck-accordion" type="button" aria-expanded="false" aria-controls="ck-panel-3" data-step-toggle="3">
         <span class="ck-accordion-icon"><i data-lucide="gift" aria-hidden="true"></i></span>
         <div class="ck-accordion-text">
-          <span class="ck-accordion-title">3. Gifting</span>
-          <span class="ck-accordion-sub">Mark any item as a gift for personalised packaging</span>
+          <span class="ck-accordion-title">Customize Packaging</span>
+          <span class="ck-accordion-sub">Mark any item as a gift for free personalised packaging</span>
         </div>
         <i data-lucide="chevron-right" class="ck-accordion-chevron" aria-hidden="true"></i>
       </button>
@@ -431,7 +430,7 @@
                 <p class="ck-gift-item-name"><?php echo e($item['name']); ?></p>
               </div>
               <label class="cart-gift-label">
-                <input type="checkbox" class="cart-gift-checkbox" data-gift-checkbox <?php if($item['gift']): echo 'checked'; endif; ?>> This will be a Gift
+                <input type="checkbox" class="cart-gift-checkbox" data-gift-checkbox <?php if($item['gift']): echo 'checked'; endif; ?>> Customize packaging for Gifting
               </label>
               <div class="wv-gift-fields ck-gift-form" data-gift-fields <?php if(!$item['gift']): ?> hidden <?php endif; ?>>
                 <div class="wv-gift-field">
@@ -468,7 +467,7 @@
       <button class="ck-accordion" type="button" aria-expanded="false" aria-controls="ck-panel-<?php echo e($reviewStepNum); ?>" data-step-toggle="<?php echo e($reviewStepNum); ?>">
         <span class="ck-accordion-icon"><i data-lucide="credit-card" aria-hidden="true"></i></span>
         <div class="ck-accordion-text">
-          <span class="ck-accordion-title"><?php echo e($reviewStepNum); ?>. Review &amp; Payment</span>
+          <span class="ck-accordion-title">Place Order</span>
           <span class="ck-accordion-sub">Confirm your order and choose a payment method</span>
         </div>
         <i data-lucide="chevron-right" class="ck-accordion-chevron" aria-hidden="true"></i>
