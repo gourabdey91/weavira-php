@@ -1438,6 +1438,84 @@ add_action('woocommerce_created_customer', function ($customerId) {
 });
 
 /**
+ * SMS Alert's own [sa_signupwithmobile] shortcode (checkout Step 1 and
+ * the My Account login form) creates phone-only accounts via a raw
+ * wp_insert_user() call, not wc_create_new_customer() — so it never
+ * fires woocommerce_created_customer above, only WordPress core's own
+ * user_register (fired inside wp_insert_user() itself, regardless of
+ * caller). Its own registration handler
+ * (wc-registration.php, processRegistration()) builds a
+ * 'billing_phone' array key but never actually persists it — no
+ * update_user_meta()/second wp_update_user() call follows — so without
+ * this hook, a phone-only signup would save no billing_phone meta at
+ * all, and WPLogin::getUserFromPhoneNumber() (what every OTP login
+ * looks up against) could never find that customer again on their next
+ * visit. Same normalize-and-save pattern as the hook above.
+ */
+add_action('user_register', function ($customerId) {
+    if (!isset($_POST['billing_phone'])) {
+        return;
+    }
+
+    $mobile = weavira_normalize_indian_mobile(wp_unslash($_POST['billing_phone']));
+
+    if ($mobile !== null) {
+        update_user_meta($customerId, 'billing_phone', $mobile);
+    }
+});
+
+/**
+ * SMS Alert's OTP verify endpoint (?option=smsalert-validate-otp-form,
+ * handler/smsalert_form_handler.php's _handle_validation_form_action())
+ * calls its remote verify API (helper/curl.php's validateOtpToken()) on
+ * every request with no local attempt limit of its own — there's a
+ * resend limit (max OTP *sends* per phone) but nothing throttling
+ * verify *attempts* against a code already sent, which otherwise leaves
+ * every [sa_verify]/[sa_signupwithmobile]/[sa_loginwithotp] usage on the
+ * site open to guessing. Locks a phone number out of further attempts
+ * for 10 minutes after 5 wrong codes. Hooked at priority 0 on the same
+ * wp_loaded action the plugin's own handler uses at priority 1, so a
+ * locked-out request short-circuits before the plugin's handler --
+ * and therefore before any remote API call -- ever runs.
+ */
+add_action('wp_loaded', function () {
+    if (($_REQUEST['option'] ?? '') !== 'smsalert-validate-otp-form') {
+        return;
+    }
+
+    $phone = !empty($_REQUEST['billing_phone'])
+        ? sanitize_text_field(wp_unslash($_REQUEST['billing_phone']))
+        : (!empty($_SESSION['phone_number_mo']) ? sanitize_text_field($_SESSION['phone_number_mo']) : '');
+
+    if ($phone === '') {
+        return;
+    }
+
+    if ((int) get_transient('wv_otp_fail_' . md5($phone)) >= 5) {
+        wp_send_json([
+            'message' => __('Too many incorrect attempts. Please request a new code in a few minutes.', 'sage'),
+            'result' => 'error',
+        ]);
+        exit;
+    }
+}, 0);
+
+add_action('otp_verification_failed', function ($userLogin, $userEmail, $phoneNumber) {
+    if (empty($phoneNumber)) {
+        return;
+    }
+
+    $key = 'wv_otp_fail_' . md5($phoneNumber);
+    set_transient($key, (int) get_transient($key) + 1, 10 * MINUTE_IN_SECONDS);
+}, 10, 3);
+
+add_action('otp_verification_successful', function ($redirectTo, $userLogin, $userEmail, $password, $phoneNumber) {
+    if (!empty($phoneNumber)) {
+        delete_transient('wv_otp_fail_' . md5($phoneNumber));
+    }
+}, 10, 5);
+
+/**
  * The register form's phone field submits as a bare 10-digit number by
  * default, but SMS Alert's own intl-tel-input widget (triggered by the
  * [sa_verify] shortcode adding the .phone-valid class to it — see
