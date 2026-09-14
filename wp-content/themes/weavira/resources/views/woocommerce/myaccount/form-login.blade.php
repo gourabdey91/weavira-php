@@ -7,7 +7,10 @@
 --}}
 @php
   $postedUsername = isset($_POST['username']) && is_string($_POST['username']) ? esc_attr(wp_unslash($_POST['username'])) : '';
-  $loginWithOtpEnabled = function_exists('smsalert_get_option') && smsalert_get_option('login_with_otp', 'smsalert_general') === 'on';
+  // The unified form below renders [sa_signupwithmobile], not
+  // [sa_loginwithotp] — the option that actually gates that shortcode's
+  // output is "Signup With Mobile", not "Login With OTP".
+  $signupWithMobileEnabled = function_exists('smsalert_get_option') && smsalert_get_option('signup_with_mobile', 'smsalert_general') === 'on';
 @endphp
 
 <main class="myaccount-page page-shell">
@@ -33,14 +36,17 @@
 
     <div class="myaccount-auth-card">
 
-      @if($loginWithOtpEnabled)
+      @if($signupWithMobileEnabled)
         {{--
-          One unified form instead of separate Login/Register tabs — same
-          OTP flow as checkout Step 1 (do_shortcode('[sa_loginwithotp]') +
-          [sa_verify]): SMS Alert matches the mobile number against an
-          existing user's billing_phone meta and logs them in, or creates a
-          new account if no match exists, so a single form covers both
-          cases without asking the visitor which one they are.
+          One unified form instead of separate Login/Register tabs, same
+          shortcode as checkout Step 1: [sa_signupwithmobile], NOT
+          [sa_loginwithotp] (that one is login-only — it rejects any
+          number without an existing account, it never creates one). This
+          embeds its own [sa_verify] internally. On OTP verification, SMS
+          Alert matches the mobile number against an existing user's
+          billing_phone meta and logs them in, or creates a minimal new
+          account (phone only) and logs that in — see app/filters.php for
+          the fix to its billing_phone-persistence bug this relies on.
         --}}
         <div class="ck-panel-head">
           <div class="ck-panel-text">
@@ -54,8 +60,7 @@
           <div class="ck-auth-col">
             <div class="ck-phone-row">
               {!! do_shortcode('[sa_loginwithotp sa_label="Mobile Number" sa_placeholder="Enter mobile number"]') !!}
-              {!! do_shortcode('[sa_verify phone_selector="#phone" submit_selector=".btn"]') !!}
-            </div>
+              {!! do_shortcode('[sa_verify phone_selector="#phone" submit_selector=".btn"]') !!}</div>
           </div>
 
           <div class="ck-auth-or" aria-hidden="true">OR</div>

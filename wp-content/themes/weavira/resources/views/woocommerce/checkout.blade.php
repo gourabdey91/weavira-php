@@ -166,8 +166,16 @@
 
         <div class="ck-auth-col">
           <div class="ck-phone-row">
-                {!! do_shortcode('[sa_loginwithotp]') !!}
-                {!! do_shortcode('[sa_verify phone_selector="#phone" submit_selector= ".btn"]') !!}
+                {{-- [sa_signupwithmobile] — not [sa_loginwithotp]. That
+                     shortcode is login-only (rejects unregistered numbers,
+                     never creates an account). This one is SMS Alert's own
+                     unified login-or-signup: on OTP verification it logs
+                     into an existing account matched by billing_phone, or
+                     creates a minimal one (phone only, no name/email) and
+                     logs that in — see app/filters.php for the fix to its
+                     billing_phone-persistence bug this relies on. It embeds
+                     its own [sa_verify] internally, so none is added here. --}}
+                {!! do_shortcode('[sa_signupwithmobile sa_label="Mobile Number" sa_placeholder="Enter mobile number" sa_button="Login with OTP" redirect_url="' . esc_url(wc_get_checkout_url()) . '"]') !!}
           </div>
         </div>
 
