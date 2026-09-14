@@ -192,8 +192,8 @@ class WPLogin extends FormInterface
         if ($this->byPassLogin($user_role) ) {
             return $user;
         }
-
         SmsAlertUtility::initialize_transaction($this->form_session_var3);
+		$_SESSION['sa_login_user_id'] = absint($user->data->ID);
         smsalert_site_challenge_otp($username, null, null, $phone_number, 'phone', $password, SmsAlertUtility::currentPageUrl(), true);
     }
 
@@ -226,7 +226,13 @@ class WPLogin extends FormInterface
 
                 wp_send_json(SmsAlertUtility::_create_json_response($message, 'error'));
             }
-            $user_info  = $this->getUserFromPhoneNumber($billing_phone, $this->phone_number_key);
+            $results  = $this->getUserFromPhoneNumber($billing_phone, $this->phone_number_key);
+			if(sizeof($results) > 1)
+			{
+				wp_send_json(SmsAlertUtility::_create_json_response(__('Multiple accounts are associated with this mobile number. Please contact the site administrator.', 'sms-alert'), 'error'));
+			}
+			$user_id = ( ! empty($results) ) ? $results[0]->user_id : 0;
+			$user_info = get_userdata($user_id);
             $user_login = ( $user_info ) ? $user_info->data->user_login : '';
             $user = get_user_by('login', $user_login);
             //added for new user approve plugin
@@ -244,6 +250,7 @@ class WPLogin extends FormInterface
 
             if (! empty($user_login) ) {
                 SmsAlertUtility::initialize_transaction($this->form_session_var3);
+				$_SESSION['sa_login_user_id'] = absint($user->data->ID);
                 smsalert_site_challenge_otp(null, null, null, $billing_phone, 'phone', null, SmsAlertUtility::currentPageUrl(), true);
             } else {
                 wp_send_json(SmsAlertUtility::_create_json_response(__('Sorry, but you do not have a registered phone number, please logged in your account and update this number.', 'sms-alert'), 'error'));
@@ -289,7 +296,7 @@ class WPLogin extends FormInterface
      */
     public static function addAdminLoginWithOtpShortcode()
     {    
-        echo '<div class="loginwithotp adminlgin" >'.do_shortcode('[sa_loginwithotp]').'</div>';
+        echo '<div class="loginwithotp adminlgin" >'.do_shortcode('[sa_loginwithotp redirect_url="'.admin_url().'"]').'</div>';
         echo '<style>.loginwithotp .sa_loginwithotp-form{display:none;}.loginwithotp .sa_default_login_form{display:block;}</style>';
     }
 
@@ -385,7 +392,7 @@ class WPLogin extends FormInterface
     {
         $user_authorize = new smsalert_Setting_Options();
         $islogged       = $user_authorize->is_user_authorised();
-        return ( $islogged && ( smsalert_get_option('buyer_login_otp', 'smsalert_general') === 'on' || smsalert_get_option('login_with_otp', 'smsalert_general') === 'on' ) ) ? true : false;
+        return ( $islogged && ( smsalert_get_option('buyer_login_otp', 'smsalert_general') === 'on' || smsalert_get_option('login_with_otp', 'smsalert_general') === 'on' || smsalert_get_option('login_with_admin_otp', 'smsalert_general') === 'on') ) ? true : false;
     }
 
     /**
@@ -442,14 +449,13 @@ class WPLogin extends FormInterface
     /**
      * If your user is authenticated then redirect him to page.
      *
-     * @param object $user_log   logged user details.
+     * @param object $user  logged user details.
      * @param string $extra_data get hidden fields.
      *
      * @return void
      */
-    public function loginWpUser( $user_log, $extra_data = null )
+    public function loginWpUser( $user, $extra_data = null )
     {
-        $user = get_user_by('login', $user_log);
         wp_set_current_user($user->data->ID, $user->user_login);
         wp_set_auth_cookie($user->data->ID);
         $this->unsetOTPSessionVariables();
@@ -469,16 +475,18 @@ class WPLogin extends FormInterface
     {
         SmsAlertUtility::checkSession();
         $login_with_otp_enabled = ( smsalert_get_option('login_with_otp', 'smsalert_general') === 'on' ) ? true : false;
-        $password='';$phone_number='';
-        if (empty($password) ) {
-            if (! empty($_REQUEST['username']) ) {
-                $phone_number = ! empty($_REQUEST['username']) ? sanitize_text_field(wp_unslash($_REQUEST['username'])) : '';
-                $user_info    = $this->getUserFromPhoneNumber($phone_number, $this->phone_number_key);
-                $user_login   = ( $user_info ) ? $user_info->data->user_login : '';
-            }
-        }
+        $login_with_admin_otp_enabled = ( smsalert_get_option('login_with_admin_otp', 'smsalert_general') === 'on' ) ? true : false;
+		$phone_number = ! empty($_REQUEST['username']) ? sanitize_text_field(wp_unslash($_REQUEST['username'])) : '';
 		$phone_number  = SmsAlertcURLOTP::checkPhoneNos($phone_number);
-		if ($login_with_otp_enabled && empty($password) && ! empty($user_login) && ! empty($_SESSION['login_otp_success']) && ! empty($_SESSION['sa_login_mobile']) && strpos($_SESSION['sa_login_mobile'], $phone_number) !== false) {
+		
+		if ($phone_number === false || empty($_SESSION['sa_login_user_id'])) {
+			return;
+		}
+		
+		$user_info    = get_user_by('ID', $_SESSION['sa_login_user_id']);
+        $user_login   = ( $user_info ) ? $user_info->data->user_login : '';
+
+		if (($login_with_otp_enabled || $login_with_admin_otp_enabled) && empty($password) && ! empty($user_login) && ! empty($_SESSION['login_otp_success']) && ! empty($_SESSION['sa_login_mobile']) && ($_SESSION['sa_login_mobile'] === $phone_number)) {
             if (! empty($_POST['redirect']) ) {
                 $redirect = wp_sanitize_redirect(wp_unslash($_POST['redirect']));
             } elseif ( function_exists('wc_get_raw_referer') ) {
@@ -486,7 +494,7 @@ class WPLogin extends FormInterface
             }
             unset($_SESSION['login_otp_success']);
             unset($_SESSION['sa_login_mobile']);
-            $this->loginWpUser($user_login, $redirect);
+            $this->loginWpUser($user_info, $redirect);
         }
     }
 
@@ -503,16 +511,11 @@ class WPLogin extends FormInterface
     {
         SmsAlertUtility::checkSession();
         $login_with_otp_enabled = ( smsalert_get_option('login_with_otp', 'smsalert_general') === 'on' ) ? true : false;
-		$phone_number = '';
-        if (empty($password) ) {
-            if (! empty($_REQUEST['username']) ) {
-                $phone_number = ! empty($_REQUEST['username']) ? sanitize_text_field(wp_unslash($_REQUEST['username'])) : '';
-                $user_info    = $this->getUserFromPhoneNumber($phone_number, $this->phone_number_key);
-                $user_login   = ( $user_info ) ? $user_info->data->user_login : '';
-            }
-        }
-        $phone_number  = SmsAlertcURLOTP::checkPhoneNos($phone_number);
-        if ($login_with_otp_enabled && empty($password) && ! empty($user_login) && ! empty($_SESSION['login_otp_success']) && ! empty($_SESSION['sa_login_mobile']) && strpos($_SESSION['sa_login_mobile'], $phone_number) !== false ) {
+		$phone_number = ! empty($_REQUEST['username']) ? sanitize_text_field(wp_unslash($_REQUEST['username'])) : '';
+		$phone_number  = SmsAlertcURLOTP::checkPhoneNos($phone_number);
+		$user_info    = !empty($_SESSION['sa_login_user_id'])?get_user_by('ID', $_SESSION['sa_login_user_id']):'';
+        $user_login   = ( $user_info ) ? $user_info->data->user_login : '';
+        if ($login_with_otp_enabled && empty($password) && ! empty($user_login) && ! empty($_SESSION['login_otp_success']) && ! empty($_SESSION['sa_login_mobile']) && ($_SESSION['sa_login_mobile'] === $phone_number) ) {
             if (! empty($_POST['redirect']) ) {
                 $redirect = wp_sanitize_redirect(wp_unslash($_POST['redirect']));
             } elseif ( function_exists('wc_get_raw_referer') ) {
@@ -522,7 +525,7 @@ class WPLogin extends FormInterface
             }
             unset($_SESSION['login_otp_success']);
             unset($_SESSION['sa_login_mobile']);
-            $this->loginWpUser($user_login, $redirect);
+            $this->loginWpUser($user_info, $redirect);
         }
 
         if (( is_array($_SESSION) && array_key_exists($this->form_session_var, $_SESSION) && strcasecmp($_SESSION[ $this->form_session_var ], 'validated') === 0 ) && ! empty($_POST['sa_phone_number']) ) {
@@ -580,7 +583,13 @@ class WPLogin extends FormInterface
         if (! $this->checkWpLoginByPhoneNumber() || ! SmsAlertUtility::validatePhoneNumber($username) ) {
             return $user;
         }
-        $user_info = $this->getUserFromPhoneNumber($username, $key);
+        $results = $this->getUserFromPhoneNumber($username, $key);
+		if(sizeof($results) > 1)
+		{
+			wp_send_json(SmsAlertUtility::_create_json_response(__('Multiple accounts are associated with this mobile number. Please contact the site administrator.', 'sms-alert'), 'error'));
+		}
+		$user_id = ( ! empty($results) ) ? $results[0]->user_id : 0;
+		$user_info = get_userdata($user_id);
         $username  = is_object($user_info) ? $user_info->data->user_login : $username; // added on 20-05-2019.
         return wp_authenticate_username_password(null, $username, $password);
     }
@@ -601,9 +610,8 @@ class WPLogin extends FormInterface
         $wocc_ph    = SmsAlertcURLOTP::checkPhoneNos($username, false);
         $wth_pls_ph = '+' . $wcc_ph;
 
-        $results = $wpdb->get_row("SELECT `user_id` FROM {$wpdb->base_prefix}usermeta inner join {$wpdb->base_prefix}users on ({$wpdb->base_prefix}users.ID = {$wpdb->base_prefix}usermeta.user_id) WHERE `meta_key` = '$key' AND `meta_value` in('$wcc_ph','$wocc_ph','$wth_pls_ph') order by user_id desc");
-        $user_id = ( ! empty($results) ) ? $results->user_id : 0;
-        return get_userdata($user_id);
+        $results = $wpdb->get_results("SELECT `user_id` FROM {$wpdb->base_prefix}usermeta WHERE `meta_key` = '$key' AND `meta_value` in('$wcc_ph','$wocc_ph','$wth_pls_ph')");
+        return $results;
     }
 
     /**
@@ -648,7 +656,8 @@ class WPLogin extends FormInterface
         ) {
             return;
         }
-        SmsAlertUtility::initialize_transaction($this->form_session_var2); 
+        SmsAlertUtility::initialize_transaction($this->form_session_var2);
+        $_SESSION['sa_login_user_id'] = absint($user->data->ID);		
         smsalert_site_challenge_otp($username, null, null, $phone_number, 'phone', $password, SmsAlertUtility::currentPageUrl(), false);
     }
 
@@ -662,9 +671,13 @@ class WPLogin extends FormInterface
     public function handleWpLoginAjaxSendOtp( $data )
     {
         SmsAlertUtility::checkSession();
+		$users = $this->getUserFromPhoneNumber(
+			$data['billing_phone'],
+			$this->phone_number_key
+		);
         if (! $this->checkWpLoginRestrictDuplicates()
-            && ! SmsAlertUtility::isBlank($this->getUserFromPhoneNumber($data['billing_phone'], $this->phone_number_key)) 
-        ) {
+            && count($users) > 0) 
+        {
             wp_send_json(SmsAlertUtility::_create_json_response(__('Phone Number is already in use. Please use another number.', 'sms-alert'), SmsAlertConstants::ERROR_JSON_TYPE));
         } elseif (isset($_SESSION[ $this->form_session_var ]) ) {
             smsalert_site_challenge_otp('ajax_phone', '', null, trim($data['billing_phone']), 'phone', null, $data, null);

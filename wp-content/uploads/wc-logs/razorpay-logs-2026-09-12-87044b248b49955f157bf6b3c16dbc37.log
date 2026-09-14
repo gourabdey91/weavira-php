@@ -1,0 +1,137 @@
+2026-09-12T00:54:11+00:00 INFO Running webhook cron.
+2026-09-12T00:54:11+00:00 INFO Webhook cron execution completed.
+2026-09-12T00:54:13+00:00 INFO Running webhook cron.
+2026-09-12T00:54:13+00:00 INFO Webhook cron execution completed.
+2026-09-12T01:29:09+00:00 INFO Running webhook cron.
+2026-09-12T01:29:09+00:00 INFO Webhook cron execution completed.
+2026-09-12T02:49:49+00:00 INFO Running webhook cron.
+2026-09-12T02:49:49+00:00 INFO Webhook cron execution completed.
+2026-09-12T03:34:43+00:00 INFO Running webhook cron.
+2026-09-12T03:34:43+00:00 INFO Webhook cron execution completed.
+2026-09-12T03:41:01+00:00 INFO Running webhook cron.
+2026-09-12T03:41:01+00:00 INFO Webhook cron execution completed.
+2026-09-12T03:46:09+00:00 INFO Running webhook cron.
+2026-09-12T03:46:09+00:00 INFO Webhook cron execution completed.
+2026-09-12T04:08:59+00:00 INFO Running webhook cron.
+2026-09-12T04:08:59+00:00 INFO Webhook cron execution completed.
+2026-09-12T04:43:07+00:00 INFO Running webhook cron.
+2026-09-12T04:43:07+00:00 INFO Webhook cron execution completed.
+2026-09-12T04:55:52+00:00 INFO Running webhook cron.
+2026-09-12T04:55:52+00:00 INFO Webhook cron execution completed.
+2026-09-12T04:57:39+00:00 INFO createOneCCAddressSyncCron: attempting to schedule daily cron
+2026-09-12T04:57:39+00:00 INFO createOneCCAddressSyncCron: already scheduled, skipping
+2026-09-12T04:57:39+00:00 INFO create one_cc_plugin_sync_cron successful
+2026-09-12T05:13:23+00:00 INFO Running webhook cron.
+2026-09-12T05:13:23+00:00 INFO Webhook cron execution completed.
+2026-09-12T05:17:13+00:00 INFO Running webhook cron.
+2026-09-12T05:17:13+00:00 INFO Webhook cron execution completed.
+2026-09-12T05:39:44+00:00 INFO Running webhook cron.
+2026-09-12T05:39:44+00:00 INFO Webhook cron execution completed.
+2026-09-12T06:41:16+00:00 INFO Running webhook cron.
+2026-09-12T06:41:16+00:00 INFO Webhook cron execution completed.
+2026-09-12T08:40:43+00:00 INFO Running webhook cron.
+2026-09-12T08:40:43+00:00 INFO Webhook cron execution completed.
+2026-09-12T09:53:48+00:00 INFO Running webhook cron.
+2026-09-12T09:53:48+00:00 INFO Webhook cron execution completed.
+2026-09-12T10:34:34+00:00 INFO Running webhook cron.
+2026-09-12T10:34:34+00:00 INFO Webhook cron execution completed.
+2026-09-12T10:54:34+00:00 INFO Running webhook cron.
+2026-09-12T10:54:34+00:00 INFO Webhook cron execution completed.
+2026-09-12T11:07:09+00:00 INFO Running webhook cron.
+2026-09-12T11:07:09+00:00 INFO Webhook cron execution completed.
+2026-09-12T11:09:39+00:00 INFO Running webhook cron.
+2026-09-12T11:09:39+00:00 INFO Webhook cron execution completed.
+2026-09-12T11:37:54+00:00 INFO Running webhook cron.
+2026-09-12T11:37:54+00:00 INFO Webhook cron execution completed.
+2026-09-12T12:31:52+00:00 INFO Running webhook cron.
+2026-09-12T12:31:52+00:00 INFO Webhook cron execution completed.
+2026-09-12T12:35:39+00:00 INFO Running webhook cron.
+2026-09-12T12:35:39+00:00 INFO Webhook cron execution completed.
+2026-09-12T12:44:19+00:00 INFO Running webhook cron.
+2026-09-12T12:44:19+00:00 INFO Webhook cron execution completed.
+2026-09-12T12:54:54+00:00 INFO Running webhook cron.
+2026-09-12T12:54:54+00:00 INFO Webhook cron execution completed.
+2026-09-12T13:28:18+00:00 INFO Running webhook cron.
+2026-09-12T13:28:18+00:00 INFO Webhook cron execution completed.
+2026-09-12T13:29:28+00:00 INFO Running webhook cron.
+2026-09-12T13:29:28+00:00 INFO Webhook cron execution completed.
+2026-09-12T13:34:35+00:00 INFO Running webhook cron.
+2026-09-12T13:34:35+00:00 INFO Webhook cron execution completed.
+2026-09-12T13:39:39+00:00 INFO Running webhook cron.
+2026-09-12T13:39:39+00:00 INFO Webhook cron execution completed.
+2026-09-12T14:04:41+00:00 INFO Running webhook cron.
+2026-09-12T14:04:41+00:00 INFO Webhook cron execution completed.
+2026-09-12T14:53:44+00:00 INFO Running webhook cron.
+2026-09-12T14:53:44+00:00 INFO Webhook cron execution completed.
+2026-09-12T14:55:04+00:00 INFO Running webhook cron.
+2026-09-12T14:55:04+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:01:13+00:00 INFO Running webhook cron.
+2026-09-12T15:01:13+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:04:42+00:00 INFO Running webhook cron.
+2026-09-12T15:04:42+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:10:45+00:00 INFO Running webhook cron.
+2026-09-12T15:10:45+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:14:47+00:00 INFO Running webhook cron.
+2026-09-12T15:14:47+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:20:39+00:00 INFO Running webhook cron.
+2026-09-12T15:20:39+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:26:12+00:00 INFO Running webhook cron.
+2026-09-12T15:26:12+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:29:54+00:00 INFO Running webhook cron.
+2026-09-12T15:29:54+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:34:58+00:00 INFO Running webhook cron.
+2026-09-12T15:34:58+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:39:27+00:00 INFO Running webhook cron.
+2026-09-12T15:39:27+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:44:14+00:00 INFO Running webhook cron.
+2026-09-12T15:44:14+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:49:13+00:00 INFO Running webhook cron.
+2026-09-12T15:49:13+00:00 INFO Webhook cron execution completed.
+2026-09-12T15:54:16+00:00 INFO Running webhook cron.
+2026-09-12T15:54:16+00:00 INFO Webhook cron execution completed.
+2026-09-12T16:28:53+00:00 INFO Running webhook cron.
+2026-09-12T16:28:53+00:00 INFO Webhook cron execution completed.
+2026-09-12T16:41:29+00:00 INFO Running webhook cron.
+2026-09-12T16:41:29+00:00 INFO Webhook cron execution completed.
+2026-09-12T16:58:38+00:00 INFO Running webhook cron.
+2026-09-12T16:58:38+00:00 INFO Webhook cron execution completed.
+2026-09-12T17:00:22+00:00 INFO Running webhook cron.
+2026-09-12T17:00:22+00:00 INFO Webhook cron execution completed.
+2026-09-12T17:04:39+00:00 INFO Running webhook cron.
+2026-09-12T17:04:39+00:00 INFO Webhook cron execution completed.
+2026-09-12T17:10:09+00:00 INFO Running webhook cron.
+2026-09-12T17:10:09+00:00 INFO Webhook cron execution completed.
+2026-09-12T18:01:32+00:00 INFO Running webhook cron.
+2026-09-12T18:01:32+00:00 INFO Webhook cron execution completed.
+2026-09-12T18:30:54+00:00 INFO Running webhook cron.
+2026-09-12T18:30:54+00:00 INFO Webhook cron execution completed.
+2026-09-12T18:30:55+00:00 INFO runOneCCAddressSync: [daily] budget=299.1min (until 05:00 IST)
+2026-09-12T18:31:02+00:00 ERROR makeAPICall: message:The server did not send back a well-formed response. 
+Server Response: , url: woocommerce/config, method: GET, retryCount: 1, statusCode: 502
+2026-09-12T18:31:04+00:00 ERROR makeAPICall: message:The server did not send back a well-formed response. 
+Server Response: , url: woocommerce/config, method: GET, retryCount: 2, statusCode: 503
+2026-09-12T18:31:17+00:00 ERROR makeAPICall: message:The server did not send back a well-formed response. 
+Server Response: , url: woocommerce/config, method: GET, retryCount: 3, statusCode: 502
+2026-09-12T18:31:17+00:00 ERROR isMerchantEligible: transient error 502, will retry tomorrow
+2026-09-12T18:43:49+00:00 INFO Running webhook cron.
+2026-09-12T18:43:49+00:00 INFO Webhook cron execution completed.
+2026-09-12T19:30:39+00:00 INFO Running webhook cron.
+2026-09-12T19:30:39+00:00 INFO Webhook cron execution completed.
+2026-09-12T20:02:36+00:00 INFO Running webhook cron.
+2026-09-12T20:02:36+00:00 INFO Webhook cron execution completed.
+2026-09-12T20:09:41+00:00 INFO Running webhook cron.
+2026-09-12T20:09:41+00:00 INFO Webhook cron execution completed.
+2026-09-12T20:14:29+00:00 INFO Running webhook cron.
+2026-09-12T20:14:29+00:00 INFO Webhook cron execution completed.
+2026-09-12T20:49:16+00:00 INFO Running webhook cron.
+2026-09-12T20:49:16+00:00 INFO Webhook cron execution completed.
+2026-09-12T21:01:19+00:00 INFO Running webhook cron.
+2026-09-12T21:01:19+00:00 INFO Webhook cron execution completed.
+2026-09-12T21:10:54+00:00 INFO Running webhook cron.
+2026-09-12T21:10:54+00:00 INFO Webhook cron execution completed.
+2026-09-12T21:24:10+00:00 INFO Running webhook cron.
+2026-09-12T21:24:10+00:00 INFO Webhook cron execution completed.
+2026-09-12T22:02:14+00:00 INFO Running webhook cron.
+2026-09-12T22:02:14+00:00 INFO Webhook cron execution completed.
+2026-09-12T22:47:35+00:00 INFO Running webhook cron.
+2026-09-12T22:47:35+00:00 INFO Webhook cron execution completed.

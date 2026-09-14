@@ -207,7 +207,19 @@ class SAWPCafe extends FormInterface
     public static function add_default_setting($defaults = array())
     {
         $obj = new WpCafe\Utils\Wpc_Utilities();
-        $bookingStatuses = $obj->get_reservation_states();
+        if (method_exists($obj, 'get_reservation_states')) {
+			$bookingStatuses = $obj->get_reservation_states();
+		} else {
+			$bookingStatuses = [
+				'pending'    => 'Pending',
+				'on-hold'    => 'On Hold',
+				'processing' => 'Processing',
+				'completed'  => 'Completed',
+				'cancelled'  => 'Cancelled',
+				'refunded'   => 'Refunded',
+				'failed'     => 'Failed',
+			];
+		}
         foreach ($bookingStatuses as $ks => $vs) {
             $defaults['smsalert_wcf_general']['customer_wcf_notify_' . $ks]   = 'off';
             $defaults['smsalert_wcf_message']['customer_sms_wcf_body_' . $ks] = '';
@@ -324,23 +336,34 @@ class SAWPCafe extends FormInterface
      */
     public static function getCustomerTemplates()
     {
-
         $obj = new WpCafe\Utils\Wpc_Utilities();
-        $bookingStatuses = $obj->get_reservation_states();
+        if (method_exists($obj, 'get_reservation_states')) {
+			$bookingStatuses = $obj->get_reservation_states();
+		} else {
+			$bookingStatuses = [
+				'pending'    => 'Pending',
+				'on-hold'    => 'On Hold',
+				'processing' => 'Processing',
+				'completed'  => 'Completed',
+				'cancelled'  => 'Cancelled',
+				'refunded'   => 'Refunded',
+				'failed'     => 'Failed',
+			];
+		}
         $templates = array();
-        foreach ($bookingStatuses as $ks  => $vs) {
+        foreach ($bookingStatuses as $vs  => $ks) {
             $currentVal = smsalert_get_option('customer_wcf_notify_' . strtolower($vs), 'smsalert_wcf_general', 'on');
             $checkboxNameId = 'smsalert_wcf_general[customer_wcf_notify_' . strtolower($vs) . ']';
             $textareaNameId = 'smsalert_wcf_message[customer_sms_wcf_body_' . strtolower($vs) . ']';
             $defaultTemplate = smsalert_get_option('admin_sms_wcf_body_' . strtolower($vs), 'smsalert_wcf_message', sprintf(__('Hello %1$s, status of your booking #%2$s with %3$s has been changed to %4$s.%5$sPowered by%6$swww.smsalert.co.in', 'sms-alert'), '[name]', '[booking_id]', '[store_name]', $vs, PHP_EOL, PHP_EOL));
             $textBody = smsalert_get_option('customer_sms_wcf_body_' . strtolower($vs), 'smsalert_wcf_message', $defaultTemplate);
-            $templates[$ks]['title']          = 'When customer booking is ' . ucwords($vs);
-            $templates[$ks]['enabled']        = $currentVal;
-            $templates[$ks]['status']         = $vs;
-            $templates[$ks]['text-body']      = $textBody;
-            $templates[$ks]['checkboxNameId'] = $checkboxNameId;
-            $templates[$ks]['textareaNameId'] = $textareaNameId;
-            $templates[$ks]['token']          = self::getWPCafevariables();
+            $templates[$vs]['title']          = 'When customer booking is ' . ucwords($vs);
+            $templates[$vs]['enabled']        = $currentVal;
+            $templates[$vs]['status']         = $vs;
+            $templates[$vs]['text-body']      = $textBody;
+            $templates[$vs]['checkboxNameId'] = $checkboxNameId;
+            $templates[$vs]['textareaNameId'] = $textareaNameId;
+            $templates[$vs]['token']          = self::getWPCafevariables();
         }
         return $templates;
     }//end getCustomerTemplates()
@@ -353,7 +376,19 @@ class SAWPCafe extends FormInterface
     public static function getAdminTemplates()
     {       
         $obj = new WpCafe\Utils\Wpc_Utilities();
-        $bookingStatuses = $obj->get_reservation_states();
+        if (method_exists($obj, 'get_reservation_states')) {
+			$bookingStatuses = $obj->get_reservation_states();
+		} else {
+			$bookingStatuses = [
+				'pending'    => 'Pending',
+				'on-hold'    => 'On Hold',
+				'processing' => 'Processing',
+				'completed'  => 'Completed',
+				'cancelled'  => 'Cancelled',
+				'refunded'   => 'Refunded',
+				'failed'     => 'Failed',
+			];
+		}
         $templates = array();
         foreach ($bookingStatuses as $ks  => $vs) {
             $currentVal     = smsalert_get_option('admin_wcf_notify_' . strtolower($vs), 'smsalert_wcf_general', 'on');
@@ -365,13 +400,13 @@ class SAWPCafe extends FormInterface
 
             $textBody = smsalert_get_option('admin_sms_wcf_body_' . strtolower($vs), 'smsalert_wcf_message', $defaultTemplate);
 
-            $templates[$ks]['title']          = 'When admin change status to ' . ucwords($vs);
-            $templates[$ks]['enabled']        = $currentVal;
-            $templates[$ks]['status']         = $vs;
-            $templates[$ks]['text-body']      = $textBody;
-            $templates[$ks]['checkboxNameId'] = $checkboxNameId;
-            $templates[$ks]['textareaNameId'] = $textareaNameId;
-            $templates[$ks]['token']          = self::getWPCafevariables();
+            $templates[$vs]['title']          = 'When admin change status to ' . ucwords($vs);
+            $templates[$vs]['enabled']        = $currentVal;
+            $templates[$vs]['status']         = $vs;
+            $templates[$vs]['text-body']      = $textBody;
+            $templates[$vs]['checkboxNameId'] = $checkboxNameId;
+            $templates[$vs]['textareaNameId'] = $textareaNameId;
+            $templates[$vs]['token']          = self::getWPCafevariables();
         }
         return $templates;
     }
@@ -625,7 +660,7 @@ class SAWPCafe extends FormInterface
     public function is_ajax_form_in_play($isAjax)
     {
         SmsAlertUtility::checkSession();
-        if ($_SESSION[$this->form_session_var] === true) {
+        if (isset($_SESSION[$this->form_session_var])) {
             return true;
         } else {
             return $isAjax;

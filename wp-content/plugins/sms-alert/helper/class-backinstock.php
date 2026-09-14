@@ -51,9 +51,10 @@ class Sa_Backinstock
         if ('on' === $smsalert_bis_subscribed_notify ) {
             add_action('woocommerce_after_variations_form', array( $this, 'saDisplayInNoVariationProduct' ));
             add_filter('woocommerce_available_variation', array( $this, 'saDisplayInVariation' ), 100, 3);
-            add_action('blocksy:woocommerce:product-single:add_to_cart:before', array( $this, 'saDisplayInBlocksy' ), 100);
-			if ( !has_filter('blocksy:woocommerce:product-single:add_to_cart:before') ) {
-             add_action('woocommerce_simple_add_to_cart', array( $this, 'displayInSimpleProduct' ), 63);
+            if ( 'blocksy' === get_template() ) {
+				add_action('blocksy:woocommerce:product-single:add_to_cart:before',array( $this, 'saDisplayInBlocksy' ),100);
+			} else {
+				add_action('woocommerce_simple_add_to_cart',array( $this, 'displayInSimpleProduct' ),63);
 			}
             $this->handleSubcribeRequest($_REQUEST);
         }
@@ -808,19 +809,37 @@ class All_Subscriber_List extends WP_List_Table
 			'sainstocknotifier',
 			'smsalert_instock_pid'
 		);
-
-        if (! empty($_REQUEST['orderby']) ) {
-            $sql .= ' ORDER BY ' . sanitize_text_field(wp_unslash($_REQUEST['orderby']));
-            $sql .= ! empty($_REQUEST['order']) ? ' ' . sanitize_text_field(wp_unslash($_REQUEST['order'])) : ' DESC';
-        } else {
-            $sql .= ' ORDER BY post_date desc';
-        }
-
-        $sql .= " LIMIT $per_page";
-        $sql .= ' OFFSET ' . ( $page_number - 1 ) * $per_page;
-
+        
+        $allowed_orderby = array(
+			'post_title',
+			'post_date',
+			'post_status',
+			'meta_value',
+			'post_author',
+			'ID'
+		);		
+        $orderby = 'post_date';
+		if ( isset($_REQUEST['orderby']) 
+			&& in_array($_REQUEST['orderby'], $allowed_orderby, true) ) {
+			$orderby = $_REQUEST['orderby'];
+		}
+		$order = 'DESC';
+		if ( isset($_REQUEST['order']) ) {
+			$request_order = strtoupper(wp_unslash($_REQUEST['order']));
+			if ( in_array($request_order, array('ASC', 'DESC'), true) ) {
+				$order = $request_order;
+			}
+		}
+		$sql .= " ORDER BY P." . $orderby . " " . $order;
+		$per_page = absint($per_page);
+        $page_number = absint($page_number);
+		$offset = ($page_number - 1) * $per_page;
+		$sql .= $wpdb->prepare(
+			" LIMIT %d OFFSET %d",
+			$per_page,
+			$offset
+		);
         $result = $wpdb->get_results($sql, 'ARRAY_A');
-
         return $result;
     }
 

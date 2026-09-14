@@ -48,9 +48,11 @@ class SaFluentForm extends FormInterface
     public function handleForm()
     {
         add_action('fluentform_submission_inserted', array( $this, 'fluentformSubmissionComplete' ), 10, 3);
-
         add_action('fluentform_after_form_render', array( $this, 'addSmsalertShortcode' ), 10, 1);
-        add_filter('fluentform_is_form_renderable', array($this, 'addSmsalertConversational'), 10, 2);
+        if (!did_action('fluentform_after_form_render')) {
+            add_action('fluentform/after_form_render', array( $this, 'addSmsalertShortcode' ), 10, 1);
+        }
+        add_action('fluentform/conversational_enqueue_assets', array($this, 'addSmsalertConversational'), 200, 2);
     }
     
      
@@ -62,7 +64,7 @@ class SaFluentForm extends FormInterface
      *
      * @return void
      */     
-    public function addSmsalertConversational($renderable, $form)
+    public function addSmsalertConversational($form, $settings)
     {                
         $formId = $form->id;
         $uniqueNo = rand();
@@ -70,7 +72,7 @@ class SaFluentForm extends FormInterface
         $otp_enable  = smsalert_get_option('fluent_otp_' .$formId, 'smsalert_fluent_general', 'on');        
         $phone_field = smsalert_get_option('fluent_sms_phone_' .$formId, 'smsalert_fluent_general', '');
         if ('on' === $form_enable && 'on' === $otp_enable && '' !== $phone_field ) {
-            $conversational_fluent_js = '
+            echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script><script>
 			document.addEventListener("DOMContentLoaded", function() {
 			    jQuery(document).ready(function(){ 
 					jQuery("div.ff_conv_app ").prepend("<form id=\"sa_conv_form\"></form>");					jQuery("#sa_conv_form").html(jQuery("#sa_conv_form").next("div.ffc_conv_form"));
@@ -92,12 +94,33 @@ class SaFluentForm extends FormInterface
 						setTimeout(function(){addSmsalertButton();}, 200);
 					});                    		
 				    addSmsalertButton();
+					var sa_btn_selector = ".ff-btn-submit-center .o-btn-action.ff-btn,.ff-btn-submit-left .o-btn-action.ff-btn,.ff-btn-submit-right .o-btn-action.ff-btn";
 					function addSmsalertButton(){
 						if(jQuery(".ff-btn.sa-default-btn-hide").length == 0){
-							jQuery(".ff-btn-submit-left .f-enter-desc,.footer-inner-wrap,.ff-btn-submit-left .ff-btn").addClass("sa-default-btn-hide");	jQuery(".ff-btn-submit-left .ff-btn").clone().removeClass("sa-default-btn-hide").insertAfter(".ff-btn-submit-left .f-enter-desc");jQuery(".ff-btn-submit-left .ff-btn").not(".sa-default-btn-hide").addClass("sa-otp-btn-init smsalert_otp_btn_submit").attr("id" ,"sa_verify_'.$uniqueNo.'").attr("name" ,"sa_verify_'.$uniqueNo.'");
+							jQuery(sa_btn_selector).addClass("sa-default-btn-hide");	jQuery(sa_btn_selector).clone().removeClass("sa-default-btn-hide").insertAfter(sa_btn_selector);jQuery(sa_btn_selector).not(".sa-default-btn-hide").addClass("sa-otp-btn-init smsalert_otp_btn_submit").attr("id" ,"sa_verify_'.$uniqueNo.'").attr("name" ,"sa_verify_'.$uniqueNo.'");
 						}
+						jQuery("#sa_conv_form").find("input[name='.$phone_field.']").addClass("sa-conv-phone");
+				        jQuery(".sa-conv-phone[name='.$phone_field.']").addClass("phone-valid");
 					}
-                    jQuery("#sa_conv_form").find("input[name='.$phone_field.']").addClass("sa-conv-phone");					
+					jQuery(document).on("click", "#sa_verify_'.$uniqueNo.'",function(event){
+					event.preventDefault();
+					send_otp(this,sa_btn_selector,".sa-conv-phone[name='.$phone_field.']","","");
+					});			
+					document.addEventListener("keydown", function(e) {
+						if (e.key === "Enter" && e.target.tagName === "INPUT") {
+
+							var form = jQuery(e.target).closest("form");
+
+							if (form.find("#sa_verify_'.$uniqueNo.'").length > 0) {
+								e.preventDefault();
+								e.stopImmediatePropagation();
+
+								jQuery("#sa_verify_'.$uniqueNo.'").trigger("click");
+								return false;
+							}
+						}
+					}, true);
+					initialiseCountrySelector(".phone-valid");	
 			    });
 				setTimeout(function() {
 					if (jQuery(".modal.smsalertModal").length==0)    
@@ -107,32 +130,9 @@ class SaFluentForm extends FormInterface
 					}
 				}, 200);
 			    });
-			';                
-            wp_add_inline_script("sa-handle-footer", $conversational_fluent_js);                
-            $conversational_fluent_js1 = '
-             document.addEventListener("DOMContentLoaded", function() {			
-				jQuery(document).ready(function(){
-				    jQuery(".sa-conv-phone[name='.$phone_field.']").addClass("phone-valid");
-					jQuery(document).on("click", "#sa_verify_'.$uniqueNo.'",function(event){
-					event.preventDefault();
-					send_otp(this,".ff-btn-submit-left .ff-btn",".sa-conv-phone[name='.$phone_field.']","","");
-					});			
-					jQuery(document).on("keypress", "input", function(e){
-						var pform 	= jQuery(this).parents("form");
-						if (e.which === 13 && pform.find("#sa_verify_'.$uniqueNo.'").length > 0)
-						{
-							e.preventDefault();
-							pform.find("#sa_verify_'.$uniqueNo.'").trigger("click");
-						}						
-					});	
-					initialiseCountrySelector(".phone-valid");	
-					
-				});
-				});
-			';
-            wp_add_inline_script("sa-handle-footer", $conversational_fluent_js1);        
+			</script>';
+            SAVerify::enqueue_otp_js_script();			
         }
-        return $renderable;
     }
     
     /**
@@ -145,7 +145,7 @@ class SaFluentForm extends FormInterface
     public function addSmsalertShortcode($form)
     {
         $unique_class    = 'sa-class-'.mt_rand(1, 100);
-        $form_id     = $form->id;
+		$form_id     = $form->id;
         $form_enable = smsalert_get_option('fluent_order_status_' . $form_id, 'smsalert_fluent_general', 'on');
         $otp_enable  = smsalert_get_option('fluent_otp_' . $form_id, 'smsalert_fluent_general', 'on');
         $phone_field = smsalert_get_option('fluent_sms_phone_' . $form_id, 'smsalert_fluent_general', '');
@@ -154,13 +154,7 @@ class SaFluentForm extends FormInterface
 			if ('on' === $otp_enable ) 
 			{
 				$uniqueNo = rand();
-				$inline_script .= 'jQuery("form#fluentform_' . esc_attr($form_id) . '").each(function () 
-					{
-						if(!jQuery(this).hasClass("sa-wp-form"))
-						{
-							jQuery(this).addClass("'.$unique_class.' sa-wp-form");
-						}		
-					});
+				$inline_script .= ' jQuery("form#fluentform_' . esc_attr($form_id) . '").not(".sa-wp-form").first().addClass("' . $unique_class . ' sa-wp-form");
 					jQuery(document).on("elementor/popup/show", (event, id, instance) => {
 						add_smsalert_button(".'.$unique_class.' .ff-btn-submit","input[name=' . esc_attr($phone_field) . ']","'.$uniqueNo.'");
 						jQuery(document).on("click", "#sa_verify_'.$uniqueNo.'",function(event){

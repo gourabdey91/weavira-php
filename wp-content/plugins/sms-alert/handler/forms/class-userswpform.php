@@ -87,8 +87,8 @@ class UsersWpForm extends FormInterface
         if (! SmsAlertcURLOTP::validateCountryCode($user_phone)) {        
             return $errors;
         }
-        if (isset($_SESSION['sa_mobile_verified']) ) {
-            unset($_SESSION['sa_mobile_verified']);
+        if (isset($_SESSION['sa_userf_mobile_verified']) ) {
+            unset($_SESSION['sa_userf_mobile_verified']);
             return $errors;
         }
         $verify = check_ajax_referer('uwp-register-nonce', 'uwp_register_nonce', false);
@@ -377,7 +377,7 @@ class UsersWpForm extends FormInterface
         if (! isset($_SESSION[ $this->form_session_var ]) && ! isset($_SESSION[ $this->form_session_var2 ]) ) {
             return;
         }
-        $_SESSION['sa_mobile_verified'] = true;
+        $_SESSION['sa_userf_mobile_verified'] = true;
         $_SESSION['sa_mobile_userswp']  = $phone_number;
         if (isset($_SESSION[ $this->form_session_var2 ]) ) {
             wp_send_json(SmsAlertUtility::_create_json_response(__('OTP Validated Successfully.', 'sms-alert'), 'success'));

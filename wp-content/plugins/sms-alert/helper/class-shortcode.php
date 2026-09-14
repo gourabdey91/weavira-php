@@ -172,7 +172,8 @@ class Shortcode
         $placeholder_field    = ( ! empty($callback['sa_placeholder']) ) ? $callback['sa_placeholder'] : 'Enter Number';
         $button_field    = ( ! empty($callback['sa_button']) ) ? $callback['sa_button'] : 'Login with OTP';
         $enabled_login_with_otp = smsalert_get_option('login_with_otp', 'smsalert_general');
-        if ('on' !== $enabled_login_with_otp && current_user_can('administrator')) {
+        $enabled_login_with_admin_otp = smsalert_get_option('login_with_admin_otp', 'smsalert_general');
+        if ('on' !== $enabled_login_with_otp && 'on' !== $enabled_login_with_admin_otp && current_user_can('administrator')) {
             return(esc_html__('Please Enable Login With OTP.', 'sms-alert'));
         }
         $unique_class    = 'sa-lwo-'.mt_rand(1, 100);

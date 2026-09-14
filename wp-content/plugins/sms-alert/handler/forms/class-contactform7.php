@@ -121,10 +121,15 @@ class ContactForm7 extends FormInterface
         if (!empty($invalid_fields)) {
             return $result;
         }
-
-        $verify = check_ajax_referer('smsalert_wp_cf7_nonce', 'smsalert_cf7_nonce', false);
+		$tag = reset(array_filter($tags, function ($tag) {
+			return $tag->type === 'billing_phone';
+		}));
+		if (!$tag->has_option('otp_enabled_popup') ) {
+			return $result;
+		}
+		$verify = check_ajax_referer('smsalert_wp_cf7_nonce', 'smsalert_cf7_nonce', false);
         if (!$verify) {
-            wp_send_json(SmsAlertUtility::_create_json_response(__('Sorry, nonce did not verify.', 'sms-alert'), 'error'));
+           wp_send_json(SmsAlertUtility::_create_json_response(__('Sorry, nonce did not verify.', 'sms-alert'), 'error'));
         }		
         
         $id = $_POST['_wpcf7'];

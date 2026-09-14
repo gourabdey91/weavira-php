@@ -43,8 +43,10 @@ class SAameliabooking extends FormInterface
     {
         add_action('AmeliaCustomerWPCreated', [$this, 'ameliaNewCustomer'], 10, 2);
         add_action('AmeliaBookingAdded', [$this, 'sendsmsNewBooking'], 10, 3);
+        add_action('amelia_after_booking_added', [$this, 'sendsmsNewBooking'], 10, 1);
         add_action('AmeliaBookingCanceled', [$this, 'sendsmsBookingCanceled'], 10, 3);
-        add_action('AmeliaBookingStatusUpdated', [$this, 'sendBookingUpdated'], 10, 3);
+        add_action('amelia_after_appointment_status_updated', [$this, 'sendBookingUpdated'], 10, 3);
+		add_action('AmeliaBookingStatusUpdated', [$this, 'sendBookingUpdated'], 10, 3);
         add_action('booking_reminder_sendsms_hook', [$this, 'sendReminderSms'], 10);
 
     }//end handleForm()
@@ -59,7 +61,7 @@ class SAameliabooking extends FormInterface
      */
     public function ameliaNewCustomer($reservation, $booking)
     {
-        $buyerNumber= $reservation['phone'];        
+		$buyerNumber= $reservation['phone'];        
         $defaultSms = sprintf(__('Hello user, thank you for contacting with %1$s.', 'sms-alert'), '[store_name]');
         do_action('sa_send_sms', $buyerNumber, $defaultSms);        
     }
@@ -395,12 +397,13 @@ class SAameliabooking extends FormInterface
      *
      * @return void
      */
-    public function sendsmsNewBooking($reservation, $bookings, $container)
+    public function sendsmsNewBooking($reservation, $bookings=null, $container=null)
     {
+		$reservation = !empty($reservation['appointment'])?$reservation['appointment']:$reservation;
         foreach ($reservation['bookings'] as $booking) {
             $bookingStatus = $booking['status'];              
         } 
-        $this->sendsms($reservation, $bookings, $bookingStatus);
+        $this->sendsms($reservation, $bookingStatus);
     }//end sendsmsNewBooking()
     
     
@@ -418,7 +421,7 @@ class SAameliabooking extends FormInterface
         foreach ($reservation['bookings'] as $booking) {
             $bookingStatus = $booking['status'];                  
         }    
-        $this->sendsms($reservation, $bookings, $bookingStatus);
+        $this->sendsms($reservation, $bookingStatus);
     }
 
 
@@ -431,12 +434,12 @@ class SAameliabooking extends FormInterface
      *
      * @return void
      */
-    public function sendBookingUpdated($reservation, $bookings, $container)
+    public function sendBookingUpdated($reservation, $bookings, $container = null)
     {        
         foreach ($reservation['bookings'] as $booking) {
             $bookingStatus = $booking['status'];                  
         }
-        $this->sendsms($reservation, $bookings, $bookingStatus);
+        $this->sendsms($reservation, $bookingStatus);
     }//end sendBookingUpdated()
     
     
@@ -450,7 +453,7 @@ class SAameliabooking extends FormInterface
      *
      * @return void
      */
-    public function sendsms($reservation, $bookings, $bookingStatus)
+    public function sendsms($reservation, $bookingStatus)
     {
         foreach ($reservation['bookings'] as $booking) {
             $info          = json_decode($booking['info']);

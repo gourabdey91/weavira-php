@@ -148,8 +148,8 @@ class SaAwesomeSupport extends FormInterface
         if (! SmsAlertcURLOTP::validateCountryCode($phone)) {        
             return $data;
         }
-        if (isset($_SESSION['sa_mobile_verified']) ) {                
-              unset($_SESSION['sa_mobile_verified']);
+        if (isset($_SESSION['sa_awe_mobile_verified']) ) {                
+              unset($_SESSION['sa_awe_mobile_verified']);
               return $data;
         }
         if (!$update ) {
@@ -572,7 +572,7 @@ class SaAwesomeSupport extends FormInterface
         if (! isset($_SESSION[ $this->form_session_var ])) {
             return;
         }        
-         $_SESSION['sa_mobile_verified'] = true;     
+         $_SESSION['sa_awe_mobile_verified'] = true;     
         if (isset($_SESSION[ $this->form_session_var ])) {
             wp_send_json(SmsAlertUtility::_create_json_response(__('OTP Validated Successfully.', 'sms-alert'), 'success'));
         }

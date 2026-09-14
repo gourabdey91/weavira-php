@@ -465,8 +465,8 @@ class AffiliateManager extends FormInterface
         if (! SmsAlertcURLOTP::validateCountryCode($phone)) {        
             return false;
         }
-        if (isset($_SESSION['sa_mobile_verified']) ) {
-            unset($_SESSION['sa_mobile_verified']);
+        if (isset($_SESSION['sa_aff_mobile_verified']) ) {
+            unset($_SESSION['sa_aff_mobile_verified']);
 
             $auto_approved = get_option('wpam_auto_aff_approve_enabled', 'on');
             if ('on' === $auto_approved ) {
@@ -557,7 +557,7 @@ class AffiliateManager extends FormInterface
         if (! isset($_SESSION[ $this->form_session_var ]) ) {
             return;
         }
-        $_SESSION['sa_mobile_verified'] = true;
+        $_SESSION['sa_aff_mobile_verified'] = true;
     }
 
     /**

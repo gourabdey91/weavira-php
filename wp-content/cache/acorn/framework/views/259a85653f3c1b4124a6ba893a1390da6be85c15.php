@@ -1,0 +1,1 @@
+<?php echo $title; ?><?php /**PATH /home/u908449413/domains/weavira.com/public_html/wp-content/themes/weavira/resources/views/partials/page-header.blade.php ENDPATH**/ ?>

@@ -198,6 +198,11 @@ class SmsAlertUtility
         foreach ( $reflect->getConstants()  as $key => $value ) {
             unset($_SESSION[ $value ]);
         }
+		unset($_SESSION['login_otp_success']);
+		unset($_SESSION['sa_mobile_verified']);
+        unset($_SESSION['sa_login_mobile']);
+        unset($_SESSION['sa_mobile']);
+        unset($_SESSION['sa_login_user_id']);
         $_SESSION[ $form ] = $sessionValue;
     }
 

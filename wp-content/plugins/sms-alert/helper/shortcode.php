@@ -287,6 +287,13 @@ class SAVerify
         $wpml_lang = (apply_filters('wpml_default_language', null) != apply_filters('wpml_current_language', null))?apply_filters('wpml_current_language', null):'';
         $otp_resend_timer = !empty(SmsAlertUtility::get_elementor_data("sa_otp_re_send_timer"))?SmsAlertUtility::get_elementor_data("sa_otp_re_send_timer"):smsalert_get_option('otp_resend_timer', 'smsalert_general', '15'); 
         $auto_validate = !empty(SmsAlertUtility::get_elementor_data("auto_validate"))?SmsAlertUtility::get_elementor_data("auto_validate"):SmsAlertUtility::get_elementor_data('auto_validate', 'smsalert_general', 'off');
+		$site_url = site_url();
+		if (is_plugin_active('translatepress-multilingual/index.php') ) 
+		{
+		  $url_converter = new TRP_Url_Converter(array());
+		  $site_url = $url_converter->cur_page_url();
+		}
+		
         wp_localize_script(
             'sa-handle-footer',
             'sa_otp_settings',
@@ -298,7 +305,7 @@ class SAVerify
             'allow_otp_countries' => smsalert_get_option('allow_otp_country', 'smsalert_general'),
             'allow_otp_verification' => smsalert_get_option('allow_otp_verification', 'smsalert_general', 'off'),
             'otp_in_popup'        => smsalert_get_option('otp_in_popup', 'smsalert_general', 'on'),
-            'site_url'                => site_url(),
+            'site_url'                => $site_url,
             'ajax_url'          => admin_url('admin-ajax.php'),
             'is_checkout'             => ( ( function_exists('is_checkout') && is_checkout() ) ? true : false ),
             'login_with_otp'          => ( 'on' === $enabled_login_with_otp ? true : false ),

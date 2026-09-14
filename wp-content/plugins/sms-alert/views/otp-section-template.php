@@ -104,7 +104,7 @@
                     {
                     ?>
                     <td scope="row" class="td-heading">
-                        <input type="checkbox" name="smsalert_general[allow_multiple_user]" id="smsalert_general[allow_multiple_user]" class="notify_box" data-parent_id="smsalert_general[buyer_signup_otp]" <?php echo ( ( 'on' === $smsalert_allow_multiple_user ) ? "checked='checked'" : '' ); ?>/><label for="smsalert_general[allow_multiple_user]"><?php esc_html_e('Allow multiple accounts with same mobile number', 'sms-alert'); ?></label>
+                        <input type="checkbox" name="smsalert_general[allow_multiple_user]" id="smsalert_general[allow_multiple_user]" class="notify_box" data-parent_id="smsalert_general[buyer_signup_otp]" <?php echo ( ( 'on' === $smsalert_allow_multiple_user ) ? "checked='checked'" : '' ); ?>/><label for="smsalert_general[allow_multiple_user]"><?php esc_html_e('Allow multiple accounts with same mobile number', 'sms-alert'); ?></br><small>(<?php esc_html_e('Login with OTP will not work if the same mobile number is associated with multiple accounts', 'sms-alert'); ?>)</small></label>
                         <span class="tooltip" data-title="OTP at registration should be active"><span class="dashicons dashicons-info"></span></span>
                     </td>
                     <?php } ?>

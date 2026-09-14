@@ -1,0 +1,85 @@
+2026-08-16T00:20:54+00:00 INFO Running webhook cron.
+2026-08-16T00:20:54+00:00 INFO Webhook cron execution completed.
+2026-08-16T02:25:07+00:00 INFO Running webhook cron.
+2026-08-16T02:25:07+00:00 INFO Webhook cron execution completed.
+2026-08-16T02:56:20+00:00 INFO Running webhook cron.
+2026-08-16T02:56:21+00:00 INFO Webhook cron execution completed.
+2026-08-16T03:10:59+00:00 INFO Running webhook cron.
+2026-08-16T03:10:59+00:00 INFO Webhook cron execution completed.
+2026-08-16T04:19:09+00:00 INFO Running webhook cron.
+2026-08-16T04:19:09+00:00 INFO Webhook cron execution completed.
+2026-08-16T04:30:41+00:00 INFO Running webhook cron.
+2026-08-16T04:30:41+00:00 INFO Webhook cron execution completed.
+2026-08-16T04:57:53+00:00 INFO Running webhook cron.
+2026-08-16T04:57:53+00:00 INFO Webhook cron execution completed.
+2026-08-16T05:09:45+00:00 INFO Running webhook cron.
+2026-08-16T05:09:45+00:00 INFO Webhook cron execution completed.
+2026-08-16T07:05:53+00:00 INFO Running webhook cron.
+2026-08-16T07:05:53+00:00 INFO Webhook cron execution completed.
+2026-08-16T07:23:13+00:00 INFO Running webhook cron.
+2026-08-16T07:23:13+00:00 INFO Webhook cron execution completed.
+2026-08-16T07:35:59+00:00 INFO Running webhook cron.
+2026-08-16T07:35:59+00:00 INFO Webhook cron execution completed.
+2026-08-16T08:02:31+00:00 INFO Running webhook cron.
+2026-08-16T08:02:31+00:00 INFO Webhook cron execution completed.
+2026-08-16T08:13:35+00:00 INFO Running webhook cron.
+2026-08-16T08:13:35+00:00 INFO Webhook cron execution completed.
+2026-08-16T08:14:10+00:00 INFO Running webhook cron.
+2026-08-16T08:14:10+00:00 INFO Webhook cron execution completed.
+2026-08-16T09:22:16+00:00 INFO Running webhook cron.
+2026-08-16T09:22:16+00:00 INFO Webhook cron execution completed.
+2026-08-16T09:56:27+00:00 INFO Running webhook cron.
+2026-08-16T09:56:27+00:00 INFO Webhook cron execution completed.
+2026-08-16T10:03:35+00:00 INFO Running webhook cron.
+2026-08-16T10:03:35+00:00 INFO Webhook cron execution completed.
+2026-08-16T10:06:14+00:00 INFO Running webhook cron.
+2026-08-16T10:06:14+00:00 INFO Webhook cron execution completed.
+2026-08-16T11:01:43+00:00 INFO Running webhook cron.
+2026-08-16T11:01:43+00:00 INFO Webhook cron execution completed.
+2026-08-16T11:18:05+00:00 INFO Running webhook cron.
+2026-08-16T11:18:05+00:00 INFO Webhook cron execution completed.
+2026-08-16T11:26:54+00:00 INFO Running webhook cron.
+2026-08-16T11:26:54+00:00 INFO Webhook cron execution completed.
+2026-08-16T12:14:05+00:00 INFO Running webhook cron.
+2026-08-16T12:14:05+00:00 INFO Webhook cron execution completed.
+2026-08-16T12:28:37+00:00 INFO Running webhook cron.
+2026-08-16T12:28:37+00:00 INFO Webhook cron execution completed.
+2026-08-16T13:41:31+00:00 INFO Running webhook cron.
+2026-08-16T13:41:31+00:00 INFO Webhook cron execution completed.
+2026-08-16T13:46:53+00:00 INFO Running webhook cron.
+2026-08-16T13:46:53+00:00 INFO Webhook cron execution completed.
+2026-08-16T13:51:07+00:00 INFO Running webhook cron.
+2026-08-16T13:51:07+00:00 INFO Webhook cron execution completed.
+2026-08-16T14:21:42+00:00 INFO Running webhook cron.
+2026-08-16T14:21:42+00:00 INFO Webhook cron execution completed.
+2026-08-16T15:39:24+00:00 INFO Running webhook cron.
+2026-08-16T15:39:24+00:00 INFO Webhook cron execution completed.
+2026-08-16T15:44:14+00:00 INFO Running webhook cron.
+2026-08-16T15:44:14+00:00 INFO Webhook cron execution completed.
+2026-08-16T17:34:06+00:00 INFO Running webhook cron.
+2026-08-16T17:34:06+00:00 INFO Webhook cron execution completed.
+2026-08-16T18:26:29+00:00 INFO Running webhook cron.
+2026-08-16T18:26:29+00:00 INFO Webhook cron execution completed.
+2026-08-16T18:41:21+00:00 INFO Running webhook cron.
+2026-08-16T18:41:21+00:00 INFO Webhook cron execution completed.
+2026-08-16T18:41:21+00:00 INFO runOneCCAddressSync: [daily] budget=288.7min (until 05:00 IST)
+2026-08-16T18:41:21+00:00 INFO makeAPICall: url: woocommerce/config is success
+2026-08-16T18:41:21+00:00 INFO sync: confirmed_order_id=776, maxSeconds=17319
+2026-08-16T18:41:21+00:00 INFO makeJSONAPICall: url: woocommerce/ingest is success
+2026-08-16T18:41:21+00:00 INFO sync: config_received event sent at order_id=776
+2026-08-16T18:41:21+00:00 INFO sync: upper_order_id=778, confirmed_order_id=776
+2026-08-16T18:41:21+00:00 INFO getNextBatch: confirmed_order_id=776, orders=2
+2026-08-16T19:44:13+00:00 INFO Running webhook cron.
+2026-08-16T19:44:13+00:00 INFO Webhook cron execution completed.
+2026-08-16T20:21:46+00:00 INFO Running webhook cron.
+2026-08-16T20:21:46+00:00 INFO Webhook cron execution completed.
+2026-08-16T20:50:48+00:00 INFO Running webhook cron.
+2026-08-16T20:50:48+00:00 INFO Webhook cron execution completed.
+2026-08-16T21:45:54+00:00 INFO Running webhook cron.
+2026-08-16T21:45:54+00:00 INFO Webhook cron execution completed.
+2026-08-16T22:21:34+00:00 INFO Running webhook cron.
+2026-08-16T22:21:34+00:00 INFO Webhook cron execution completed.
+2026-08-16T22:47:17+00:00 INFO Running webhook cron.
+2026-08-16T22:47:17+00:00 INFO Webhook cron execution completed.
+2026-08-16T23:47:58+00:00 INFO Running webhook cron.
+2026-08-16T23:47:58+00:00 INFO Webhook cron execution completed.

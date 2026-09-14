@@ -7,10 +7,7 @@
 --}}
 @php
   $postedUsername = isset($_POST['username']) && is_string($_POST['username']) ? esc_attr(wp_unslash($_POST['username'])) : '';
-  // The unified form below renders [sa_signupwithmobile], not
-  // [sa_loginwithotp] — the option that actually gates that shortcode's
-  // output is "Signup With Mobile", not "Login With OTP".
-  $signupWithMobileEnabled = function_exists('smsalert_get_option') && smsalert_get_option('signup_with_mobile', 'smsalert_general') === 'on';
+  $loginWithOtpEnabled = function_exists('smsalert_get_option') && smsalert_get_option('login_with_otp', 'smsalert_general') === 'on';
 @endphp
 
 <main class="myaccount-page page-shell">
@@ -36,17 +33,14 @@
 
     <div class="myaccount-auth-card">
 
-      @if($signupWithMobileEnabled)
+      @if($loginWithOtpEnabled)
         {{--
-          One unified form instead of separate Login/Register tabs, same
-          shortcode as checkout Step 1: [sa_signupwithmobile], NOT
-          [sa_loginwithotp] (that one is login-only — it rejects any
-          number without an existing account, it never creates one). This
-          embeds its own [sa_verify] internally. On OTP verification, SMS
-          Alert matches the mobile number against an existing user's
-          billing_phone meta and logs them in, or creates a minimal new
-          account (phone only) and logs that in — see app/filters.php for
-          the fix to its billing_phone-persistence bug this relies on.
+          One unified form instead of separate Login/Register tabs — same
+          OTP flow as checkout Step 1 (do_shortcode('[sa_loginwithotp]') +
+          [sa_verify]): SMS Alert matches the mobile number against an
+          existing user's billing_phone meta and logs them in, or creates a
+          new account if no match exists, so a single form covers both
+          cases without asking the visitor which one they are.
         --}}
         <div class="ck-panel-head">
           <div class="ck-panel-text">
@@ -59,22 +53,23 @@
 
           <div class="ck-auth-col">
             <div class="ck-phone-row">
-              {!! do_shortcode('[sa_signupwithmobile sa_label="Mobile Number" sa_placeholder="Enter mobile number" sa_button="Login with OTP" redirect_url="' . esc_url(wc_get_page_permalink('myaccount')) . '"]') !!}
+              {!! do_shortcode('[sa_loginwithotp sa_label="Mobile Number" sa_placeholder="Enter mobile number"]') !!}
+              {!! do_shortcode('[sa_verify phone_selector="#phone" submit_selector=".btn"]') !!}
             </div>
           </div>
 
           <div class="ck-auth-or" aria-hidden="true">OR</div>
 
-          <div class="ck-social-col">
-            <!-- <button class="ck-social-btn" type="button" disabled title="Coming soon">
-              <svg class="ck-social-icon" viewBox="0 0 24 24" aria-label="Google" role="img">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-              Continue with Google
-            </button> -->
+          <div class="ck-social-col" style="align-items: center;">
+            <!--<button class="ck-social-btn" type="button" disabled title="Coming soon">-->
+            <!--  <svg class="ck-social-icon" viewBox="0 0 24 24" aria-label="Google" role="img">-->
+            <!--    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>-->
+            <!--    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>-->
+            <!--    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>-->
+            <!--    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>-->
+            <!--  </svg>-->
+            <!--  Continue with Google-->
+            <!--</button>-->
             {!! do_shortcode('[nextend_social_login]') !!}
             <button class="ck-social-btn" type="button" disabled title="Coming soon">
               <svg class="ck-social-icon" viewBox="0 0 24 24" fill="currentColor" aria-label="Apple" role="img">

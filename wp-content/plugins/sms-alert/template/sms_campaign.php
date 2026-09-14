@@ -31,6 +31,7 @@ if ($type == 'order_status_data') {
     global $wpdb;
 if (! empty($post_ids) ) {
     foreach ( $post_ids as $key => $post_id ) {
+		$post_id = absint($post_id);
         if ($type == 'orders_data') {
             $tokens = WooCommerceCheckOutForm::getOrderVariables();
             if (version_compare(WC_VERSION, '7.1', '<') ) {
@@ -53,7 +54,11 @@ if (! empty($post_ids) ) {
         } elseif ($type == 'abandoned_data') {
             $tokens = SA_Abandoned_Cart::getAbandonCartvariables();
             $table_name = $wpdb->prefix . SA_CART_TABLE_NAME;
-            $results=$wpdb->get_row("SELECT * FROM $table_name WHERE id = $post_id ", ARRAY_A);
+            $query = $wpdb->prepare(
+				"SELECT * FROM {$table_name} WHERE id = %d",
+				$post_id
+			);
+			$results = $wpdb->get_row($query, ARRAY_A);
             $phone[] =$results['phone'];
         } elseif ($type == 'subscribe_data') {  
             $tokens = array(
@@ -65,7 +70,14 @@ if (! empty($post_ids) ) {
             '[shop_url]'        => 'Shop Url',
             );
             global $wpdb;
-            $sql = "SELECT  P.post_title, P.post_status,P.post_content, PM.meta_value FROM {$wpdb->prefix}posts P inner join {$wpdb->prefix}postmeta PM on P.ID = PM.post_id WHERE id = $post_id";
+			$sql = $wpdb->prepare(
+				"SELECT P.post_title, P.post_status, P.post_content, PM.meta_value
+				 FROM {$wpdb->prefix}posts AS P
+				 INNER JOIN {$wpdb->prefix}postmeta AS PM 
+					ON P.ID = PM.post_id
+				 WHERE P.ID = %d",
+				$post_id
+			);
             $results = $wpdb->get_row($sql, 'ARRAY_A');
             $phone[] = $results['post_title'];
         } 

@@ -149,8 +149,8 @@ class UserRegistrationForm extends FormInterface
     {
         SmsAlertUtility::checkSession();
         
-        if (!empty($_SESSION['sa_mobile_verified']) ) {
-            unset($_SESSION['sa_mobile_verified']);
+        if (!empty($_SESSION['sa_userr_mobile_verified']) ) {
+            unset($_SESSION['sa_userr_mobile_verified']);
             return array();
         }
     
@@ -291,8 +291,8 @@ class UserRegistrationForm extends FormInterface
         if (! isset($_SESSION[ $this->form_session_var ]) ) {
             return;
         }
-        $_SESSION['sa_mobile_verified'] = true;
-        $_SESSION['sa_mobile_userswp']  = $phone_number;
+        $_SESSION['sa_userr_mobile_verified'] = true;
+        $_SESSION['sa_mobile_usersreg']  = $phone_number;
         
         if (isset($_SESSION[ $this->form_session_var ]) ) {
             wp_send_json(SmsAlertUtility::_create_json_response(__('OTP Validated Successfully.', 'sms-alert'), 'success'));

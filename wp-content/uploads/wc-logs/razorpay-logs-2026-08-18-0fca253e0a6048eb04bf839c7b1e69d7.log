@@ -1,0 +1,34 @@
+2026-08-18T13:40:53+00:00 INFO Running webhook cron.
+2026-08-18T13:40:53+00:00 INFO Webhook cron execution completed.
+2026-08-18T13:44:24+00:00 INFO Running webhook cron.
+2026-08-18T13:44:24+00:00 INFO Webhook cron execution completed.
+2026-08-18T13:45:27+00:00 INFO Called process_payment with params order_id 786
+2026-08-18T13:45:27+00:00 INFO Set transient with key razorpay_wc_order_id params order_id 786
+2026-08-18T13:45:29+00:00 INFO getRazorpayPaymentParams 786
+2026-08-18T13:45:29+00:00 INFO createOrGetRazorpayOrderId 786 and is1ccCheckout is set to no
+2026-08-18T13:45:29+00:00 INFO Called createOrGetRazorpayOrderId with params orderId 786 and is_magic_checkout_order is set to no
+2026-08-18T13:45:29+00:00 INFO razorpayOrderId  | sessionKey razorpay_order_id786
+2026-08-18T13:45:29+00:00 INFO Called createRazorpayOrderId with params orderId 786 and sessionKey razorpay_order_id786
+2026-08-18T13:45:29+00:00 INFO Called getOrderCreationData with params orderId 786
+2026-08-18T13:45:29+00:00 INFO Called getOrderCreationData with params orderId 786 and is1ccOrder is set to no
+2026-08-18T13:45:29+00:00 INFO For order 786
+2026-08-18T13:45:29+00:00 INFO {"receipt":"786","amount":2400000,"currency":"INR","payment_capture":1,"app_offer":0,"notes":{"woocommerce_order_id":"786","woocommerce_order_number":"786"}}
+2026-08-18T13:45:31+00:00 ERROR Could not enable webhook for localhost
+2026-08-18T13:45:31+00:00 INFO Meta data saved for Order ID 786 with key razorpay_order_id786 and value order_TRFnYaTNgfm9fV.
+2026-08-18T13:45:31+00:00 INFO For order session key razorpay_order_id786
+2026-08-18T13:45:47+00:00 INFO Called check_razorpay_response: wc_order_yo4ems2KE2KhN and POST data is {"razorpay_payment_id":"","razorpay_signature":"","razorpay_wc_form_submit":"1"}
+2026-08-18T13:45:47+00:00 INFO HPOS is enabled and order status: pending
+2026-08-18T13:45:47+00:00 INFO Get order id in check_razorpay_response: orderId 786
+2026-08-18T13:45:47+00:00 INFO handleErrorCase
+2026-08-18T13:45:47+00:00 INFO getErrorMessage orderId: 786
+2026-08-18T13:45:47+00:00 INFO returning An error occured. Please contact administrator for assistance
+2026-08-18T13:45:47+00:00 INFO updateOrder orderId: 786 , razorpayPaymentId:  , success: 
+2026-08-18T13:45:51+00:00 INFO Woocommerce orderId: 786 processed through callback
+2026-08-18T13:49:47+00:00 INFO Running webhook cron.
+2026-08-18T13:49:47+00:00 INFO Webhook cron execution completed.
+2026-08-18T13:54:35+00:00 INFO Running webhook cron.
+2026-08-18T13:54:35+00:00 INFO Webhook cron execution completed.
+2026-08-18T13:59:32+00:00 INFO Running webhook cron.
+2026-08-18T13:59:32+00:00 INFO Webhook cron execution completed.
+2026-08-18T14:04:29+00:00 INFO Running webhook cron.
+2026-08-18T14:04:29+00:00 INFO Webhook cron execution completed.

@@ -33,7 +33,7 @@ class SmsAlertConstants
     const ERROR_JSON_TYPE        = 'error';
     const SUCCESS_JSON_TYPE      = 'success';
     const USERPRO_VER_FIELD_META = 'verification_form';
-    const SA_VERSION             = '3.9.7';
+    const SA_VERSION             = '4.0.0';
     
     
     

@@ -177,8 +177,8 @@ class BuddyPressRegistrationForm extends FormInterface
         $password = ! empty($_REQUEST['signup_password']) ? sanitize_text_field(wp_unslash($_REQUEST['signup_password'])) : '';
         
         SmsAlertUtility::checkSession();
-        if (isset($_SESSION['sa_mobile_verified']) ) {              
-            unset($_SESSION['sa_mobile_verified']);
+        if (isset($_SESSION['sa_bud_mobile_verified']) ) {              
+            unset($_SESSION['sa_bud_mobile_verified']);
             return ;
         }       
             SmsAlertUtility::initialize_transaction($this->form_session_var2);            
@@ -277,7 +277,7 @@ class BuddyPressRegistrationForm extends FormInterface
         if (! isset($_SESSION[ $this->form_session_var2 ])) {
             return;
         }        
-         $_SESSION['sa_mobile_verified'] = true;     
+         $_SESSION['sa_bud_mobile_verified'] = true;     
         
     }
 

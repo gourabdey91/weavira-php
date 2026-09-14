@@ -3,8 +3,8 @@
 Contributors: cozyvision1
 Tags: woocommerce sms plugin, sms notification, otp verification, cod verification, login with otp
 Requires at least: 4.6
-Tested up to: 7.0
-Stable tag: 3.9.7
+Tested up to: 7.1
+Stable tag: 4.0.0
 Requires PHP: 5.6
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -383,6 +383,25 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 You are now ready to Start sending WooCommerce SMS notifications.
 
 == Changelog ==
+
+= 4.0.0 = 
+* Enhancement:  Security fixes for handling the login with otp process.
+* compatibility changes for amelia latest version
+* added support for same form multiple times on a page for fluentform
+* back in stock compatibility for ray theme
+* compatibility check for latest woocommerce version
+* compatibility check for latest wordpress version
+
+= 3.9.9 = 
+* Bugfix: Resolved the issue with conversational forms in the latest version of Fluent Forms.
+* Bugfix: Resolved the Site Health session issue.
+* compatibility check for latest woocommerce version
+* compatibility check for latest wordpress version
+
+= 3.9.8 = 
+* Enhancement:  Security fixes.
+* compatibility check for latest woocommerce version
+* compatibility check for latest wordpress version
 
 = 3.9.7 = 
 * Enhancement:  Security fixes for handling the admin settings update.

@@ -548,7 +548,7 @@ class smsalert_Setting_Options
         $smsalert_notification_login_otp              = smsalert_get_option('buyer_login_otp', 'smsalert_general', 'on');
         $smsalert_notification_reg_msg                = smsalert_get_option('registration_msg', 'smsalert_general', 'on');
         $smsalert_notification_out_of_stock_admin_msg = smsalert_get_option('admin_out_of_stock_msg', 'smsalert_general', 'on');
-        $smsalert_allow_multiple_user                 = smsalert_get_option('allow_multiple_user', 'smsalert_general', 'on');
+        $smsalert_allow_multiple_user                 = smsalert_get_option('allow_multiple_user', 'smsalert_general', '');
         $admin_bypass_otp_login                       = maybe_unserialize(smsalert_get_option('admin_bypass_otp_login', 'smsalert_general', array( 'administrator' )));
         $checkout_show_otp_button                     = smsalert_get_option('checkout_show_otp_button', 'smsalert_general', 'off');
         $checkout_show_otp_guest_only                 = smsalert_get_option('checkout_show_otp_guest_only', 'smsalert_general', 'on');

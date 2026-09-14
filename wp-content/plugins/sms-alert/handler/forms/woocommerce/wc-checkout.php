@@ -2405,9 +2405,8 @@ class SA_CodTOPrepaid
      */
     function filterWoocommerceValidOrderStatusesForPayment( $array, $instance )
     {
-        $order_status       = str_replace('wc-', '', smsalert_get_option('order_status', 'smsalert_cod_to_prepaid', ""));
-		$payment_method     = $instance->Payment_method;
-		$payment_Status     = $instance->Status;    
+        $payment_method     = $instance->get_payment_method();
+		$payment_Status     = $instance->get_status();    
 		$payment_method2    = smsalert_get_option('checkout_payment_plans', 'smsalert_cod_to_prepaid', "");		
         $order_status       = str_replace('wc-', '', smsalert_get_option('order_status', 'smsalert_cod_to_prepaid', ""));	
 		if ('' === $order_status || $payment_method !== $payment_method2 || $payment_Status !== $order_status) {
@@ -2539,8 +2538,20 @@ class SA_CodTOPrepaid
             $datetime = current_time('mysql');
             $fromdate = date('Y-m-d H:i:s', strtotime('-' . $sdata['frequency'] . ' minutes', strtotime($datetime)));
             $todate = date('Y-m-d H:i:s', strtotime('-' . ( $sdata['frequency'] + $cron_frequency ) . ' minutes', strtotime($datetime)));    
-  
-            $rows_to_phone = $wpdb->get_results('select * from wp_posts as p inner join wp_postmeta as pm1 on (p.ID = pm1.post_id) where (pm1.meta_key = "_payment_method" and pm1.meta_value = "'.$payment_method.'") and (p.post_status = "'.(strtolower($order_statuses)).'") AND (p.post_date >= "'.$todate.'" and p.post_date <="'.$fromdate.'")', ARRAY_A);
+            $query = $wpdb->prepare(
+				"SELECT * 
+				 FROM {$wpdb->posts} AS p 
+				 INNER JOIN {$wpdb->postmeta} AS pm1 ON (p.ID = pm1.post_id)
+				 WHERE (pm1.meta_key = %s AND pm1.meta_value = %s)
+				 AND (p.post_status = %s)
+				 AND (p.post_date >= %s AND p.post_date <= %s)",
+				'_payment_method',
+				$payment_method,
+				strtolower($order_statuses),
+				$todate,
+				$fromdate
+			);
+            $rows_to_phone = $wpdb->get_results($query, ARRAY_A);
 
             if ($rows_to_phone ) { // If we have new rows in the database
             

@@ -72,8 +72,8 @@ class WpForm extends FormInterface
     public function beforeValidateFields( $fals, $entry, $form_data)
     {
         SmsAlertUtility::checkSession();         
-        if (isset($_SESSION['sa_mobile_verified'])  ) {
-            unset($_SESSION['sa_mobile_verified']);           
+        if (isset($_SESSION['sa_wf_mobile_verified'])  ) {
+            unset($_SESSION['sa_wf_mobile_verified']);           
             return $entry;
         }
          
@@ -480,7 +480,7 @@ class WpForm extends FormInterface
         if (! isset($_SESSION[ $this->form_session_var ]) ) {
             return;
         }
-        $_SESSION['sa_mobile_verified'] = true;
+        $_SESSION['sa_wf_mobile_verified'] = true;
         if (! empty($_REQUEST['option']) && sanitize_text_field(wp_unslash($_REQUEST['option'])) === 'smsalert-validate-otp-form' ) {
             wp_send_json(SmsAlertUtility::_create_json_response(__('OTP Validated Successfully.', 'sms-alert'), 'success'));
             exit();

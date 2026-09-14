@@ -147,8 +147,8 @@ class PieRegistrationForm extends FormInterface
         if (! SmsAlertcURLOTP::validateCountryCode($user_phone)) {                
             return $errors;
         }
-        if (isset($_SESSION['sa_mobile_verified']) ) {
-            unset($_SESSION['sa_mobile_verified']);
+        if (isset($_SESSION['sa_pie_mobile_verified']) ) {
+            unset($_SESSION['sa_pie_mobile_verified']);
             return $errors;
         }
         $verify = check_ajax_referer('piereg_wp_registration_form_nonce', 'piereg_registration_form_nonce', false);
@@ -269,7 +269,7 @@ class PieRegistrationForm extends FormInterface
         if (! isset($_SESSION[ $this->form_session_var2 ]) ) {
             return;
         }
-        $_SESSION['sa_mobile_verified'] = true;
+        $_SESSION['sa_pie_mobile_verified'] = true;
         $_SESSION['sa_mobile_pie']  = $phone_number;
         if (isset($_SESSION[ $this->form_session_var2 ]) ) {
             wp_send_json(SmsAlertUtility::_create_json_response(__('OTP Validated Successfully.', 'sms-alert'), 'success'));
