@@ -13,7 +13,7 @@
   $signupWithMobileEnabled = function_exists('smsalert_get_option') && smsalert_get_option('signup_with_mobile', 'smsalert_general') === 'on';
 @endphp
 
-<main class="myaccount-page page-shell">
+<main class="myaccount-page myaccount-login-page page-shell">
 
   <nav class="wl-breadcrumb" aria-label="Breadcrumb">
     <a href="{{ home_url('/') }}">Home</a>

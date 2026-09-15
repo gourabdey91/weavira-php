@@ -127,6 +127,10 @@ add_filter('body_class', function ($classes) {
         $classes[] = 'moments-page';
     }
 
+    if (function_exists('is_account_page') && is_account_page() && !is_user_logged_in()) {
+        $classes[] = 'myaccount-login-body';
+    }
+
     return $classes;
 });
 
