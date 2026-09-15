@@ -1,3 +1,9 @@
+{{-- The My Account login/signup screen (guest view only — once logged in,
+     is_account_page() still true but the dashboard renders instead) is a
+     distraction-free entry point, same reasoning as checkout's own
+     minimal header — no footer there. --}}
+@unless(function_exists('is_account_page') && is_account_page() && !is_user_logged_in())
+
 @if(is_home() || is_front_page())
     @include('partials.trust-ribbon')
 @endif
@@ -107,5 +113,7 @@
 
 
 </footer>
+
+@endunless
 
 @include('partials.mobile-bottom-nav')
