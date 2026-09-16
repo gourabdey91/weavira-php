@@ -1,0 +1,80 @@
+{
+    "key": "group_myaccount_login_images",
+    "title": "My Account Login Images",
+    "fields": [
+        {
+            "key": "field_myaccount_login_image_desktop",
+            "label": "Desktop Image",
+            "name": "myaccount_login_image_desktop",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Shown on the left half of the login screen at 769px width and wider. Falls back to the current default photo if left blank.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": "",
+            "allow_in_bindings": 0
+        },
+        {
+            "key": "field_myaccount_login_image_mobile",
+            "label": "Mobile Image",
+            "name": "myaccount_login_image_mobile",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Shown as the top banner on the login screen below 769px width. Falls back to the current default photo if left blank.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": "",
+            "allow_in_bindings": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page",
+                "operator": "==",
+                "value": "11"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Images for the logged-out My Account (login) screen — shown side-by-side with the sign-in form on desktop, as a top banner on mobile.",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1789570000
+}

@@ -11,6 +11,12 @@
   // [sa_loginwithotp] — the option that actually gates that shortcode's
   // output is "Signup With Mobile", not "Login With OTP".
   $signupWithMobileEnabled = function_exists('smsalert_get_option') && smsalert_get_option('signup_with_mobile', 'smsalert_general') === 'on';
+  // Editable from the My Account page in wp-admin (see acf-json/group_myaccount_login_images.json),
+  // same pattern as the Home page's own image fields. Falls back to the
+  // original hardcoded photo (attachment 334) until someone uploads one.
+  $defaultLoginImage = wp_get_attachment_image_url(334, 'large');
+  $loginImageDesktop = get_field('myaccount_login_image_desktop') ?: $defaultLoginImage;
+  $loginImageMobile = get_field('myaccount_login_image_mobile') ?: $defaultLoginImage;
 @endphp
 
 <main class="myaccount-page myaccount-login-page page-shell">
@@ -26,7 +32,10 @@
   <div class="myaccount-auth-shell">
 
     <div class="myaccount-auth-image" aria-hidden="true">
-      <img src="{{ wp_get_attachment_image_url(334, 'large') }}" alt="" loading="lazy">
+      <picture>
+        <source media="(min-width: 769px)" srcset="{{ $loginImageDesktop }}">
+        <img src="{{ $loginImageMobile }}" alt="" loading="lazy">
+      </picture>
       <div class="myaccount-auth-image-overlay"></div>
       <div class="myaccount-auth-image-text">
         <span class="myaccount-auth-image-kicker">Weavira</span>
