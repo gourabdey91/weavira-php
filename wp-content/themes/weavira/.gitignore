@@ -2,5 +2,11 @@
 /vendor
 /public/*
 !/public/.gitkeep
+!/public/css/
+/public/css/*
+!/public/css/main.css
+!/public/js/
+/public/js/*
+!/public/js/weavira.js
 .env
 npm-debug.log
