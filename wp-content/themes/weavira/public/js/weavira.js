@@ -2239,6 +2239,27 @@
       return document.querySelector('.ck-step-panel[data-step="' + stepNum + '"], .ck-accordion-panel[data-step="' + stepNum + '"]');
     }
 
+    /* woocommerce_form_field() marks a required field with aria-required
+       plus a `validate-required` class on the wrapping <p> (checkout.blade.php's
+       required => true fields, e.g. billing_email) — it never sets the
+       native HTML `required` attribute on the <input> itself (confirmed
+       directly in WooCommerce core, wc-template-functions.php). validatePanel
+       below (and the Place Order safety net further down) both rely on
+       native required/checkValidity(), so without this a required field
+       left empty silently let "Next"/"Place Order" through regardless —
+       WooCommerce's own inline "X is a required field" notice could still
+       appear (from its separate AJAX validation), but nothing here ever
+       blocked on it. Syncing the native attribute once, from WC's own
+       required marking, makes both of those already-correct checks work.
+       Mirrors the same real-required-attribute approach already used for
+       the GST sub-form's fields below (necessarily manual there, since
+       those are required=>false at the PHP level until the section is
+       shown) — this just extends it to the fields WC itself marks
+       required from the start. */
+    form.querySelectorAll('.validate-required input, .validate-required select, .validate-required textarea').forEach(function (field) {
+      field.required = true;
+    });
+
     function openStep(stepNum) {
       panels.forEach(function (panel) {
         panel.hidden = panel.getAttribute('data-step') !== String(stepNum);
