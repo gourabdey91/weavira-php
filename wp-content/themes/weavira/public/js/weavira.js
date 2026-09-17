@@ -2988,15 +2988,27 @@
     var errorEl = otpStep.querySelector('.myaccount-otp-error');
     var editBtn = otpStep.querySelector('.myaccount-otp-edit');
 
-    var realVerifyBtn = document.querySelector('.smsalertModal.popup #sa_verify_otp');
+    /* The plugin renders TWO duplicate .smsalertModal.popup instances on
+       this page on every load (a pre-existing, unrelated plugin quirk —
+       confirmed directly against the live page's HTML: two elements each
+       with id="sa_verify_otp"). Which one the plugin's own AJAX lifecycle
+       actually operates on isn't knowable up front, so every lookup below
+       is scoped to activePopup — the specific instance whose .sa-message
+       actually received the real, substituted "sent to <phone>" text (see
+       handleRealMessage) — rather than blindly taking the first DOM
+       match, which could silently be the OTHER, inactive instance and
+       never see the plugin's real disabled-attribute toggling. */
+    var activePopup = document.querySelector('.smsalertModal.popup');
+    var realVerifyBtn = null;
+    var loading = { verify: false, resend: false };
+
     /* Resend never toggles .sa_resend_btn's own `disabled` — saResendOTP()
        re-triggers a click on the ORIGINAL phone-submit button instead
        (otp-sms.min.js), and THAT button is what the plugin's own AJAX
-       disables/re-enables around the request. Still in the DOM the whole
-       time, just hidden via [hidden] on its .ck-auth-grid ancestor, so
-       it's safely observable from page load. */
+       disables/re-enables around the request. It's unique on this page
+       (one [sa_signupwithmobile] instance), so no duplicate-ID ambiguity
+       here — safe to resolve once at setup. */
     var realResendInitBtn = card.querySelector('.ck-phone-row .smsalert_reg_with_otp_btn');
-    var loading = { verify: false, resend: false };
 
     var formatPhone = function (raw) {
       var digits = raw.replace(/\D/g, '');
@@ -3021,7 +3033,7 @@
     };
 
     var realOtpInput = function () {
-      return document.querySelector('.smsalertModal.popup .otp_input');
+      return activePopup ? activePopup.querySelector('.otp_input') : null;
     };
 
     var updateVerifyEnabled = function () {
@@ -3036,12 +3048,22 @@
       real.value = combined;
     };
 
+    /* Auto-submit once every box has a digit — submitVerify (defined
+       below) already guards against double-submission and against
+       firing with an incomplete/already-in-flight code, so calling it
+       unconditionally here whenever a box fills is safe: it's a no-op
+       any time the boxes aren't actually all full yet. */
+    var maybeAutoSubmit = function () {
+      if (boxes.every(function (b) { return b.value !== ''; })) { submitVerify(); }
+    };
+
     boxes.forEach(function (box, i) {
       box.addEventListener('input', function () {
         box.value = box.value.replace(/[^0-9]/g, '').slice(0, 1);
         if (box.value && boxes[i + 1]) { boxes[i + 1].focus(); }
         syncRealField();
         updateVerifyEnabled();
+        maybeAutoSubmit();
       });
       box.addEventListener('keydown', function (e) {
         if (e.key === 'Backspace' && !box.value && boxes[i - 1]) {
@@ -3061,6 +3083,7 @@
         boxes[last].focus();
         syncRealField();
         updateVerifyEnabled();
+        maybeAutoSubmit();
       });
     });
 
@@ -3068,39 +3091,76 @@
        signal for "AJAX request in flight" around both the verify and
        resend/init calls (otp-sms.min.js) — onto this UI's `.is-loading`,
        so the spinner reflects real network state without reimplementing
-       any AJAX, consistent with the rest of this file's approach. */
+       any AJAX, consistent with the rest of this file's approach.
+
+       A local dev/test SMS API can round-trip fast enough (well under
+       ~150ms) that a spinner tied 1:1 to the real disabled-window can
+       flip on and off within a single frame — technically correct, but
+       reads as "nothing happened" rather than "processing." minLoadingMs
+       below keeps the spinner visible for a floor duration regardless of
+       how fast the real request actually finishes, without affecting
+       genuinely slow requests at all (it only ever pads, never delays
+       showing the spinner in the first place). */
+    var minLoadingMs = 350;
+
     var watchLoading = function (realBtn, onChange) {
       if (!realBtn) { return; }
-      var sync = function () { onChange(!!realBtn.disabled); };
-      sync();
-      new MutationObserver(sync).observe(realBtn, { attributes: true, attributeFilter: ['disabled'] });
+      var shownAt = 0;
+      var pendingOff = null;
+      var apply = function (isLoading) {
+        if (pendingOff) { clearTimeout(pendingOff); pendingOff = null; }
+        if (isLoading) {
+          shownAt = Date.now();
+          onChange(true);
+          return;
+        }
+        var elapsed = Date.now() - shownAt;
+        var wait = Math.max(0, minLoadingMs - elapsed);
+        if (wait === 0) {
+          onChange(false);
+        } else {
+          pendingOff = setTimeout(function () { onChange(false); }, wait);
+        }
+      };
+      apply(!!realBtn.disabled);
+      new MutationObserver(function () { apply(!!realBtn.disabled); })
+        .observe(realBtn, { attributes: true, attributeFilter: ['disabled'] });
     };
 
-    watchLoading(realVerifyBtn, function (isLoading) {
-      loading.verify = isLoading;
-      verifyBtn.classList.toggle('is-loading', isLoading);
-      boxes.forEach(function (b) { b.disabled = isLoading; });
-      updateVerifyEnabled();
-    });
+    var attachVerifyLoadingWatcher = function () {
+      if (realVerifyBtn || !activePopup) { return; }
+      realVerifyBtn = activePopup.querySelector('#sa_verify_otp');
+      watchLoading(realVerifyBtn, function (isLoading) {
+        loading.verify = isLoading;
+        verifyBtn.classList.toggle('is-loading', isLoading);
+        boxes.forEach(function (b) { b.disabled = isLoading; });
+        updateVerifyEnabled();
+      });
+    };
 
     watchLoading(realResendInitBtn, function (isLoading) {
       loading.resend = isLoading;
       resendLink.classList.toggle('is-loading', isLoading);
     });
 
-    verifyBtn.addEventListener('click', function () {
-      if (loading.verify || loading.resend || !realVerifyBtn) { return; }
+    /* Shared by the button's own click and auto-submit (see the box
+       `input` listener above) so both paths get the same in-flight
+       guard and spinner handling. */
+    var submitVerify = function () {
+      if (loading.verify || loading.resend || !realVerifyBtn || verifyBtn.disabled) { return; }
       loading.verify = true;
       verifyBtn.classList.add('is-loading');
       updateVerifyEnabled();
       syncRealField();
       realVerifyBtn.click();
-    });
+    };
+
+    verifyBtn.addEventListener('click', submitVerify);
 
     resendLink.addEventListener('click', function (e) {
       e.preventDefault();
       if (loading.resend || loading.verify) { return; }
-      var realResend = document.querySelector('.smsalertModal.popup .sa_resend_btn');
+      var realResend = activePopup ? activePopup.querySelector('.sa_resend_btn') : null;
       if (realResend) { realResend.click(); }
       boxes.forEach(function (b) { b.value = ''; });
       if (boxes[0]) { boxes[0].focus(); }
@@ -3109,7 +3169,7 @@
 
     editBtn.addEventListener('click', function (e) {
       e.preventDefault();
-      var realEdit = document.querySelector('.smsalertModal.popup .saeditphone');
+      var realEdit = activePopup ? activePopup.querySelector('.saeditphone') : null;
       if (realEdit) { realEdit.click(); }
       showPhoneEntry();
     });
@@ -3119,7 +3179,7 @@
        already a "changes constantly" pattern a MutationObserver would
        just be a heavier way to watch. */
     setInterval(function () {
-      var realTimer = document.querySelector('.smsalertModal.popup .satimer');
+      var realTimer = activePopup ? activePopup.querySelector('.satimer') : null;
       if (realTimer && timerEl) {
         var text = realTimer.textContent.trim();
         timerEl.textContent = (text && text !== '00:00:00') ? 'in ' + text : '';
@@ -3152,6 +3212,11 @@
          contains it. */
       if (!text || text.indexOf('##phone##') !== -1) { return; }
       if (/has been sent to/i.test(text)) {
+        /* This is the one point where we have direct evidence of which
+           popup instance is actually live — see the activePopup comment
+           near its declaration above. */
+        activePopup = message.closest('.smsalertModal.popup') || activePopup;
+        attachVerifyLoadingWatcher();
         var match = text.match(/sent to\s*([0-9+ ]+)/i);
         var phone = match ? formatPhone(match[1]) : '';
         var otpField = realOtpInput();
