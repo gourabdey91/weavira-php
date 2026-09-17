@@ -236,7 +236,6 @@
         <i data-lucide="chevron-right" class="ck-accordion-chevron" aria-hidden="true"></i>
       </button>
       <div class="ck-accordion-panel" id="ck-panel-2" data-step="2" @if(!$skipStep1) hidden @endif>
-        <div class="woocommerce-shipping-fields__field-wrapper">
           <?php
           // Card-list picker (Home / Office / ...) — shown whenever the
           // customer has any saved address at all. JS (weavira.js) reads
@@ -374,7 +373,23 @@
             </div>
           @endif
 
-          <div class="ck-field-grid" id="ck-shipping-field-grid" @if($shippingDefault) hidden @endif>
+          {{--
+            .woocommerce-shipping-fields__field-wrapper scoped to ONLY this
+            grid (not the cards/modal above) — it's the exact class/selector
+            WooCommerce core's own wc-address-i18n.js uses to find every
+            .form-row within it and re-sort/re-parent them all under the
+            FIRST row's own parent (address-i18n.js: `rows.detach().appendTo(
+            wrapper)`). With the cards + custom Add/Edit modal ALSO inside
+            that wrapper (as it used to be, wrapping the whole panel), that
+            scan swept up the modal's own unrelated ck-am-* fields too, and
+            its indiscriminate re-parenting moved every real shipping_*/
+            billing_* field out of this div and into the modal's own field
+            grid — emptying #ck-shipping-field-grid and fully explaining
+            the fields duplicating inside the Edit Address popup after any
+            interaction (like selecting a saved card, which dispatches a
+            country change) that fires the event this script reacts to.
+          --}}
+          <div class="ck-field-grid woocommerce-shipping-fields__field-wrapper" id="ck-shipping-field-grid" @if($shippingDefault) hidden @endif>
             <?php
             foreach ($deliveryFieldOrder as $key) {
                 if (isset($deliveryFields[$key])) {
@@ -383,7 +398,6 @@
             }
             ?>
           </div>
-        </div>
 
         {{-- Only relevant while the field grid above is visible (Add New
              Address is active, or there were no saved addresses to begin
