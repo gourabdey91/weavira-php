@@ -2932,4 +2932,260 @@
     new MutationObserver(apply).observe(input, { attributes: true, attributeFilter: ['placeholder'] });
   }());
 
+  /* ── My Account login: OTP step, custom UI on the plugin's backend ───
+     After several rounds of CSS-only patches on the SMS Alert plugin's
+     own auto-generated OTP popup kept failing in real-browser testing
+     for reasons that were never fully pinned down (position, spacing,
+     and layout fixes that all passed locally and still broke live),
+     this replaces the VISIBLE layer entirely with genuine markup in
+     form-login.blade.php (.myaccount-otp-step) — same approach as the
+     rest of this page, which has never had these problems.
+
+     Everything that actually matters for correctness — sending the
+     code, validating it, resending, the session/nonce handling, and
+     the eventual real login + redirect on success — is still 100% the
+     plugin's own, already-proven JS (otp-sms.min.js) and PHP. None of
+     that is reimplemented here; a full custom AJAX flow was considered
+     and rejected as too risky (the real validate step re-serializes
+     the entire original phone form alongside the code and chains
+     through several endpoints before login actually happens — exactly
+     the kind of logic a styling fix shouldn't be reimplementing from
+     scratch). Instead, this custom UI stays a thin, purely visual proxy:
+     digit boxes mirror their combined value into the plugin's own
+     (now-hidden) #smsalert_customer_validation_otp_token field, and
+     every button here triggers a real .click() on the plugin's own
+     corresponding hidden element — Verify triggers #sa_verify_otp,
+     Resend triggers .sa_resend_btn, Back/Edit trigger .close/.back or
+     .saeditphone. The plugin's own popup keeps existing and functioning
+     in the DOM throughout; only main.css's `display:none` keeps it out
+     of view.
+
+     Detection of "OTP was sent" reuses the same signal already proven
+     reliable elsewhere in this file: the plugin's .sa-message element
+     receiving its real "...has been sent to <phone>" text (the initial
+     static markup only ever has the literal, unsubstituted "##phone##"
+     placeholder — substitution happens later, server-side, inside the
+     plugin's own AJAX success response). */
+  (function () {
+    if (!document.body.classList.contains('myaccount-login-body')) { return; }
+
+    var otpStep = document.querySelector('.myaccount-otp-step');
+    var card = document.querySelector('.myaccount-auth-card');
+    if (!otpStep || !card) { return; }
+
+    var phoneEntryEls = [
+      card.querySelector('.myaccount-auth-welcome'),
+      card.querySelector('.ck-auth-grid'),
+      card.querySelector('.myaccount-auth-legal')
+    ].filter(Boolean);
+
+    var boxes = Array.prototype.slice.call(otpStep.querySelectorAll('.myaccount-otp-box'));
+    var verifyBtn = otpStep.querySelector('.myaccount-otp-verify-btn');
+    var resendLink = otpStep.querySelector('.myaccount-otp-resend');
+    var timerEl = otpStep.querySelector('.myaccount-otp-timer');
+    var phoneEl = otpStep.querySelector('.myaccount-otp-phone');
+    var digitCountEl = otpStep.querySelector('.myaccount-otp-digit-count');
+    var errorEl = otpStep.querySelector('.myaccount-otp-error');
+    var editBtn = otpStep.querySelector('.myaccount-otp-edit');
+
+    var realVerifyBtn = document.querySelector('.smsalertModal.popup #sa_verify_otp');
+    /* Resend never toggles .sa_resend_btn's own `disabled` — saResendOTP()
+       re-triggers a click on the ORIGINAL phone-submit button instead
+       (otp-sms.min.js), and THAT button is what the plugin's own AJAX
+       disables/re-enables around the request. Still in the DOM the whole
+       time, just hidden via [hidden] on its .ck-auth-grid ancestor, so
+       it's safely observable from page load. */
+    var realResendInitBtn = card.querySelector('.ck-phone-row .smsalert_reg_with_otp_btn');
+    var loading = { verify: false, resend: false };
+
+    var formatPhone = function (raw) {
+      var digits = raw.replace(/\D/g, '');
+      if (digits.length === 12 && digits.slice(0, 2) === '91') {
+        return '+91 ' + digits.slice(2, 7) + ' ' + digits.slice(7);
+      }
+      return digits ? '+' + digits : raw;
+    };
+
+    var showPhoneEntry = function () {
+      otpStep.hidden = true;
+      phoneEntryEls.forEach(function (el) { el.hidden = false; });
+    };
+
+    var showOtpStep = function () {
+      phoneEntryEls.forEach(function (el) { el.hidden = true; });
+      otpStep.hidden = false;
+      errorEl.hidden = true;
+      boxes.forEach(function (b) { b.value = ''; });
+      if (boxes[0]) { boxes[0].focus(); }
+      updateVerifyEnabled();
+    };
+
+    var realOtpInput = function () {
+      return document.querySelector('.smsalertModal.popup .otp_input');
+    };
+
+    var updateVerifyEnabled = function () {
+      var complete = boxes.every(function (b) { return b.value !== ''; });
+      verifyBtn.disabled = loading.verify || !complete;
+    };
+
+    var syncRealField = function () {
+      var real = realOtpInput();
+      if (!real) { return; }
+      var combined = boxes.map(function (b) { return b.value; }).join('');
+      real.value = combined;
+    };
+
+    boxes.forEach(function (box, i) {
+      box.addEventListener('input', function () {
+        box.value = box.value.replace(/[^0-9]/g, '').slice(0, 1);
+        if (box.value && boxes[i + 1]) { boxes[i + 1].focus(); }
+        syncRealField();
+        updateVerifyEnabled();
+      });
+      box.addEventListener('keydown', function (e) {
+        if (e.key === 'Backspace' && !box.value && boxes[i - 1]) {
+          boxes[i - 1].focus();
+        }
+        if (e.key === 'ArrowLeft' && boxes[i - 1]) { boxes[i - 1].focus(); }
+        if (e.key === 'ArrowRight' && boxes[i + 1]) { boxes[i + 1].focus(); }
+      });
+      box.addEventListener('paste', function (e) {
+        var text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+        if (!text) { return; }
+        e.preventDefault();
+        text.split('').forEach(function (digit, offset) {
+          if (boxes[i + offset]) { boxes[i + offset].value = digit; }
+        });
+        var last = Math.min(i + text.length, boxes.length - 1);
+        boxes[last].focus();
+        syncRealField();
+        updateVerifyEnabled();
+      });
+    });
+
+    /* Mirrors the plugin's own `disabled` attribute — its already-proven
+       signal for "AJAX request in flight" around both the verify and
+       resend/init calls (otp-sms.min.js) — onto this UI's `.is-loading`,
+       so the spinner reflects real network state without reimplementing
+       any AJAX, consistent with the rest of this file's approach. */
+    var watchLoading = function (realBtn, onChange) {
+      if (!realBtn) { return; }
+      var sync = function () { onChange(!!realBtn.disabled); };
+      sync();
+      new MutationObserver(sync).observe(realBtn, { attributes: true, attributeFilter: ['disabled'] });
+    };
+
+    watchLoading(realVerifyBtn, function (isLoading) {
+      loading.verify = isLoading;
+      verifyBtn.classList.toggle('is-loading', isLoading);
+      boxes.forEach(function (b) { b.disabled = isLoading; });
+      updateVerifyEnabled();
+    });
+
+    watchLoading(realResendInitBtn, function (isLoading) {
+      loading.resend = isLoading;
+      resendLink.classList.toggle('is-loading', isLoading);
+    });
+
+    verifyBtn.addEventListener('click', function () {
+      if (loading.verify || loading.resend || !realVerifyBtn) { return; }
+      loading.verify = true;
+      verifyBtn.classList.add('is-loading');
+      updateVerifyEnabled();
+      syncRealField();
+      realVerifyBtn.click();
+    });
+
+    resendLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (loading.resend || loading.verify) { return; }
+      var realResend = document.querySelector('.smsalertModal.popup .sa_resend_btn');
+      if (realResend) { realResend.click(); }
+      boxes.forEach(function (b) { b.value = ''; });
+      if (boxes[0]) { boxes[0].focus(); }
+      updateVerifyEnabled();
+    });
+
+    editBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var realEdit = document.querySelector('.smsalertModal.popup .saeditphone');
+      if (realEdit) { realEdit.click(); }
+      showPhoneEntry();
+    });
+
+    /* Countdown is a simple poll, not an observer — the plugin updates
+       .satimer's text every second via its own setInterval, which is
+       already a "changes constantly" pattern a MutationObserver would
+       just be a heavier way to watch. */
+    setInterval(function () {
+      var realTimer = document.querySelector('.smsalertModal.popup .satimer');
+      if (realTimer && timerEl) {
+        var text = realTimer.textContent.trim();
+        timerEl.textContent = (text && text !== '00:00:00') ? 'in ' + text : '';
+      }
+    }, 500);
+
+    /* Mirrors any error the plugin's own validation surfaces (a wrong
+       code, "Maximum OTP limit exceeded", etc.) into this UI's own
+       error line — watched generically (anything that isn't the normal
+       "sent to <phone>" success wording) rather than matching specific
+       error strings, since the plugin can surface several different
+       messages here and new ones shouldn't silently go unmirrored. */
+    var mirrorError = function (text) {
+      if (!text || /has been sent to/i.test(text)) { return; }
+      errorEl.textContent = text;
+      errorEl.hidden = false;
+    };
+
+    var handleRealMessage = function (message) {
+      var text = message.textContent.trim();
+      /* The plugin's own default, pre-send message text is literally
+         "...has been sent to ##phone##..." (helper/class-sapopup.php,
+         $sa_label) — present in the DOM from initial page load, before
+         any OTP has actually been sent. It matches the "sent" regex
+         below just as well as the real, substituted text does, which
+         without this guard shows the OTP step immediately on page
+         load. The literal, unsubstituted placeholder is the one
+         reliable signal that no real send has happened yet — real
+         substituted text (or any other real plugin message) never
+         contains it. */
+      if (!text || text.indexOf('##phone##') !== -1) { return; }
+      if (/has been sent to/i.test(text)) {
+        var match = text.match(/sent to\s*([0-9+ ]+)/i);
+        var phone = match ? formatPhone(match[1]) : '';
+        var otpField = realOtpInput();
+        var otpLength = otpField ? otpField.getAttribute('data-max') : null;
+        if (phoneEl) { phoneEl.textContent = phone || 'your phone'; }
+        if (digitCountEl && otpLength) { digitCountEl.textContent = otpLength; }
+        if (otpStep.hidden) { showOtpStep(); }
+      } else {
+        mirrorError(text);
+      }
+    };
+
+    var watchMessage = function (message) {
+      if (message.dataset.wvOtpWatched) { return; }
+      message.dataset.wvOtpWatched = '1';
+      handleRealMessage(message);
+      new MutationObserver(function () {
+        handleRealMessage(message);
+      }).observe(message, { childList: true, subtree: true, characterData: true });
+    };
+
+    document.querySelectorAll('.smsalertModal.popup .sa-message').forEach(watchMessage);
+
+    new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (node) {
+          if (node.nodeType !== 1) { return; }
+          if (node.matches && node.matches('.sa-message')) { watchMessage(node); }
+          if (node.querySelectorAll) {
+            node.querySelectorAll('.sa-message').forEach(watchMessage);
+          }
+        });
+      });
+    }).observe(document.body, { childList: true, subtree: true });
+  }());
+
 }());

@@ -15668,8 +15668,17 @@ a.plp-card-add { text-decoration: none; text-align: center; }
    generic "button" class, whose default text color (#515151, a dark
    gray — WooCommerce's --wc-secondary-text) was winning over a plain
    color:#fff and made "Continue" nearly unreadable on the dark-red
-   background. */
-.ck-phone-row .smsalert_login_with_otp_btn {
+   background.
+
+   Two selectors, not one: [sa_loginwithotp] renders .smsalert_login_with_
+   otp_btn, [sa_signupwithmobile] (the one actually used on My Account and
+   checkout — see form-login.blade.php/checkout.blade.php for why) renders
+   .smsalert_reg_with_otp_btn instead. The plugin doesn't style the reg_
+   variant with its own !important background the way it does the login_
+   variant, but keeping both selectors covered here means this styling
+   isn't silently lost again if either page's shortcode ever changes. */
+.ck-phone-row .smsalert_login_with_otp_btn,
+.ck-phone-row .smsalert_reg_with_otp_btn {
   -webkit-appearance: none;
   appearance: none;
   isolation: isolate;
@@ -15691,7 +15700,17 @@ a.plp-card-add { text-decoration: none; text-align: center; }
   transition: opacity 180ms;
 }
 
-.ck-phone-row .smsalert_login_with_otp_btn:hover { opacity: 0.88; }
+.ck-phone-row .smsalert_login_with_otp_btn:hover,
+.ck-phone-row .smsalert_reg_with_otp_btn:hover { opacity: 0.88; }
+
+/* The plugin's own multi-mode UI (a "Back" link between its login/
+   register sub-views) isn't used here — this page only ever renders the
+   one unified form, so the link is dead weight that would otherwise show
+   up under the phone field. */
+.ck-phone-row .sa_default_signup_form,
+.ck-phone-row .sa_default_login_form {
+  display: none;
+}
 
 /* Secure sign-in note — a single flat line, no background/border box (see
    checkout.blade.php; replaces the previous two-box .ck-trust-badges). */
@@ -19002,7 +19021,8 @@ a.plp-card-add { text-decoration: none; text-align: center; }
   line-height: 1.25;
 }
 
-.myaccount-auth-card .ck-phone-row .smsalert_login_with_otp_btn {
+.myaccount-auth-card .ck-phone-row .smsalert_login_with_otp_btn,
+.myaccount-auth-card .ck-phone-row .smsalert_reg_with_otp_btn {
   padding-block: clamp(3px, calc(5.3cqh - 16.875px), 13.6px);
   margin-top: clamp(3px, calc(4.5cqh - 13.875px), 12px);
 }
@@ -19047,6 +19067,7 @@ a.plp-card-add { text-decoration: none; text-align: center; }
    This is the one that actually matters at the low end; 32px keeps each
    control comfortably tappable without the earlier 44px tax on height. */
 .myaccount-auth-card .ck-phone-row .smsalert_login_with_otp_btn,
+.myaccount-auth-card .ck-phone-row .smsalert_reg_with_otp_btn,
 .myaccount-auth-card .ck-social-btn,
 .myaccount-auth-card .ck-social-col .nsl-container .nsl-button {
   min-height: clamp(32px, calc(6cqh + 9.5px), 44px);
@@ -19111,7 +19132,8 @@ a.plp-card-add { text-decoration: none; text-align: center; }
     padding-block: 0.35rem;
   }
 
-  .myaccount-auth-card .ck-phone-row .smsalert_login_with_otp_btn {
+  .myaccount-auth-card .ck-phone-row .smsalert_login_with_otp_btn,
+  .myaccount-auth-card .ck-phone-row .smsalert_reg_with_otp_btn {
     padding-block: 0.4rem;
     margin-top: 0.35rem;
     font-size: 0.75rem;
@@ -19123,6 +19145,7 @@ a.plp-card-add { text-decoration: none; text-align: center; }
   }
 
   .myaccount-auth-card .ck-phone-row .smsalert_login_with_otp_btn,
+  .myaccount-auth-card .ck-phone-row .smsalert_reg_with_otp_btn,
   .myaccount-auth-card .ck-social-btn,
   .myaccount-auth-card .ck-social-col .nsl-container .nsl-button {
     min-height: 30px;
@@ -19142,6 +19165,234 @@ a.plp-card-add { text-decoration: none; text-align: center; }
     gap: 0.45rem;
     margin-bottom: 0.45rem;
   }
+}
+
+/* ── OTP verification step — genuine markup, not a restyled popup ──
+   See form-login.blade.php's .myaccount-otp-step and weavira.js's "OTP
+   step: custom UI, plugin backend" block for the full reasoning: after
+   several rounds of CSS-only fixes on the SMS Alert plugin's own
+   auto-generated popup kept passing every local test and still failing
+   in real-browser use for reasons never pinned down, this replaces the
+   VISIBLE layer with real markup in our own template instead — same
+   approach as the rest of this page, which never had these problems.
+   All the logic that actually matters (sending, validating, resending,
+   session handling, the real login+redirect on success) is still
+   100% the plugin's own JS/PHP; this UI only mirrors input into, and
+   triggers real clicks on, the plugin's own (now-hidden) elements.
+
+   .myaccount-otp-step lives inside .myaccount-auth-card, right beside
+   the phone-entry group weavira.js toggles it against — so it inherits
+   that card's already-correct viewport-fit sizing/centering for free,
+   the whole reason this needed to move inside the card rather than
+   become another independent full-page overlay like the popup was. */
+
+body.myaccount-login-body .smsalertModal.popup {
+  display: none !important;
+}
+
+/* weavira.js toggles the [hidden] attribute on .myaccount-otp-step and
+   its phone-entry siblings (.myaccount-auth-welcome, .ck-auth-grid,
+   .myaccount-auth-legal) to switch steps. That only works if nothing
+   else on the page sets a competing `display` on those same elements
+   — an unconditional `display: flex` (like .myaccount-otp-step's own
+   rule below, or checkout's shared .ck-auth-grid{display:flex} rule)
+   has equal specificity to the UA stylesheet's [hidden]{display:none}
+   but wins anyway, since author CSS always beats the UA stylesheet
+   regardless of specificity — the element stays visibly on-screen
+   even with the hidden attribute correctly set. !important here is
+   what actually lets hidden win back. */
+.myaccount-auth-card [hidden] {
+  display: none !important;
+}
+
+.myaccount-otp-step {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.myaccount-otp-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-weight: 500;
+  color: var(--accent);
+  margin: 0 0 0.75rem;
+}
+
+/* width:100% + min-width:0 — .myaccount-otp-message is a direct child
+   of .myaccount-otp-step's column flex, so it's a flex item; a flex
+   item's default min-width:auto pins it to its min-content size, which
+   here includes the .myaccount-otp-phone-row inline-flex box as one
+   unbreakable atomic unit, overflowing the card on narrow viewports
+   instead of wrapping onto its own line. Without this the whole page
+   silently clips the overflow rather than showing a scrollbar, since
+   html/body both set overflow-x:hidden site-wide. */
+.myaccount-otp-message {
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0 0 1.5rem;
+}
+
+.myaccount-otp-phone-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.myaccount-otp-edit {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.myaccount-otp-edit svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  color: var(--accent);
+}
+
+.myaccount-otp-boxes {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Real, separate <input> elements — no background-gradient illusion
+   needed this time, since these aren't standing in for the plugin's
+   own single combined field, just plain boxes weavira.js reads and
+   mirrors a combined value out of. */
+.myaccount-otp-box {
+  width: 3rem;
+  height: 3.4rem;
+  border: 2px solid #000;
+  border-radius: 0;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+}
+
+.myaccount-otp-box:focus {
+  border-color: var(--accent);
+}
+
+.myaccount-otp-box:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.myaccount-otp-error {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: #b3261e;
+  margin: -1rem 0 1rem;
+}
+
+.myaccount-otp-verify-btn {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-height: 44px;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+}
+
+.myaccount-otp-verify-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* "Loading" (a real AJAX request in flight, mirrored from the plugin's
+   own #sa_verify_otp `disabled` attribute — see weavira.js) is a
+   different meaning than "disabled because the boxes aren't full yet",
+   so it gets full opacity + a spinner instead of the dimmed look above.
+   :disabled in the selector wins the specificity tie against the rule
+   above regardless of source order, since a loading button is always
+   also disabled (blocks re-submission). */
+.myaccount-otp-verify-btn.is-loading:disabled {
+  opacity: 1;
+  cursor: wait;
+  color: transparent;
+}
+
+.myaccount-otp-verify-btn.is-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: myaccount-otp-spin 0.7s linear infinite;
+}
+
+@keyframes myaccount-otp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.myaccount-otp-resend-row {
+  width: 100%;
+  min-width: 0;
+  margin: 1rem 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.myaccount-otp-resend {
+  position: relative;
+  margin: 0 0.35rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.myaccount-otp-resend.is-loading {
+  color: transparent;
+  text-decoration: none;
+  pointer-events: none;
+}
+
+.myaccount-otp-resend.is-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: myaccount-otp-spin 0.7s linear infinite;
 }
 
 /* ── Empty state (no orders yet, invalid order) ── */

@@ -57,6 +57,19 @@
           billing_phone meta and logs them in, or creates a minimal new
           account (phone only) and logs that in — see app/filters.php for
           the fix to its billing_phone-persistence bug this relies on.
+
+          This was actually fixed once already (see git history —
+          a2ee3379), but the production re-sync from an All-in-One WP
+          Migration import (3cf1dd49) reverted it back to [sa_loginwithotp]
+          on this page specifically; checkout's own copy got restored in a
+          later commit (e340aaa7) but this one only had its comment
+          updated, not the shortcode call itself, so it silently stayed
+          broken. Re-applying the same fix checkout already has. (Briefly
+          reverted again to isolate an unrelated "OTP failed to send"
+          report, which turned out to be an SMS Alert account/settings
+          issue, not this shortcode — confirmed once the old shortcode
+          failed the same way, then a setting was fixed and it started
+          working again either way.)
         --}}
         <div class="myaccount-auth-welcome">
           <span class="myaccount-auth-welcome-kicker">Welcome to</span>
@@ -68,8 +81,8 @@
 
           <div class="ck-auth-col">
             <div class="ck-phone-row">
-              {!! do_shortcode('[sa_loginwithotp sa_label="Mobile Number" sa_placeholder="Enter your mobile number" sa_button="Continue"]') !!}
-              {!! do_shortcode('[sa_verify phone_selector="#phone" submit_selector=".btn"]') !!}</div>
+              {!! do_shortcode('[sa_signupwithmobile sa_label="Mobile Number" sa_placeholder="Enter your mobile number" sa_button="Continue" redirect_url="' . esc_url(wc_get_page_permalink('myaccount')) . '"]') !!}
+            </div>
           </div>
 
           <div class="ck-auth-or" aria-hidden="true">OR</div>
@@ -96,6 +109,47 @@
           and
           <a href="{{ get_privacy_policy_url() ?: '#' }}">Privacy Policy</a>.
         </p>
+
+        {{--
+          OTP verification step — genuine markup in this template, not
+          the SMS Alert plugin's own auto-generated popup. That popup is
+          still what actually runs the verification (its JS/AJAX/session
+          logic is untouched and does all the real work — sending,
+          validating, resending, and the eventual login+redirect on
+          success); this block is purely the visible layer, hidden by
+          default and shown by weavira.js once the plugin's own OTP-sent
+          state is detected. Every control below mirrors input into (or
+          triggers a real click on) the plugin's own now-hidden elements
+          rather than reimplementing any of that logic — see
+          weavira.js's "OTP step: custom UI, plugin backend" block for
+          the wiring and why a from-scratch AJAX reimplementation was
+          judged too risky for a styling fix to take on.
+        --}}
+        <div class="myaccount-otp-step" hidden>
+          <h1 class="myaccount-otp-heading">Verify your number</h1>
+          <p class="myaccount-otp-message">
+            We&rsquo;ve sent a <span class="myaccount-otp-digit-count">4</span>-digit OTP to
+            <span class="myaccount-otp-phone-row">
+              <span class="myaccount-otp-phone"></span>
+              <button type="button" class="myaccount-otp-edit" aria-label="Edit number">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zM12.793 5.5 10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.032-.325"/></svg>
+              </button>
+            </span>
+          </p>
+          <div class="myaccount-otp-boxes">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="myaccount-otp-box" data-otp-index="0" aria-label="Digit 1">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="myaccount-otp-box" data-otp-index="1" aria-label="Digit 2">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="myaccount-otp-box" data-otp-index="2" aria-label="Digit 3">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="myaccount-otp-box" data-otp-index="3" aria-label="Digit 4">
+          </div>
+          <p class="myaccount-otp-error" hidden></p>
+          <button type="button" class="myaccount-otp-verify-btn" disabled>Verify &amp; Continue &rarr;</button>
+          <p class="myaccount-otp-resend-row">
+            Didn&rsquo;t receive the code?
+            <a href="#" class="myaccount-otp-resend">Resend OTP</a>
+            <span class="myaccount-otp-timer"></span>
+          </p>
+        </div>
       @else
         {{-- Fallback when SMS Alert's "Login With OTP" setting is off —
              still a single form, just username/password instead of OTP. --}}
