@@ -280,6 +280,9 @@
                         <span class="ck-address-card-default">DEFAULT</span>
                       @endif
                       <button type="button" class="ck-address-card-edit" data-edit-address-id="{{ $saved['id'] }}">Edit</button>
+                      <button type="button" class="ck-address-card-delete" data-delete-address-id="{{ $saved['id'] }}" aria-label="Delete address">
+                        <i data-lucide="trash-2" aria-hidden="true"></i>
+                      </button>
                     </div>
                     <span class="ck-address-card-address">{!! WC()->countries->get_formatted_address($saved) !!}</span>
                     @if(!empty($saved['phone']))

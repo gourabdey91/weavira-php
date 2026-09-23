@@ -16423,6 +16423,36 @@ a.plp-card-add { text-decoration: none; text-align: center; }
 
 .ck-address-card-edit:hover { color: var(--accent-dark); }
 
+/* Icon-only, right next to Edit — Edit's own margin-left:auto already
+   pushes THIS pair to the far right of the head row, so delete just
+   needs a small gap from Edit, not its own auto margin (that would
+   push it away from Edit instead of sitting beside it). Same
+   stopPropagation reasoning as Edit: a distinct action from selecting
+   the card. */
+.ck-address-card-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 0.15rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ck-address-card-delete svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.ck-address-card-delete:hover { color: #b3261e; }
+
+.ck-address-card.is-deleting {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .ck-address-card-address,
 .ck-address-card-phone {
   font-family: var(--font-ui);

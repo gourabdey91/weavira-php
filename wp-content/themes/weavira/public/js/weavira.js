@@ -2446,11 +2446,54 @@
       });
     }
 
+    function deleteCard(addressId, card) {
+      if (!window.confirm('Delete this address?')) return;
+      if (typeof ajax_object === 'undefined' || !ajax_object.checkout_nonce) return;
+
+      card.classList.add('is-deleting');
+
+      fetch(ajax_object.ajaxurl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          action: 'weavira_delete_checkout_shipping_address',
+          security: ajax_object.checkout_nonce,
+          address_id: addressId,
+        }),
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (json) {
+          if (json && json.success) {
+            // Same reasoning as the Add/Edit modal's own save handler —
+            // reload so the server-rendered card list, defaults, and
+            // WC's own shipping_ pre-fill stay authoritative rather
+            // than reimplementing that reshuffling logic in JS.
+            window.location.reload();
+            return;
+          }
+          card.classList.remove('is-deleting');
+          window.alert((json && json.data && json.data.message) || 'Could not delete this address. Please try again.');
+        })
+        .catch(function () {
+          card.classList.remove('is-deleting');
+          window.alert('Could not delete this address. Please try again.');
+        });
+    }
+
     cardsWrap.addEventListener('click', function (e) {
       var editBtn = e.target.closest('.ck-address-card-edit');
       if (editBtn) {
         e.stopPropagation();
         if (window.wvOpenAddressModal) window.wvOpenAddressModal(editBtn.getAttribute('data-edit-address-id'));
+        return;
+      }
+
+      var deleteBtn = e.target.closest('.ck-address-card-delete');
+      if (deleteBtn) {
+        e.stopPropagation();
+        var deleteCardEl = deleteBtn.closest('.ck-address-card');
+        deleteCard(deleteBtn.getAttribute('data-delete-address-id'), deleteCardEl);
         return;
       }
 

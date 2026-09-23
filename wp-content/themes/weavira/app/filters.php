@@ -1782,6 +1782,34 @@ function weavira_handle_save_checkout_shipping_address()
 }
 
 /**
+ * Delete button next to each saved shipping address card on checkout (see
+ * weavira.js's modal IIFE) — same weavira_delete_shipping_address() the My
+ * Account address book's own delete form already posts to
+ * (wv_delete_shipping_address above), just reachable via AJAX here so the
+ * card list can update without a full page reload of the checkout form.
+ */
+add_action('wp_ajax_weavira_delete_checkout_shipping_address', 'App\\weavira_handle_delete_checkout_shipping_address');
+
+function weavira_handle_delete_checkout_shipping_address()
+{
+    check_ajax_referer('weavira_checkout_actions', 'security');
+
+    if (!is_user_logged_in()) {
+        wp_send_json_error(['message' => __('You must be logged in.', 'sage')], 403);
+    }
+
+    $addressId = isset($_POST['address_id']) ? sanitize_text_field(wp_unslash($_POST['address_id'])) : '';
+
+    if ($addressId === '') {
+        wp_send_json_error(['message' => __('Missing address id.', 'sage')], 400);
+    }
+
+    weavira_delete_shipping_address(get_current_user_id(), $addressId);
+
+    wp_send_json_success();
+}
+
+/**
  * ─── Billing / GST address book ─────────────────────────────────────────
  *
  * Same "Home / Office" pattern as the shipping address book above (its own
