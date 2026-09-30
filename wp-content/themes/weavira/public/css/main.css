@@ -15731,6 +15731,188 @@ a.plp-card-add { text-decoration: none; text-align: center; }
 
 .ck-panel-trust-dot { color: var(--border); margin: 0 0.1rem; }
 
+/* ── Checkout Step 1: OTP verification step — genuine markup ───────────
+   Same rebuild as My Account's .myaccount-otp-step (see that block for
+   the full reasoning) — the plugin's own popup is hidden entirely and
+   this real markup in #ck-panel-1 is what customers actually see.
+   Reuses this page's own existing tokens/patterns (.ck-panel-title,
+   .ck-panel-sub, the .smsalert_reg_with_otp_btn button look, .sa_mobileno's
+   rounded 1px border) rather than My Account's bolder black-bordered
+   box style, so it reads as part of the SAME step, not a different page. */
+
+body.woocommerce-checkout .smsalertModal.popup {
+  display: none !important;
+}
+
+/* Same [hidden]-override-by-unconditional-display bug as My Account's
+   .myaccount-auth-card [hidden] fix — .ck-auth-grid already sets
+   display:flex unconditionally (line ~15530), which otherwise beats the
+   [hidden] attribute regardless of specificity since author CSS always
+   wins over the UA stylesheet. */
+#ck-panel-1 [hidden] {
+  display: none !important;
+}
+
+.ck-otp-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.ck-otp-message {
+  margin-top: 0.4rem;
+}
+
+.ck-otp-phone-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ck-otp-edit {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.ck-otp-edit svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  color: var(--accent);
+}
+
+.ck-otp-boxes {
+  display: flex;
+  gap: 0.6rem;
+  margin: 1.5rem 0;
+}
+
+/* Matches .ck-phone-row .sa_mobileno's own rounded 1px border, just
+   narrowed to a single digit and centered, instead of My Account's
+   bolder 2px black boxes — this page's existing inputs are the design
+   reference here, not that one. */
+.ck-otp-box {
+  width: 3rem;
+  height: 3.4rem;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.ck-otp-box:focus {
+  border-color: var(--accent);
+}
+
+.ck-otp-box:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ck-otp-error {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: #b3261e;
+  margin: -1rem 0 1rem;
+}
+
+/* Same button look as .ck-phone-row .smsalert_reg_with_otp_btn (line
+   ~15680) so Verify reads as the same kind of action as Continue right
+   above it, not a differently-styled one. */
+.ck-otp-verify-btn {
+  position: relative;
+  width: 100%;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.85rem 1rem;
+  min-height: 44px;
+  transition: opacity 180ms;
+}
+
+.ck-otp-verify-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Same "loading vs. disabled" distinction as My Account's verify button
+   — a request in flight should read as "processing," not "greyed out." */
+.ck-otp-verify-btn.is-loading:disabled {
+  opacity: 1;
+  cursor: wait;
+  color: transparent;
+}
+
+.ck-otp-verify-btn.is-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ck-otp-spin 0.7s linear infinite;
+}
+
+@keyframes ck-otp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ck-otp-resend-row {
+  margin: 1rem 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.ck-otp-resend {
+  position: relative;
+  margin: 0 0.35rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.ck-otp-resend.is-loading {
+  color: transparent;
+  text-decoration: none;
+  pointer-events: none;
+}
+
+.ck-otp-resend.is-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: ck-otp-spin 0.7s linear infinite;
+}
+
 /* Privacy note — full-width footer strip below the checkout layout */
 .ck-privacy-note {
   display: flex;

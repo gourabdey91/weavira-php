@@ -3317,4 +3317,246 @@
     }).observe(document.body, { childList: true, subtree: true });
   }());
 
+  /* ── Checkout Step 1: OTP step, custom UI on the plugin's backend ────
+     Same rebuild, same reasoning, as My Account's OTP step directly
+     above — checkout's "Log in or Sign Up" panel (#ck-panel-1) still
+     rendered the SMS Alert plugin's own auto-generated OTP popup on top
+     of an otherwise fully custom-built login step, which is exactly the
+     "not in sync" mismatch that was already fixed once here. Same thin
+     proxy approach: this UI only mirrors input into, and triggers real
+     clicks on, the plugin's own (now-hidden) elements — none of the
+     actual send/verify/resend/session logic is reimplemented. On
+     success the plugin's own real form submit reaches redirect_url
+     (this same checkout page, see checkout.blade.php), and $skipStep1
+     re-evaluates true now that the customer is logged in, so Step 2
+     opens automatically — no extra navigation handling needed here. */
+  (function () {
+    var otpStep = document.getElementById('ck-otp-step');
+    var panel = document.getElementById('ck-panel-1');
+    if (!otpStep || !panel) { return; }
+
+    var phoneEntryEls = [
+      panel.querySelector('.ck-panel-head'),
+      panel.querySelector('.ck-auth-grid'),
+      document.getElementById('ck-panel-trust')
+    ].filter(Boolean);
+
+    var boxes = Array.prototype.slice.call(otpStep.querySelectorAll('.ck-otp-box'));
+    var verifyBtn = otpStep.querySelector('.ck-otp-verify-btn');
+    var resendLink = otpStep.querySelector('.ck-otp-resend');
+    var timerEl = otpStep.querySelector('.ck-otp-timer');
+    var phoneEl = otpStep.querySelector('.ck-otp-phone');
+    var digitCountEl = otpStep.querySelector('.ck-otp-digit-count');
+    var errorEl = otpStep.querySelector('.ck-otp-error');
+    var editBtn = otpStep.querySelector('.ck-otp-edit');
+
+    /* Same duplicate-popup-instance quirk as My Account (see that IIFE's
+       comment above) — the plugin renders this popup twice per page
+       load regardless of which page embeds the shortcode. */
+    var activePopup = document.querySelector('.smsalertModal.popup');
+    var realVerifyBtn = null;
+    var loading = { verify: false, resend: false };
+
+    /* Unique on this page (one [sa_signupwithmobile] instance) — safe to
+       resolve once at setup, same as My Account's equivalent lookup. */
+    var realResendInitBtn = panel.querySelector('.ck-phone-row .smsalert_reg_with_otp_btn');
+
+    var formatPhone = function (raw) {
+      var digits = raw.replace(/\D/g, '');
+      if (digits.length === 12 && digits.slice(0, 2) === '91') {
+        return '+91 ' + digits.slice(2, 7) + ' ' + digits.slice(7);
+      }
+      return digits ? '+' + digits : raw;
+    };
+
+    var showPhoneEntry = function () {
+      otpStep.hidden = true;
+      phoneEntryEls.forEach(function (el) { el.hidden = false; });
+    };
+
+    var showOtpStep = function () {
+      phoneEntryEls.forEach(function (el) { el.hidden = true; });
+      otpStep.hidden = false;
+      errorEl.hidden = true;
+      boxes.forEach(function (b) { b.value = ''; });
+      if (boxes[0]) { boxes[0].focus(); }
+      updateVerifyEnabled();
+    };
+
+    var realOtpInput = function () {
+      return activePopup ? activePopup.querySelector('.otp_input') : null;
+    };
+
+    var updateVerifyEnabled = function () {
+      var complete = boxes.every(function (b) { return b.value !== ''; });
+      verifyBtn.disabled = loading.verify || !complete;
+    };
+
+    var syncRealField = function () {
+      var real = realOtpInput();
+      if (!real) { return; }
+      var combined = boxes.map(function (b) { return b.value; }).join('');
+      real.value = combined;
+    };
+
+    var maybeAutoSubmit = function () {
+      if (boxes.every(function (b) { return b.value !== ''; })) { submitVerify(); }
+    };
+
+    boxes.forEach(function (box, i) {
+      box.addEventListener('input', function () {
+        box.value = box.value.replace(/[^0-9]/g, '').slice(0, 1);
+        if (box.value && boxes[i + 1]) { boxes[i + 1].focus(); }
+        syncRealField();
+        updateVerifyEnabled();
+        maybeAutoSubmit();
+      });
+      box.addEventListener('keydown', function (e) {
+        if (e.key === 'Backspace' && !box.value && boxes[i - 1]) {
+          boxes[i - 1].focus();
+        }
+        if (e.key === 'ArrowLeft' && boxes[i - 1]) { boxes[i - 1].focus(); }
+        if (e.key === 'ArrowRight' && boxes[i + 1]) { boxes[i + 1].focus(); }
+      });
+      box.addEventListener('paste', function (e) {
+        var text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+        if (!text) { return; }
+        e.preventDefault();
+        text.split('').forEach(function (digit, offset) {
+          if (boxes[i + offset]) { boxes[i + offset].value = digit; }
+        });
+        var last = Math.min(i + text.length, boxes.length - 1);
+        boxes[last].focus();
+        syncRealField();
+        updateVerifyEnabled();
+        maybeAutoSubmit();
+      });
+    });
+
+    var minLoadingMs = 350;
+
+    var watchLoading = function (realBtn, onChange) {
+      if (!realBtn) { return; }
+      var shownAt = 0;
+      var pendingOff = null;
+      var apply = function (isLoading) {
+        if (pendingOff) { clearTimeout(pendingOff); pendingOff = null; }
+        if (isLoading) {
+          shownAt = Date.now();
+          onChange(true);
+          return;
+        }
+        var elapsed = Date.now() - shownAt;
+        var wait = Math.max(0, minLoadingMs - elapsed);
+        if (wait === 0) {
+          onChange(false);
+        } else {
+          pendingOff = setTimeout(function () { onChange(false); }, wait);
+        }
+      };
+      apply(!!realBtn.disabled);
+      new MutationObserver(function () { apply(!!realBtn.disabled); })
+        .observe(realBtn, { attributes: true, attributeFilter: ['disabled'] });
+    };
+
+    var attachVerifyLoadingWatcher = function () {
+      if (realVerifyBtn || !activePopup) { return; }
+      realVerifyBtn = activePopup.querySelector('#sa_verify_otp');
+      watchLoading(realVerifyBtn, function (isLoading) {
+        loading.verify = isLoading;
+        verifyBtn.classList.toggle('is-loading', isLoading);
+        boxes.forEach(function (b) { b.disabled = isLoading; });
+        updateVerifyEnabled();
+      });
+    };
+
+    watchLoading(realResendInitBtn, function (isLoading) {
+      loading.resend = isLoading;
+      resendLink.classList.toggle('is-loading', isLoading);
+    });
+
+    var submitVerify = function () {
+      if (loading.verify || loading.resend || !realVerifyBtn || verifyBtn.disabled) { return; }
+      loading.verify = true;
+      verifyBtn.classList.add('is-loading');
+      updateVerifyEnabled();
+      syncRealField();
+      realVerifyBtn.click();
+    };
+
+    verifyBtn.addEventListener('click', submitVerify);
+
+    resendLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (loading.resend || loading.verify) { return; }
+      var realResend = activePopup ? activePopup.querySelector('.sa_resend_btn') : null;
+      if (realResend) { realResend.click(); }
+      boxes.forEach(function (b) { b.value = ''; });
+      if (boxes[0]) { boxes[0].focus(); }
+      updateVerifyEnabled();
+    });
+
+    editBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var realEdit = activePopup ? activePopup.querySelector('.saeditphone') : null;
+      if (realEdit) { realEdit.click(); }
+      showPhoneEntry();
+    });
+
+    setInterval(function () {
+      var realTimer = activePopup ? activePopup.querySelector('.satimer') : null;
+      if (realTimer && timerEl) {
+        var text = realTimer.textContent.trim();
+        timerEl.textContent = (text && text !== '00:00:00') ? 'in ' + text : '';
+      }
+    }, 500);
+
+    var mirrorError = function (text) {
+      if (!text || /has been sent to/i.test(text)) { return; }
+      errorEl.textContent = text;
+      errorEl.hidden = false;
+    };
+
+    var handleRealMessage = function (message) {
+      var text = message.textContent.trim();
+      if (!text || text.indexOf('##phone##') !== -1) { return; }
+      if (/has been sent to/i.test(text)) {
+        activePopup = message.closest('.smsalertModal.popup') || activePopup;
+        attachVerifyLoadingWatcher();
+        var match = text.match(/sent to\s*([0-9+ ]+)/i);
+        var phone = match ? formatPhone(match[1]) : '';
+        var otpField = realOtpInput();
+        var otpLength = otpField ? otpField.getAttribute('data-max') : null;
+        if (phoneEl) { phoneEl.textContent = phone || 'your phone'; }
+        if (digitCountEl && otpLength) { digitCountEl.textContent = otpLength; }
+        if (otpStep.hidden) { showOtpStep(); }
+      } else {
+        mirrorError(text);
+      }
+    };
+
+    var watchMessage = function (message) {
+      if (message.dataset.wvOtpWatched) { return; }
+      message.dataset.wvOtpWatched = '1';
+      handleRealMessage(message);
+      new MutationObserver(function () {
+        handleRealMessage(message);
+      }).observe(message, { childList: true, subtree: true, characterData: true });
+    };
+
+    document.querySelectorAll('.smsalertModal.popup .sa-message').forEach(watchMessage);
+
+    new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (node) {
+          if (node.nodeType !== 1) { return; }
+          if (node.matches && node.matches('.sa-message')) { watchMessage(node); }
+          if (node.querySelectorAll) {
+            node.querySelectorAll('.sa-message').forEach(watchMessage);
+          }
+        });
+      });
+    }).observe(document.body, { childList: true, subtree: true });
+  }());
+
 }());

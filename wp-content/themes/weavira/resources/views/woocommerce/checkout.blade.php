@@ -205,10 +205,52 @@
       {{-- Single unboxed line, replacing the previous two-box trust-badge
            pair — matches the mockup's flat treatment (background color and
            borders only on the outer .ck-panel, not nested inside it). --}}
-      <p class="ck-panel-trust">
+      <p class="ck-panel-trust" id="ck-panel-trust">
         <i data-lucide="shield-check" aria-hidden="true"></i>
         Secure sign-in <span class="ck-panel-trust-dot" aria-hidden="true">&bull;</span> Your information is protected
       </p>
+
+      {{--
+        OTP verification step — genuine markup in this template, not the
+        SMS Alert plugin's own auto-generated popup. Same reasoning and
+        proxy-wiring approach as My Account's .myaccount-otp-step (see
+        form-login.blade.php) — the plugin's own popup is hidden but stays
+        fully functional in the DOM; this is purely the visible layer,
+        shown by weavira.js once the plugin's own OTP-sent state is
+        detected, and every control below mirrors input into (or triggers
+        a real click on) the plugin's own now-hidden elements. On success
+        the plugin's own real form submit reaches redirect_url (this same
+        checkout page) with the customer now logged in, so $skipStep1
+        re-evaluates true and Step 2 opens automatically — no extra
+        navigation logic needed here.
+      --}}
+      <div class="ck-otp-step" id="ck-otp-step" hidden>
+        <div class="ck-panel-text" style="text-align: left;">
+          <h1 class="ck-panel-title" id="ck-otp-title">Verify your number</h1>
+          <p class="ck-panel-sub ck-otp-message">
+            We&rsquo;ve sent a <span class="ck-otp-digit-count">4</span>-digit OTP to
+            <span class="ck-otp-phone-row">
+              <span class="ck-otp-phone"></span>
+              <button type="button" class="ck-otp-edit" aria-label="Edit number">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zM12.793 5.5 10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.032-.325"/></svg>
+              </button>
+            </span>
+          </p>
+        </div>
+        <div class="ck-otp-boxes">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="ck-otp-box" data-otp-index="0" aria-label="Digit 1">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="ck-otp-box" data-otp-index="1" aria-label="Digit 2">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="ck-otp-box" data-otp-index="2" aria-label="Digit 3">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="ck-otp-box" data-otp-index="3" aria-label="Digit 4">
+        </div>
+        <p class="ck-otp-error" hidden></p>
+        <button type="button" class="ck-otp-verify-btn" disabled>Verify &amp; Continue &rarr;</button>
+        <p class="ck-otp-resend-row">
+          Didn&rsquo;t receive the code?
+          <a href="#" class="ck-otp-resend">Resend OTP</a>
+          <span class="ck-otp-timer"></span>
+        </p>
+      </div>
 
     @endunless
     </section><!-- /Step 1 -->
