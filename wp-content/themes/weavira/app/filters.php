@@ -1520,6 +1520,32 @@ add_action('otp_verification_successful', function ($redirectTo, $userLogin, $us
 }, 10, 5);
 
 /**
+ * WooCommerce merges a customer's saved (persistent) cart back in on
+ * login, but only if woocommerce_load_saved_cart_after_login user meta
+ * is set — WooCommerce's own wc_user_logged_in() (wc-user-functions.php)
+ * sets it, but only on WordPress's wp_login action. The checkout OTP
+ * flow (SMS Alert's WooCommerceRegistrationForm::processRegistration(),
+ * both the existing-user-login and new-signup branches) authenticates
+ * via wp_set_auth_cookie() directly and never fires wp_login, so a
+ * guest who already has items in their cart when they complete OTP
+ * login/signup at checkout would keep only their guest-session cart —
+ * any cart saved on their account from another device would silently
+ * never merge in.
+ *
+ * set_auth_cookie is WordPress core's own hook, fired unconditionally
+ * inside wp_set_auth_cookie() (wp-includes/pluggable.php) regardless of
+ * which code calls it — covers this checkout flow, the My Account OTP
+ * flow (which already fires wp_login and so already worked), and any
+ * future login path, without needing to hook anything plugin-specific.
+ * Mirrors wc_user_logged_in()'s own logic exactly; WooCommerce's own
+ * cart-session code (class-wc-cart-session.php) reads this flag once
+ * and deletes it after merging, so no cleanup needed here.
+ */
+add_action('set_auth_cookie', function ($authCookie, $expire, $expiration, $userId) {
+    update_user_meta($userId, '_woocommerce_load_saved_cart_after_login', 1);
+}, 10, 4);
+
+/**
  * The register form's phone field submits as a bare 10-digit number by
  * default, but SMS Alert's own intl-tel-input widget (triggered by the
  * [sa_verify] shortcode adding the .phone-valid class to it — see
