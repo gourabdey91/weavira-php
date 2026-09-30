@@ -617,9 +617,11 @@ function weavira_cart_totals_payload($cart_item_key = null)
 
     if ($cart_item_key && isset($cart->cart_contents[$cart_item_key])) {
         $item = $cart->cart_contents[$cart_item_key];
-        // Matches Cart.php's cartItems() — tax-inclusive, independent of the
-        // woocommerce_tax_display_cart option (see comment there).
-        $lineTotal = wc_price(wc_get_price_including_tax($item['data'], ['qty' => $item['quantity']]));
+        // Matches Cart.php's cartItems() — get_product_subtotal() reads
+        // woocommerce_tax_display_cart itself, so this stays consistent with
+        // the Subtotal above (also from cart totals) without hardcoding a
+        // tax mode (see Cart.php's own comment / the GST pricing-mode plan).
+        $lineTotal = $cart->get_product_subtotal($item['data'], $item['quantity']);
     }
 
     return [

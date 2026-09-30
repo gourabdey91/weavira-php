@@ -52,7 +52,7 @@
                       <p class="cart-item-price">{!! $item['unitPriceHtml'] !!}</p>
                       <p class="cart-item-unit-price"><span class="cart-item-total-label">Total:</span> {!! $item['lineTotalHtml'] !!}</p>
                       @if(wc_tax_enabled())
-                        <p class="cart-item-gst">Incl. GST</p>
+                        <p class="cart-item-gst">{{ wc_prices_include_tax() ? 'Incl. GST' : '+ GST' }}</p>
                       @endif
                     </div>
                     <div class="cart-qty">
@@ -93,7 +93,7 @@
           <div class="cart-summary-taxes">
             @foreach($taxRows as $tax)
               <div class="cart-summary-row">
-                <span>{{ $tax['label'] }} (Included)</span>
+                <span>{{ $tax['label'] }} ({{ wc_prices_include_tax() ? 'Included' : 'Added' }})</span>
                 <span>{!! $tax['amount'] !!}</span>
               </div>
             @endforeach
@@ -103,8 +103,18 @@
           <span>Total</span>
           <span class="cart-summary-total-price">{!! $total !!}</span>
         </div>
+        {{-- Wording follows woocommerce_prices_include_tax directly (via
+             wc_prices_include_tax()) so this never needs editing again when
+             the mode is switched from WooCommerce's own Settings → Tax
+             screen. --}}
         @if(wc_tax_enabled())
-          <p class="cart-summary-note">Prices are inclusive of GST. A tax invoice will be provided after purchase.</p>
+          <p class="cart-summary-note">
+            @if(wc_prices_include_tax())
+              Prices are inclusive of GST. A tax invoice will be provided after purchase.
+            @else
+              Prices exclude GST — GST is added at checkout. A tax invoice will be provided after purchase.
+            @endif
+          </p>
         @endif
         <a href="{{ wc_get_checkout_url() }}" class="cart-checkout-btn">
           <i data-lucide="lock" aria-hidden="true"></i>

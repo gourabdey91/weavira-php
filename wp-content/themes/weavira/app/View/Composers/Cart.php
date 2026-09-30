@@ -63,15 +63,19 @@ class Cart extends Composer
                 'collection' => $this->collectionLabel($product),
                 'badges' => $this->badges($product, $cartItem),
                 'quantity' => $cartItem['quantity'],
-                // Deliberately not $cart->get_product_subtotal() — that (and
-                // get_cart_subtotal() for the right-side summary) both read
-                // the same woocommerce_tax_display_cart option, so flipping
-                // that option to fix these would also wrongly flip the
-                // summary's Subtotal to tax-inclusive. wc_get_price_including_tax()
-                // computes inclusive pricing directly, independent of that
-                // option, leaving the summary untouched.
-                'unitPriceHtml' => wc_price(wc_get_price_including_tax($product)),
-                'lineTotalHtml' => wc_price(wc_get_price_including_tax($product, ['qty' => $cartItem['quantity']])),
+                // get_product_subtotal() reads woocommerce_tax_display_cart
+                // itself (WC_Cart::display_prices_including_tax(), which this
+                // was previously avoiding since that option used to disagree
+                // with woocommerce_tax_display_shop — see git history,
+                // "Cart Fix 1"). Now that both options are kept in sync (see
+                // GST pricing-mode plan), this is the correct, settings-aware
+                // call: it already matches get_cart_subtotal() below for the
+                // summary's own Subtotal, and it already appends WooCommerce's
+                // own "(ex. tax)"/"(incl. tax)" suffix when the display mode
+                // and the stored price's own inclusive/exclusive nature
+                // differ, so nothing needs to be reimplemented here.
+                'unitPriceHtml' => $cart->get_product_subtotal($product, 1),
+                'lineTotalHtml' => $cart->get_product_subtotal($product, $cartItem['quantity']),
                 'gift' => $cartItem['wv_gift'] ?? null,
             ];
         }

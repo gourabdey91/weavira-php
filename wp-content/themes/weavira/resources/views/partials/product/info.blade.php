@@ -58,7 +58,11 @@
     <div class="ppbox-info-row">
       <div class="ppbox-price">
         <p class="w-pdp-price">{!! $product->get_price_html() !!}</p>
-        <p class="w-pdp-price-note">(Inclusive of all taxes)</p>
+        {{-- Follows woocommerce_prices_include_tax directly (via
+             wc_prices_include_tax()), same as cart.blade.php/checkout.blade.php,
+             so this never needs editing again when the mode is switched
+             from WooCommerce's own Settings → Tax screen. --}}
+        <p class="w-pdp-price-note">{{ wc_prices_include_tax() ? '(Inclusive of all taxes)' : '(Excludes GST, added at checkout)' }}</p>
       </div>
 
       @if(!empty($craftFacts))

@@ -617,7 +617,7 @@
            jumped straight from Subtotal to Total with the tax invisible. --}}
       @foreach($taxRows as $tax)
         <div class="ck-summary-row">
-          <span>{{ $tax['label'] }} (Included)</span>
+          <span>{{ $tax['label'] }} ({{ wc_prices_include_tax() ? 'Included' : 'Added' }})</span>
           <span>{!! $tax['amount'] !!}</span>
         </div>
       @endforeach
@@ -628,8 +628,17 @@
       <span class="ck-total-price">{!! $total !!}</span>
     </div>
 
+    {{-- Wording follows woocommerce_prices_include_tax directly (via
+         wc_prices_include_tax()) so this never needs editing again when the
+         mode is switched from WooCommerce's own Settings → Tax screen. --}}
     @if(wc_tax_enabled())
-      <p class="ck-summary-note">Prices are inclusive of GST. A tax invoice will be provided after purchase.</p>
+      <p class="ck-summary-note">
+        @if(wc_prices_include_tax())
+          Prices are inclusive of GST. A tax invoice will be provided after purchase.
+        @else
+          Prices exclude GST — GST is added at checkout. A tax invoice will be provided after purchase.
+        @endif
+      </p>
     @endif
 
     <div class="ck-summary-perks" role="list">
