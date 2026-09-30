@@ -2192,34 +2192,6 @@
     });
   }());
 
-  /* ── Checkout Step 1: OTP login success reloads the page ─────────────────
-     SMS Alert's own JS (otp-sms.min.js, otpSuceess()) hides the OTP modal
-     on a correct code but never reloads or redirects — login only changes
-     server-side (the auth cookie), so Step 1 stays on screen and the
-     customer has to notice and click "Continue to Delivery Details"
-     themselves despite already being logged in. Reloading re-evaluates
-     $skipStep1 in checkout.blade.php, which then shows Step 2
-     automatically — the same mechanism any other login path already
-     uses, so no new step-transition logic is needed here.
-     Success is detected exactly the way the plugin's own otpSuceess()
-     does it: result === 'success' on the smsalert-validate-otp-form
-     response. [sa_verify] renders once on this page, inside Step 1 only
-     (guests only), so this can't fire from anywhere else on checkout. ── */
-  (function () {
-    if (!document.getElementById('ck-checkout-form') || typeof jQuery === 'undefined') return;
-
-    jQuery(document).on('ajaxSuccess', function (event, xhr, settings) {
-      if (!settings.url || settings.url.indexOf('option=smsalert-validate-otp-form') === -1) return;
-
-      var response;
-      try { response = JSON.parse(xhr.responseText); } catch (e) { return; }
-
-      if (response && response.result === 'success') {
-        window.location.reload();
-      }
-    });
-  }());
-
   /* ── Checkout: multi-step accordion (Continue / Delivery / Gift / Review) ──
      All steps live inside ONE real <form class="checkout"> so WooCommerce's
      own checkout.js still owns validation/submission — this only handles
